@@ -18,8 +18,8 @@ directory with the same name `proposal.Rmd`. Do not change the name!
 0. Who are the authors of this package? See format below.
 
 ```{r q0}
-authors <- list(sunet1 = "Full Name",
-                sunet2 = "Full Name")
+authors <- list(radke = "Rohisha Adke",
+                layu = "Lisa Ann Yu")
 ```
 
 1. What is your package trying to achieve?  Who is it aimed at?
@@ -113,14 +113,14 @@ proficient <- "proficient"
 ```{r q5}
 languages <- list(
     ## replace the values below appropriately for each member
-    sunet1 = c(cxx = none,
+    radke = c(cxx = none,
                java = proficient,
                python = proficient,
                ruby = none)
     ,
-    sunet2 = c(cxx = none,
-               java = proficient,
-               python = proficient,
+    layu = c(cxx = none,
+               java = basic,
+               python = basic,
                ruby = none)
 )
 ```
