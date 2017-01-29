@@ -45,6 +45,33 @@ The package is aimed at analysts and scientists in pharmaceutical
 companies, research institutions, health care organizations, and other
 administrative organizations (i.e., FDA).
 
+Ideas **just have to make sure doing more than this package we are using does,
+including the examples in the vignette**:
+- Visualization: 
+  - across the course of a day (or any other time frame), several different
+  measures (i.e. heart-rate, steps, distance, calories burned) on one graph
+  so the user can look at the relationship between those variables; can have
+  two different variables on a plot on two different scales, or several on one
+  plot just using densities for all the variables
+  - for workouts, can plot rates (distance/time over time) or distances - useful 
+  if someone is trying to improve their mile time or prep for an event (5k, 
+  marathon)
+  - the user can plug in other values, like when the workday starts and ends,
+  and when they had caffeine or alcohol, to compare all other values to those
+  time points
+  - compare to average in gender/age bracket
+  (I guess we will have to scrape this?), compare to own data at an earlier
+  time (last week, last month, etc.)
+- Recommendations for improvement: 
+  - this will be hard: we can show the user is not meeting his/her own goals 
+  but how can we write a program that will provide nonobvious suggestions?
+- Analysis:
+  - what counts as an analysis? we could look at the relationship between
+  steps and distance during "workout sessions" and do linear regressions?
+  - compare sleep to what happened during the day - use lag and lead
+- Shiny App: users will be able to use the app to look at these graphs/analytics 
+themselves
+
 ```
 
 2. Briefly describe the background if that's not obvious.  What field
@@ -65,6 +92,15 @@ weight, gender or drug pairs." The project will address this level of
 the challenge and will also provide tools for visualization and
 analysis.
 
+This package builds off the fitbitScraper (https://cran.r-project.org/web/packages/fitbitScraper/index.html) package.  We looked at what fitbit users might want in terms of analytics 
+(https://community.fitbit.com/t5/Fitbit-com-Dashboard/dashboard-needs-better-analytics/m-p/1185213)
+
+Other links
+- don't think we can actually do anything about this person's complaints:
+http://www.computerworld.com/article/2951751/personal-technology/why-i-ditched-my-fitbit-and-what-this-means-for-analytics.html
+- Other sites that create fitbit analytics
+  - https://rocketgraph.com/reports/16-fitbit-analytics, https://www.producthunt.com/posts/fitbit-analytics-2
+  - https://datarunsdeep.com.au/blog/track-your-life-in-google-analytics/
 ```
 
 3. Provide one or two use cases; that is, in a sentence or so say how
