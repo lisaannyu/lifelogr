@@ -1,0 +1,134 @@
+---
+title: "Project Proposal"
+output:
+     html_document
+---
+
+__Proposal Deadline: Jan 30, 2017 11:59pm__
+
+
+- Edit this markdown file by __replacing only__ what is there in the
+chunks named `q0`, `q1`, `q2`, ..., `q5` with your team's appropriate
+answers. These chunks have been filled in as an example.
+
+- Place the filled in markdown in any one of the team member's private
+directory with the same name `proposal.Rmd`. Do not change the name!
+
+
+0. Who are the authors of this package? See format below.
+
+```{r q0}
+authors <- list(sunet1 = "Full Name",
+                sunet2 = "Full Name")
+```
+
+1. What is your package trying to achieve?  Who is it aimed at?
+
+```q1
+
+1.  Querying.  The package will enable users to query the Adverse
+Events Database and other databases on OpenFDA from R. For example,
+they could query information about events and patients.
+
+2.  Visualization.  The package will also provide tools to
+visualize for an inquired drug the relationship between adverse event
+counts/types and time, drug pair, patient's weight, age, gender and
+other variables.
+
+3.  Analysis.  It will also include three functions to analyze
+if 1) there are spikes in adverse event happenings, 2) if spikes
+are related to drug recalls or enforcement and then 3) other
+visualizations such as principal component charts to see which
+variables contribute the most to certain phenomena.
+
+The package is aimed at analysts and scientists in pharmaceutical
+companies, research institutions, health care organizations, and other
+administrative organizations (i.e., FDA).
+
+```
+
+2. Briefly describe the background if that's not obvious.  What field
+   or area of interest is it related to?  (Just briefly, in a paragraph
+   or two, maximum.) References, including web references, are welcome
+   where available.
+
+```q2
+
+This package design is inspired by the OpenFDA Developer Challenge
+(Option 1, Level 1). A link to the developer Challenge announcement is
+here
+
+https://open.fda.gov/update/an-open-challenge-to-tap-public-data/. The
+challenge is broken into three phases. The first phase is identifying
+spikes based on drug queries and "bucketizing variables over time,
+weight, gender or drug pairs." The project will address this level of
+the challenge and will also provide tools for visualization and
+analysis.
+
+```
+
+3. Provide one or two use cases; that is, in a sentence or so say how
+   you see someone using the package.
+
+```q3
+
+Scientists will query the R package for adverse events and patient
+information. The queries will allow them to pass arguments.
+
+Scientists can also visualize the results of their queries.
+
+Scientists will also be able to utilize the analytical functions to
+discover assocations among variables.
+
+Administrative organizations will query the R package for adverse
+event patterns in order to monitor the drug market.  These queries can
+also be parameterized by the user.
+
+```
+
+4. If you can, list the main functions or other software you plan on
+   including.  No need to implement anything now, but you should have
+   an idea.
+
+```q4
+
+The R package will provide the following functions: reading and
+writing data, creating graphs and visualizations, running
+parameterized queries against datasets, providing for download
+capabilibities of both data and graphics.  The R package will also
+provide functions for deeper analysis by the user.
+
+```
+
+```{r, echo = FALSE, hide = TRUE}
+none <- "none"
+basic <- "basic"
+proficient <- "proficient"
+```
+
+5. For languages C/C++, Java, Python, Ruby, please specify your
+   proficiency: Proficient, basic knowledge, no knowledge.  (This
+   helps us evaluate the proposal sometimes and offer suggestions.)
+
+```{r q5}
+languages <- list(
+    ## replace the values below appropriately for each member
+    sunet1 = c(cxx = none,
+               java = proficient,
+               python = proficient,
+               ruby = none)
+    ,
+    sunet2 = c(cxx = none,
+               java = proficient,
+               python = proficient,
+               ruby = none)
+)
+```
+
+
+
+
+
+
+
+
