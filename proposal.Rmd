@@ -78,7 +78,7 @@ themselves
 
 1. Data matching. The package will allow users to input data from their personal activity trackers or other logs, and match the data sources together for global analysis of their health. The primary personal tracking data the package will be used to deal with is Fitbit data, which we will use the R package fitbitScraper to access. However, users may also input their own alternative sources of data as files, such as Apple Health data, or data from other apps.
 2. Visualization. Shiny app
-3. Analysis.
+3. Analysis. See associations between data types.
 4. Experimentation framework. Run experiments on yourself
 
 ```
