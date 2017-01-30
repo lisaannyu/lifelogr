@@ -45,6 +45,7 @@ variables contribute the most to certain phenomena.
 The package is aimed at analysts and scientists in pharmaceutical
 companies, research institutions, health care organizations, and other
 administrative organizations (i.e., FDA).
+'''
 
 Ideas **just have to make sure doing more than this package we are using does,
 including the examples in the vignette**:
@@ -121,7 +122,6 @@ the challenge and will also provide tools for visualization and
 analysis.
 '''
 
-
 Fitbits and other health tracking devices have taken off in the last few years, as data enthusiasts, along with, increasingly, the everyday consumer, seek a more personal, and finer, granularity of insight. There are stories of devices alerting users to previously unknown health conditions, while at the same time, how to incorporate such data into medical care remains an open question.
 
 A common complaint about the Fitbit in particular is the lack of analytics provided for by the company; users are left to glance through a couple raw graphs of their numbers, and, failing to continue to learn from their data, after the novelty wears off, Fitbits often end up stuffed away, unused, in a drawer.
@@ -134,7 +134,6 @@ Related work includes:
 The fitbitScraper R package, which allows users to access their Fitbit data: https://cran.r-project.org/web/packages/fitbitScraper/index.html.
 The analytics requests of the Fitbit community: https://community.fitbit.com/t5/Fitbit-com-Dashboard/dashboard-needs-better-analytics/m-p/1185213
 Other websites that create Fitbit analytics: https://rocketgraph.com/reports/16-fitbit-analytics, https://www.producthunt.com/posts/fitbit-analytics-2, https://datarunsdeep.com.au/blog/track-your-life-in-google-analytics/
-
 
 ```
 
