@@ -133,62 +133,23 @@ $(document).ready(function () {
 <ol style="list-style-type: decimal">
 <li>What is your package trying to achieve? Who is it aimed at?</li>
 </ol>
-<pre class="q1"><code>
-'''
-1.  Querying.  The package will enable users to query the Adverse
-Events Database and other databases on OpenFDA from R. For example,
-they could query information about events and patients.
+<pre class="q1"><code>1. Data matching. The package will allow users to input data from their personal 
+activity trackers or other logs, and match the data sources together for a 
+multifaceted view of their health. The primary personal tracking data the 
+package will be used with is Fitbit data, which we will access for a user 
+through the R package fitbitScraper. Users may also input their own sources of 
+data as files, such as Apple Health or other app data.
 
-2.  Visualization.  The package will also provide tools to
-visualize for an inquired drug the relationship between adverse event
-counts/types and time, drug pair, patient's weight, age, gender and
-other variables.
+2. Visualization. The package will allow users to visualize their matched data. 
+To increase the ease of use for Fitbit users, these will also be displayed in a 
+Shiny app. For example,
 
-3.  Analysis.  It will also include three functions to analyze
-if 1) there are spikes in adverse event happenings, 2) if spikes
-are related to drug recalls or enforcement and then 3) other
-visualizations such as principal component charts to see which
-variables contribute the most to certain phenomena.
-
-The package is aimed at analysts and scientists in pharmaceutical
-companies, research institutions, health care organizations, and other
-administrative organizations (i.e., FDA).
-'''
-
-Ideas **just have to make sure doing more than this package we are using does,
-including the examples in the vignette**:
-- Visualization: 
-  - across the course of a day (or any other time frame), several different
-  measures (i.e. heart-rate, steps, distance, calories burned) on one graph
-  so the user can look at the relationship between those variables; can have
-  two different variables on a plot on two different scales, or several on one
-  plot just using densities for all the variables
-  - for workouts, can plot rates (distance/time over time) or distances - useful 
-  if someone is trying to improve their mile time or prep for an event (5k, 
-  marathon)
-  - the user can plug in other values, like when the workday starts and ends,
-  and when they had caffeine or alcohol, to compare all other values to those
-  time points
-  - compare to average in gender/age bracket
-  (I guess we will have to scrape this?), compare to own data at an earlier
-  time (last week, last month, etc.)
-- Recommendations for improvement: 
-  - this will be hard: we can show the user is not meeting his/her own goals 
-  but how can we write a program that will provide nonobvious suggestions?
-- Analysis:
-  - what counts as an analysis? we could look at the relationship between
-  steps and distance during &quot;workout sessions&quot; and do linear regressions?
-  - compare sleep to what happened during the day - use lag and lead
-- Shiny App: users will be able to use the app to look at these graphs/analytics 
-themselves
-'''
-
-
-1. Data matching. The package will allow users to input data from their personal activity trackers or other logs, and match the data sources together for a multifaceted view of their health. The primary personal tracking data the package will be used with is Fitbit data, which we will access for a user through the R package fitbitScraper. Users may also input their own sources of data as files, such as Apple Health or other app data.
-
-2. Visualization. The package will allow users to visualize their matched data. To increase the ease of use for Fitbit users, these will also be displayed in a Shiny app. For example,
-
-  - Visualizations of multiple measures (ex: for Fitbit data, heartrate, step count/distance, calories burned, weight) over the course of a day (or any other time frame), on the same graph (normalized, or with multiple axes).
+  - Comparisons between Fitbit data and Apple Health data for matched fields.
+  Note: the visualizations, analyses, recommendations, and framework will all 
+  rely on Fitbit data, since it collects more data than Apple Health
+  - Multiple measures (ex: for Fitbit data, heartrate, step count/distance, 
+  calories burned, weight) over the course of a day (or any other time frame), 
+  on the same graph (normalized, or with multiple axes).
   - For workouts, can plot rates (distance/time over time) or distances - useful 
   if someone is trying to improve their mile time or prep for an event (5k, 
   marathon)
@@ -198,12 +159,21 @@ themselves
   - Compare to average in gender/age bracket, compare to own data at an earlier
   time (last week, last month, etc.).
   
-3. Analysis. See associations between data types - for example, the relationship between
-  steps and distance during workouts, comparing sleep pattern to daytime data, comparing weekend and weekday data, etc.
+3. Analysis. See associations between data types - for example, the relationship 
+between steps and distance during workouts, comparing sleep pattern to daytime 
+data, comparing weekend and weekday data, etc.
 
-4. Recommendations for improvement. Based on a user's choice of goal, we can recommend strategies based on their data (for example, if a user walks a lot on the weekdays but not weekends and is not meeting their target step count, suggest walks on the weekends, at times of day when they are usually active on the weekdays according to their heart rate).
+4. Recommendations for improvement. Based on a user's choice of goal, we can 
+recommend strategies based on their data (for example, if a user walks a lot on 
+the weekdays but not weekends and is not meeting their target step count, 
+suggest walks on the weekends, at times of day when they are usually active on 
+the weekdays according to their heart rate).
   
-5. Experimentation framework. The package will provide the framework for a user to easily perform A/B or other testing on him/herself - for example, decide he/she wants to know if his/her heart rate is higher in a statistically significant way when alcohol or caffeine is consumed, and so mark each day/time of consumption, then display the results of hypothesis testing on the desired field.
+5. Experimentation framework. The package will provide the framework for a user 
+to easily perform A/B or other testing on him/herself - for example, decide 
+he/she wants to know if his/her heart rate is higher in a statistically 
+significant way when alcohol or caffeine is consumed, and so mark each day/time 
+of consumption, then display the results of hypothesis testing on the desired field.
 
 
 The package is aimed at users of Fitbits and other self-tracking devices and methods looking to get more interaction and insight from their data.
@@ -211,76 +181,62 @@ The package is aimed at users of Fitbits and other self-tracking devices and met
 <ol start="2" style="list-style-type: decimal">
 <li>Briefly describe the background if that’s not obvious. What field or area of interest is it related to? (Just briefly, in a paragraph or two, maximum.) References, including web references, are welcome where available.</li>
 </ol>
-<pre class="q2"><code>
-'''
-This package design is inspired by the OpenFDA Developer Challenge
-(Option 1, Level 1). A link to the developer Challenge announcement is
-here
+<pre class="q2"><code>Fitbits and other health tracking devices have taken off in the last few years, 
+as data enthusiasts, along with, increasingly, the everyday consumer, seek a 
+more personal, and finer, granularity of insight. There are stories of devices 
+alerting users to previously unknown health conditions, while at the same time, 
+how to incorporate such data into medical care remains an open question.
 
-https://open.fda.gov/update/an-open-challenge-to-tap-public-data/. The
-challenge is broken into three phases. The first phase is identifying
-spikes based on drug queries and &quot;bucketizing variables over time,
-weight, gender or drug pairs.&quot; The project will address this level of
-the challenge and will also provide tools for visualization and
-analysis.
-'''
+A common complaint about the Fitbit in particular is the lack of analytics 
+provided for by the company; users are left to glance through a couple raw 
+graphs of their numbers, and, failing to continue to learn from their data, 
+after the novelty wears off, Fitbits often end up stuffed away, unused, in a 
+drawer.
 
-Fitbits and other health tracking devices have taken off in the last few years, as data enthusiasts, along with, increasingly, the everyday consumer, seek a more personal, and finer, granularity of insight. There are stories of devices alerting users to previously unknown health conditions, while at the same time, how to incorporate such data into medical care remains an open question.
-
-A common complaint about the Fitbit in particular is the lack of analytics provided for by the company; users are left to glance through a couple raw graphs of their numbers, and, failing to continue to learn from their data, after the novelty wears off, Fitbits often end up stuffed away, unused, in a drawer.
-
-This package will bring the Fitbit one step closer to its full potential by providing users with suggestions and the ability to do advanced analysis of their health. Instead of single graph visualizations of raw numbers, we will enable individuals to view the impact of one part of their life on another by combining data sources. We hope to allow the Fitbit to remain an interactive tool for self analysis and tailoring of one's life to meet one's goals, and a source of continual learning, by enabling individuals to run experiments in their life, then easily view the impact of the treatment on their Fitbit data.
+This package will bring the Fitbit one step closer to its full potential by 
+providing users with suggestions and the ability to do advanced analysis of 
+their health. Instead of single graph visualizations of raw numbers, we will 
+enable individuals to view the impact of one part of their life on another by 
+combining data sources. We hope to allow the Fitbit to remain an interactive 
+tool for self analysis and tailoring of one's life to meet one's goals, and a 
+source of continual learning, by enabling individuals to run experiments in 
+their life, then easily view the impact of the treatment on their Fitbit data.
 
 
 Related work includes:
 
 The fitbitScraper R package, which allows users to access their Fitbit data: https://cran.r-project.org/web/packages/fitbitScraper/index.html.
 The analytics requests of the Fitbit community: https://community.fitbit.com/t5/Fitbit-com-Dashboard/dashboard-needs-better-analytics/m-p/1185213
-Other websites that create Fitbit analytics: https://rocketgraph.com/reports/16-fitbit-analytics, https://www.producthunt.com/posts/fitbit-analytics-2, https://datarunsdeep.com.au/blog/track-your-life-in-google-analytics/
-</code></pre>
+Other websites that create Fitbit analytics: https://rocketgraph.com/reports/16-fitbit-analytics, https://www.producthunt.com/posts/fitbit-analytics-2, https://datarunsdeep.com.au/blog/track-your-life-in-google-analytics/</code></pre>
 <ol start="3" style="list-style-type: decimal">
 <li>Provide one or two use cases; that is, in a sentence or so say how you see someone using the package.</li>
 </ol>
-<pre class="q3"><code>
-'''
-Scientists will query the R package for adverse events and patient
-information. The queries will allow them to pass arguments.
+<pre class="q3"><code>Individuals can use the R package to match data from their personal health 
+devices and apps together for global analysis.
 
-Scientists can also visualize the results of their queries.
+Individuals can use the R package and Shiny app to run experiments on their 
+Fitbit data; for example, track when they consume alcohol, and visualize the 
+result on their recorded Fitbit resting heartrate.
 
-Scientists will also be able to utilize the analytical functions to
-discover assocations among variables.
+Individuals can run analytics on their data, such as an analysis of how long 
+they usually spend between waking up, and leaving bed in the morning.
 
-Administrative organizations will query the R package for adverse
-event patterns in order to monitor the drug market.  These queries can
-also be parameterized by the user.
-'''
+Individuals can visualize associations in their data, such as the result of 
+exercise and increased step counts on their sleep at night.
 
-Individuals can use the R package to match data from their personal health devices and apps together for global analysis.
+Individuals can view fluctuations in their measures of health over time, such as 
+how their heart rate corresponds to other events as recorded by other tracking 
+devices.
 
-Individuals can use the R package and Shiny app to run experiments on their Fitbit data; for example, track when they consume alcohol, and visualize the result on their recorded Fitbit resting heartrate.
-
-Individuals can run analytics on their data, such as an analysis of how long they usually spend between waking up, and leaving bed in the morning.
-
-Individuals can visualize associations in their data, such as the result of exercise and increased step counts on their sleep at night.
-
-Individuals can view fluctuations in their measures of health over time, such as how their heart rate corresponds to other events as recorded by other tracking devices.
-
-Individuals can design a training program, or use a suggested one, and measure the effect on their weight over time.
-</code></pre>
+Individuals can design a training program, or use a suggested one, and measure 
+the effect on their weight over time.</code></pre>
 <ol start="4" style="list-style-type: decimal">
 <li>If you can, list the main functions or other software you plan on including. No need to implement anything now, but you should have an idea.</li>
 </ol>
-<pre class="q4"><code>'''
-The R package will provide the following functions: reading and
-writing data, creating graphs and visualizations, running
-parameterized queries against datasets, providing for download
-capabilibities of both data and graphics.  The R package will also
-provide functions for deeper analysis by the user.
-'''
-
-The R package will provide capability to read in Fitbit, Apple, and other personal health data, match data from multiple sources, visualize the data and associations between different types of data, perform analysis on the data, and run experiments over time by adding other types of data to their personal tracking data.
-</code></pre>
+<pre class="q4"><code>The R package will provide capability to read in Fitbit, Apple, and other 
+personal health data, match data from multiple sources, visualize the data and 
+associations between different types of data, perform analysis on the data, and 
+run experiments over time by adding other types of data to their personal tracking data.</code></pre>
 <ol start="5" style="list-style-type: decimal">
 <li>For languages C/C++, Java, Python, Ruby, please specify your proficiency: Proficient, basic knowledge, no knowledge. (This helps us evaluate the proposal sometimes and offer suggestions.)</li>
 </ol>
