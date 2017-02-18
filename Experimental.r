@@ -19,3 +19,23 @@ all <- merge(all, steps, by="date", all=TRUE)
 
 plot(hr$date, hr$restingHeartRate, type='l')
 
+
+sleep <- get_sleep_data(sookie, start_date = "2015-01-13", end_date = "2017-02-13")[[2]]
+rhr <- get_daily_data(sookie, what = "getRestingHeartRateData", start_date = "2015-01-13", end_date = "2017-02-16")
+sleep$date <- as.Date(sleep$date, "%Y-%m-%d")
+rhr$date <- as.Date(strptime(rhr$time, format="%Y-%m-%d"))
+all <- merge(x=sleep, y=rhr, by.x="date", by.y="date", all=TRUE)
+
+
+plot(all$sleepDuration, all$restingHeartRate)
+plot(all$steps, all$restingHeartRate)
+
+
+# Plots resting heart rate over time
+rest_hr <- function(c, person){
+  rhr <- get_daily_data(c, what = "getRestingHeartRateData", start_date = "2015-01-13", end_date = "2017-02-16")
+  rhr$date <- as.Date(strptime(rhr$time, format="%Y-%m-%d"))
+  print(rhr)
+  plot(rhr$date, rhr$restingHeartRate, type='l', main=person)
+}
+
