@@ -4,11 +4,13 @@ Person <- R6::R6Class("Person",
   addl_data = NULL, # other data a user could provide (Apple, Fitbit, etc.)
   start_date = NA, # optional start date of interest
   end_date = NA, # optional end date of interest
-  initialize = function(user_email = NA, user_pw = NA, addl_data = NA, 
-                        start_date = NA, end_date = NA) {
+  user_info = NULL, # optional list of user info, such as "age", "gender", "name", etc.
+  initialize = function(user_email = NA, user_pw = NA, user_info = NA,
+                        addl_data = NA, start_date = NA, end_date = NA) {
     self$addl_data <- addl_data
     self$start_date <- as.Date(strptime(start_date, format="%Y-%m-%d"))
     self$end_date <- as.Date(strptime(end_date, format="%Y-%m-%d"))
+    self$user_info <- user_info
     self$fitbit <- private$get_fitbit_data(user_email, user_pw)
     }),
                       
