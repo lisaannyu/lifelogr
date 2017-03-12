@@ -31,8 +31,34 @@ Person <- R6::R6Class("Person",
       char_start <- as.character(start)
       char_end <- as.character(end)
       
-      # pull each of the datasets can only get daily, rbind
-      #data$df = get_intraday_data(cookie, what="steps", date="2017-02-16")
+      # Pull each of the intraday datasets, rbind together
+      # data$df = get_intraday_data(cookie, what="steps", date="2017-02-16")
+      # Intra-day (multiple times per day):
+      # from get_intraday_data
+      # steps
+      # distance
+      # floors
+      # active-minutes
+      # calories-burned
+      # heart-rate
+      data$isteps <- NULL
+      data$idist <- NULL
+      data$ifloors <- NULL
+      data$iactive_min <- NULL
+      data$ical_burn <- NULL
+      data$ihr <- NULL
+      
+      for (indiv_date in format(seq.Date(from = as.Date(start), to = as.Date(end), by = "day"), format = "%Y-%m-%d")){
+        char_date <- as.character(indiv_date)
+        data$isteps <- rbind(data$isteps, fitbitScraper::get_intraday_data(cookie, what="steps", date=char_date))
+        data$idist <- rbind(data$idist, fitbitScraper::get_intraday_data(cookie, what="distance", date=char_date))
+        data$ifloors <- rbind(data$ifloors, fitbitScraper::get_intraday_data(cookie, what="floors", date=char_date))
+        data$iactive_min <- rbind(data$iactive_min, fitbitScraper::get_intraday_data(cookie, what="active-minutes", date=char_date))
+        data$ical_burn <- rbind(data$ical_burn, fitbitScraper::get_intraday_data(cookie, what="calories-burned", date=char_date))
+        data$ihr <- rbind(data$ihr, fitbitScraper::get_intraday_data(cookie, what="heart-rate", date=char_date))
+      }
+      
+      
       
       # Variables recorded once daily
       data$steps <- fitbitScraper::get_daily_data(cookie, what = "steps", 
