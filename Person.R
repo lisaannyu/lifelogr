@@ -61,6 +61,12 @@ Person <- R6::R6Class("Person",
       data$weight <- fitbitScraper::get_weight_data(cookie, 
                                    start_date = char_start, 
                                    end_date = char_end)
+      
+      # Save fields that contain date to date, as Date class, as needed
+      data$steps$date <- as.Date(strptime(data$steps$time, format = "%Y-%m-%d"))
+      data$sleep$date <- as.Date(strptime(data$sleep$date, format = "%Y-%m-%d"))
+      data$rest_hr$date <- as.Date(strptime(data$rest_hr$time, format="%Y-%m-%d"))
+      
       return(data)
     }
     
