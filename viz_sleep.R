@@ -1,0 +1,80 @@
+# Quality
+# Plot 1
+plot_sleep_over_time <- function(Person) {
+    ggplot2::ggplot(data = tidy_sleep(Person)) +
+      ggplot2::geom_line(mapping = ggplot2::aes(x = date, 
+                                                y = mins / 60, 
+                                                color = sleep_type)) +
+      ggplot2::labs(x = "Date", y = "Sleep Duration (hours)",
+                    title = "Quantity of Sleep") +
+      ggplot2::guides(color = ggplot2::guide_legend(title = "Sleep Type", 
+                                                    reverse = TRUE)) +
+      ggplot2::scale_color_discrete(labels = c("Time Asleep", "Sleep Duration"))
+}
+
+tidy_sleep <- function(Person) {
+  return(tidyr::gather(data = Person$fitbit$sleep, 
+                       key = "sleep_type", 
+                       value = "mins", 
+                       sleepDuration, minAsleep))
+    
+}
+
+# need lines to denote weekend?
+
+# Example:
+plot_sleep_over_time(RA)
+
+
+# Plot 2: Percent of Restless Sleep
+plot_sleep_restless_prop <- function(Person) {
+  ggplot2::ggplot(data = Person$fitbit$sleep) +
+    ggplot2::geom_line(mapping = ggplot2::aes(x = date, 
+      y = (((sleepDuration - minAsleep) / sleepDuration) / 60) * 100)) +
+    ggplot2::labs(x = "Date", y = "Percent of Restless Sleep",
+                  title = "Quality of Sleep: Restlessness")
+}
+
+plot_sleep_restless_prop(RA)
+
+# Plot 3: Length of Restless Sleep
+plot_sleep_restless_min <- function(Person) {
+  ggplot2::ggplot(data = Person$fitbit$sleep) +
+    ggplot2::geom_line(mapping = ggplot2::aes(x = date, 
+                                              y = restlessDuration)) +
+    ggplot2::labs(x = "Date", y = "Length of Restless Sleep (minutes)",
+                  title = "Quality of Sleep: Restlessness")
+}
+plot_sleep_restless_min(RA)
+
+
+# Plot 4: by day of week
+# df_sleep$df %>% 
+#   dplyr::group_by(weekday) %>% 
+#   dplyr::summarize(sleepDurationHrs = mean(sleepDuration / 60),
+#             minAsleepHrs = mean(minAsleep / 60)) %>% 
+#   tidyr::gather(key = "measure", value = "hours", -weekday) %>% 
+#   ggplot2::ggplot(mapping = ggplot2::aes(x = weekday, y = hours, fill = measure)) +
+#   ggplot2::geom_col(position = "dodge") +
+#   ggplot2::labs(x = "Day of the Week", y = "Hours")
+
+
+plot_sleep_weekday <- function(Person) {
+  ggplot2::ggplot(data = tidy_sleep_weekday(Person)) +
+    ggplot2::geom_line(mapping = ggplot2::aes(x = weekday, 
+                                              y = hours,
+                                              fill = measure)) +
+    ggplot2::geom_col(position = "dodge") +
+    ggplot2::labs(x = "Day of the Week", y = "Hours")
+}
+
+tidy_sleep_weekday <- function(Person) {
+  tmp <- dplyr::mutate(Person$fitbit$sleep, weekday = lubridate::wday(date, label = TRUE))
+  tmp <- dplyr::group_by(tmp, weekday)
+  tmp <- dplyr::summarize(tmp, sleepDurationHrs = mean(sleepDuration / 60),
+                          minAsleepHrs = mean(minAsleep / 60))
+  tmp <- tidyr::gather(tmp, key = "measure", value = "hours", -weekday)
+  return(tmp)
+}
+# not sure why this isn't working
+plot_sleep_weekday(RA)
