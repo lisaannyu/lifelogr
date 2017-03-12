@@ -47,25 +47,28 @@ plot_sleep_restless_min <- function(Person) {
 }
 plot_sleep_restless_min(RA)
 
+# Plot 4: Subjective Quality of Sleep
+plot_sleep_quality <- function(Person) {
+  ggplot2::ggplot(data = Person$fitbit$sleep) +
+    ggplot2::geom_line(mapping = ggplot2::aes(x = date, 
+                                              y = sleepQualityScoreA)) +
+    ggplot2::labs(x = "Date", y = "Sleep Quality Score",
+                  title = "Quality of Sleep: Quality Score")
+}
+plot_sleep_quality(RA)
 
-# Plot 4: by day of week
-# df_sleep$df %>% 
-#   dplyr::group_by(weekday) %>% 
-#   dplyr::summarize(sleepDurationHrs = mean(sleepDuration / 60),
-#             minAsleepHrs = mean(minAsleep / 60)) %>% 
-#   tidyr::gather(key = "measure", value = "hours", -weekday) %>% 
-#   ggplot2::ggplot(mapping = ggplot2::aes(x = weekday, y = hours, fill = measure)) +
-#   ggplot2::geom_col(position = "dodge") +
-#   ggplot2::labs(x = "Day of the Week", y = "Hours")
 
-
+# Plot 5: by day of week
 plot_sleep_weekday <- function(Person) {
-  ggplot2::ggplot(data = tidy_sleep_weekday(Person)) +
-    ggplot2::geom_line(mapping = ggplot2::aes(x = weekday, 
-                                              y = hours,
-                                              fill = measure)) +
+  ggplot2::ggplot(data = tidy_sleep_weekday(Person),
+                  mapping = ggplot2::aes(x = weekday, 
+                                         y = hours,
+                                         fill = measure)) +
     ggplot2::geom_col(position = "dodge") +
-    ggplot2::labs(x = "Day of the Week", y = "Hours")
+    ggplot2::labs(x = "Day of the Week", y = "Hours") +
+    ggplot2::guides(fill = ggplot2::guide_legend(title = "Sleep Type", 
+                                                  reverse = TRUE)) +
+    ggplot2::scale_fill_discrete(labels = c("Time Asleep", "Sleep Duration"))
 }
 
 tidy_sleep_weekday <- function(Person) {
@@ -76,5 +79,6 @@ tidy_sleep_weekday <- function(Person) {
   tmp <- tidyr::gather(tmp, key = "measure", value = "hours", -weekday)
   return(tmp)
 }
-# not sure why this isn't working
 plot_sleep_weekday(RA)
+
+# Add one for start and end times
