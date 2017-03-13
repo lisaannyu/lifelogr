@@ -93,6 +93,11 @@ Person <- R6::R6Class("Person",
       # Save fields that contain date to date, as Date class, as needed
       data$steps$date <- as.Date(strptime(data$steps$time, format = "%Y-%m-%d"))
       data$sleep$date <- as.Date(strptime(data$sleep$date, format = "%Y-%m-%d"))
+      data$sleep$startDateTime <- as.POSIXct(strptime(data$sleep$startDateTime, 
+          format = "%Y-%m-%d %H:%M:%S"))
+      data$sleep$endDateTime <- as.POSIXct(strptime(data$sleep$endDateTime, 
+          format = "%Y-%m-%d %H:%M:%S"))
+
       data$rest_hr$date <- as.Date(strptime(data$rest_hr$time, format="%Y-%m-%d"))
       
       return(data)
