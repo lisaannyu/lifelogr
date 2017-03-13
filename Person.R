@@ -1,15 +1,18 @@
 Person <- R6::R6Class("Person",
   public = list(
   fitbit = NULL, # list of fitbit data components of interest
+  target_steps = NULL,
   addl_data = NULL, # other data a user could provide (Apple, Fitbit, etc.)
   start_date = NA, # optional start date of interest
   end_date = NA, # optional end date of interest
   user_info = NULL, # optional list of user info, such as "age", "gender", "name", etc.
-  initialize = function(user_email = NA, user_pw = NA, user_info = NA,
+  initialize = function(user_email = NA, user_pw = NA, user_info = NA, 
+                        target_steps = 10000,
                         addl_data = NA, start_date = NA, end_date = NA) {
     self$addl_data <- addl_data
     self$start_date <- as.Date(strptime(start_date, format="%Y-%m-%d"))
     self$end_date <- as.Date(strptime(end_date, format="%Y-%m-%d"))
+    self$target_steps <- target_steps
     self$user_info <- user_info
     self$fitbit <- private$get_fitbit_data(user_email, user_pw)
     }),
@@ -103,6 +106,7 @@ Person <- R6::R6Class("Person",
       data$distance$date <- as.Date(strptime(data$dist$time, format = "%Y-%m-%d"))
       
       data$cal_ratio$date <- as.Date(strptime(data$cal_ratio$time, format = "%Y-%m-%d"))
+      data$minsVery$date <- as.Date(strptime(data$minsVery$time, format = "%Y-%m-%d"))
       data$sleep$date <- as.Date(strptime(data$sleep$date, format = "%Y-%m-%d"))
       data$sleep$startDateTime <- as.POSIXct(strptime(data$sleep$startDateTime, 
           format = "%Y-%m-%d %H:%M:%S"))

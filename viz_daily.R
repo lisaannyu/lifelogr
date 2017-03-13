@@ -22,7 +22,7 @@ plot_daily <- function(Person, measure_data_name, measure_var_name) {
 # Plot 1: Steps
 plot_steps <- function(Person) {
   p <- plot_daily(Person, "steps", "steps")
-  p + modelr::geom_ref_line(h = 10000, colour = "red", size = 1)
+  p + modelr::geom_ref_line(h = Person$target_steps, colour = "red", size = 1)
 }
 plot_steps(RA)
 
