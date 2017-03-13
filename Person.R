@@ -66,6 +66,10 @@ Person <- R6::R6Class("Person",
       data$dist <- fitbitScraper::get_daily_data(cookie, what = "distance", 
                                                   start_date = char_start, 
                                                  end_date = char_end)
+      # ONLY TECHNICALLY NEED THIS OR ABOVE ONE - dist issues
+      data$distance <- fitbitScraper::get_daily_data(cookie, what = "distance", 
+                                                 start_date = char_start, 
+                                                 end_date = char_end)
       data$floors <- fitbitScraper::get_daily_data(cookie, what = "floors", 
                                                   start_date = char_start, 
                                                   end_date = char_end)
@@ -94,6 +98,10 @@ Person <- R6::R6Class("Person",
       data$steps$date <- as.Date(strptime(data$steps$time, format = "%Y-%m-%d"))
       data$floors$date <- as.Date(strptime(data$floors$time, format = "%Y-%m-%d"))
       data$dist$date <- as.Date(strptime(data$dist$time, format = "%Y-%m-%d"))
+      
+      #duplicating (see above note)
+      data$distance$date <- as.Date(strptime(data$dist$time, format = "%Y-%m-%d"))
+      
       data$cal_ratio$date <- as.Date(strptime(data$cal_ratio$time, format = "%Y-%m-%d"))
       data$sleep$date <- as.Date(strptime(data$sleep$date, format = "%Y-%m-%d"))
       data$sleep$startDateTime <- as.POSIXct(strptime(data$sleep$startDateTime, 
@@ -102,6 +110,7 @@ Person <- R6::R6Class("Person",
           format = "%Y-%m-%d %H:%M:%S"))
 
       data$rest_hr$date <- as.Date(strptime(data$rest_hr$time, format="%Y-%m-%d"))
+      data$weight$date <- as.Date(strptime(data$weight$time, format = "%Y-%m-%d"))
       
       return(data)
     }
