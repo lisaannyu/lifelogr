@@ -1,3 +1,7 @@
+# WANT: visualize when restless each night, norm to time of sleep or not
+
+# computing variances of variables
+
 # 5. Experimentation framework. The package will provide the framework for a user 
 # to easily perform A/B or other testing on him/herself - for example, decide 
 # he/she wants to know if his/her heart rate is higher in a statistically 
@@ -57,12 +61,11 @@ experiment <- function(person, variables, measures,
          # print error: your analysis didn't match any options
          )
 }
-  
-# person[["fitbit"]][[var]]
+
   
 # Collect all the variables and measures into one df
 # NOTE: can make this tidy
-# NOTE: won't work if isn't date variable
+# NOTE: won't work if isn't date variable (if is a time variable)
 create_joined <- function(person, variables, measures, vars.sources, meas.sources){
   # rbind each dataset of interest together
   all_dfs <- list()
@@ -70,23 +73,14 @@ create_joined <- function(person, variables, measures, vars.sources, meas.source
   for (i in 1:length(variables)){
     print(data.frame(person[[vars.sources[[i]]]][[variables[[i]]]]))
     all_dfs[[variables[[i]]]] <- data.frame(person[[vars.sources[[i]]]][[variables[[i]]]])
-    #print(all_dfs[])
     }
   for (i in 1:length(measures)){
     all_dfs[[measures[[i]]]] <- data.frame(person[[meas.sources[[i]]]][[measures[[i]]]])
-    #sparse <- merge(x = joined, y = person[[meas.sources[[i]]]][[variables[[i]]]],
-                    #by = "date", all = TRUE)
-    #sparse <- dplyr::bind_rows(sparse, person[[meas.sources[[i]]]][[measures[[i]]]])
   }
   
   print(all_dfs)
   joined <- Reduce(function(x, y) merge(x, y, all=TRUE, by = "date"), all_dfs)
-  
-  #tidy_df <- tidyr::gather(sparse, -date, key = "var", value = "value")
-  #tidy_df <- dplyr::filter(tidy_df, !is.na(value))
-  # print(joined)
   return(joined)
-  
 }
 
 # NOTE: doesn't work with ggplot2:: for some reason
@@ -95,7 +89,7 @@ create_joined <- function(person, variables, measures, vars.sources, meas.source
 pplot <- function(person, variables, measures, vars.sources, meas.sources){
   # plot each variable against each measure
   joined <- create_joined(person, variables, measures, vars.sources, meas.sources)
-  print(joined)
+  #print(joined)
   # NOTE: maybe not do individual plots if desired
   for (i in 1:length(measures)){
     for (j in 1:length(variables)){
@@ -109,9 +103,14 @@ pplot <- function(person, variables, measures, vars.sources, meas.sources){
 
 
 correlation <- function(person, variables, measures, vars.sources, meas.sources){
+  joined <- create_joined(person, variables, measures, vars.sources, meas.sources)
+  print(joined)
   
+  # compute correlation between each variable and each measure pair (select one of
+
 }
 
+  
 
 panova <- function(person, variables, measures, vars.sources, meas.sources){
   

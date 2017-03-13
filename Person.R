@@ -108,8 +108,13 @@ Person <- R6::R6Class("Person",
           format = "%Y-%m-%d %H:%M:%S"))
       data$sleep$endDateTime <- as.POSIXct(strptime(data$sleep$endDateTime, 
           format = "%Y-%m-%d %H:%M:%S"))
-
+      # pulling out columns of interest...
+      data$sleepDuration <- data$sleep[, c("date", "sleepDuration")]
+      data$minsRestlessAwake <- data.frame("date" = data$sleep$date,
+                                           "minsRestlessAwake" = (data$sleep$sleepDuration - data$sleep$minAsleep))
       data$rest_hr$date <- as.Date(strptime(data$rest_hr$time, format="%Y-%m-%d"))
+      # duplicating column for naming...
+      data$rest_hr$rest_hr <- data$rest_hr$restingHeartRate
       data$weight$date <- as.Date(strptime(data$weight$time, format = "%Y-%m-%d"))
       
       return(data)
