@@ -104,16 +104,45 @@ pplot <- function(person, variables, measures, vars.sources, meas.sources){
 
 correlation <- function(person, variables, measures, vars.sources, meas.sources){
   joined <- create_joined(person, variables, measures, vars.sources, meas.sources)
-  print(joined)
+  # print(joined)
   
-  # compute correlation between each variable and each measure pair (select one of
-
+  # correlations <- data.frame(variable = character(0),
+  #                            measure = character(0), correlation = numeric(0))
+  # names(correlations) <- c("variable", "measure", "correlation")
+  # 
+  # # compute correlation between each variable and each measure pair (select one of
+  # for (i in 1:length(measures)){
+  #   for (j in 1:length(variables)){
+  #   
+  #     correlations <- rbind(correlations, c("variable" = variables[[j]],
+  #                                           "measure" = measures[[i]],
+  #                                           "correlation" = 0.5),
+  #                           stringsAsFactors = FALSE)
+  #   }
+  # }
+  # # unclear why this gets modified...
+  # names(correlations) <- c("variable", "measure", "correlation")
+  # print(correlations)
+  
+  pearson_corr <- cor(joined[, variables], joined[, measures], method = "pearson")
+  print(pearson_corr)
 }
 
   
 
 panova <- function(person, variables, measures, vars.sources, meas.sources){
-  
+  joined <- create_joined(person, variables, measures, vars.sources, meas.sources)
+  print(joined)
+  # for each measure, fit linear model with interactions, run anova
+  for (i in 1:length(measures)){
+    f <- paste(measures[[i]], " ~ ", 
+               "(", paste(variables, collapse=" + "), ")^2", sep="")
+    print(f)
+    lin_model <- do.call("lm", list(as.formula(f), data=as.name("joined")))
+    #print(summary(lin_model))
+    lin_anova <- anova(lin_model)
+    print(lin_anova)
+  }
   
 }
 
@@ -124,7 +153,16 @@ ttest <- function(person, variables, measures, vars.sources, meas.sources){
 
 
 pregression <- function(person, variables, measures, vars.sources, meas.sources){
-  
+  joined <- create_joined(person, variables, measures, vars.sources, meas.sources)
+  print(joined)
+  # for each measure, fit linear model with interactions, run anova
+  for (i in 1:length(measures)){
+    f <- paste(measures[[i]], " ~ ", 
+               "(", paste(variables, collapse=" + "), ")^2", sep="")
+    print(f)
+    lin_model <- do.call("lm", list(as.formula(f), data=as.name("joined")))
+    print(summary(lin_model))
+  }
 }
   
 

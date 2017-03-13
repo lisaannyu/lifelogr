@@ -15,9 +15,11 @@ experiment(person = RA, variables = c("steps", "sleepDuration"),
 source("experiments.R")
 experiment(person = RA, variables = c("steps", "sleepDuration"),
            measures = c("distance", "rest_hr", "minsRestlessAwake"), 
-           analysis = "correlation") #vars.sources = NA, meas.sources = NA)
+           analysis = "anova") #vars.sources = NA, meas.sources = NA)
 
 
 # identifying weekend/weekdays? dealing with those columns before pulled out?
 # visualize when awake/restless normed to start/not?
 # convert dataframe to tidy?
+# should probably have an experiment class so don't have to keep joining variables 
+# in each function...(and running lm for regression and anova)
