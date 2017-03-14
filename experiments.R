@@ -1,5 +1,7 @@
 # WANT: visualize when restless each night, norm to time of sleep or not
 
+#could make var names more friendly in the experiment fn (replace variables)
+
 # computing variances of variables
 
 # 5. Experimentation framework. The package will provide the framework for a user 
@@ -46,121 +48,131 @@ experiment <- function(person, variables, measures,
     meas.sources <- rep("fitbit", times = length(measures))
   }
   
-  # NOTE: what happens when you enter multiple analyses?
+  # create dataset
+  dataset <- create_dataset(person, all_variables = c(variables, measures),
+                            all_sources = c(vars.sources, meas.sources))
+
   # call the type of analysis requested
-  switch(analysis,
-         "plot" = pplot(person, variables, measures, vars.sources, meas.sources), 
-         "correlation" = correlation(person, variables, measures, 
-                                     vars.sources, meas.sources),
-         "anova" = panova(person, variables, measures, 
-                               vars.sources, meas.sources),
-         "t_test" = pttest(person, variables, measures, 
-                         vars.sources, meas.sources),
-         "regression" = pregression(person, variables, measures, 
-                          vars.sources, meas.sources)
-         # print error: your analysis didn't match any options
-         )
+  for (type in analysis){
+    switch(type,
+           "plot" = pplot(dataset, person, variables, measures, vars.sources, 
+                          meas.sources), 
+           "correlation" = correlation(dataset, person, variables, measures, 
+                                       vars.sources, meas.sources),
+           "anova" = panova(dataset, person, variables, measures, 
+                                 vars.sources, meas.sources),
+           "t_test" = pttest(dataset, person, variables, measures, 
+                           vars.sources, meas.sources),
+           "regression" = pregression(dataset, person, variables, measures, 
+                            vars.sources, meas.sources)
+           # print error: your analysis didn't match any options
+           )
+  }
 }
 
   
 # Collect all the variables and measures into one df
-# NOTE: can make this tidy
 # NOTE: won't work if isn't date variable (if is a time variable)
-create_joined <- function(person, variables, measures, vars.sources, meas.sources){
+create_dataset <- function(person, all_variables, all_sources){
   # rbind each dataset of interest together
   all_dfs <- list()
+  print(all_variables)
+  print(all_sources)
   
-  for (i in 1:length(variables)){
-    print(data.frame(person[[vars.sources[[i]]]][[variables[[i]]]]))
-    all_dfs[[variables[[i]]]] <- data.frame(person[[vars.sources[[i]]]][[variables[[i]]]])
+  for (i in 1:length(all_variables)){
+    print(data.frame(person[[all_sources[[i]]]][[all_variables[[i]]]]))
+    all_dfs[[all_variables[[i]]]] <- data.frame(person[[all_sources[[i]]]][[all_variables[[i]]]])
     }
-  for (i in 1:length(measures)){
-    all_dfs[[measures[[i]]]] <- data.frame(person[[meas.sources[[i]]]][[measures[[i]]]])
-  }
   
   print(all_dfs)
-  joined <- Reduce(function(x, y) merge(x, y, all=TRUE, by = "date"), all_dfs)
-  return(joined)
+  dataset <- Reduce(function(x, y) merge(x, y, all=TRUE, by = "date"), all_dfs)
+  return(dataset)
 }
 
-# NOTE: doesn't work with ggplot2:: for some reason
+
+# can pass in person and variables of interest by name, or pass in a dataset
+# that has already been created by create_dataset, or call experiment and 
+# it'll call this for you
 # NOTE: maybe shouldn't be directly printing plots
 # NOTE: test what happens when variables aren't on the same time scale
-pplot <- function(person, variables, measures, vars.sources, meas.sources){
+pplot <- function(dataset = NA, person, variables, measures, vars.sources, 
+                  meas.sources){
   # plot each variable against each measure
-  joined <- create_joined(person, variables, measures, vars.sources, meas.sources)
-  #print(joined)
+  if (!is.data.frame(dataset)){
+    dataset <- create_dataset(person, c(variables, measures), c(vars.sources,
+                                                                meas.sources))
+  }
   # NOTE: maybe not do individual plots if desired
   for (i in 1:length(measures)){
     for (j in 1:length(variables)){
-      print(ggplot2::ggplot(joined) +
+      print(ggplot2::ggplot(dataset) +
               ggplot2::aes_string(x = variables[[j]],
                                   y = measures[[i]]) +
-              ggplot2::geom_point() + ggplot2::ggtitle(paste(variables[[j]], "vs", measures[[i]])))
+              ggplot2::geom_point() + ggplot2::ggtitle(paste(variables[[j]], 
+                                                             "vs", measures[[i]])))
     }
   }
 }
 
 
-correlation <- function(person, variables, measures, vars.sources, meas.sources){
-  joined <- create_joined(person, variables, measures, vars.sources, meas.sources)
-  # print(joined)
+correlation <- function(dataset = NA, person, variables, measures, 
+                        vars.sources, meas.sources){
+  if (!is.data.frame(dataset)){
+    dataset <- create_dataset(person, all_variables = c(variables, measures),
+                              all_sources = c(vars.sources, meas.sources))
+    
+    }
   
-  # correlations <- data.frame(variable = character(0),
-  #                            measure = character(0), correlation = numeric(0))
-  # names(correlations) <- c("variable", "measure", "correlation")
-  # 
-  # # compute correlation between each variable and each measure pair (select one of
-  # for (i in 1:length(measures)){
-  #   for (j in 1:length(variables)){
-  #   
-  #     correlations <- rbind(correlations, c("variable" = variables[[j]],
-  #                                           "measure" = measures[[i]],
-  #                                           "correlation" = 0.5),
-  #                           stringsAsFactors = FALSE)
-  #   }
-  # }
-  # # unclear why this gets modified...
-  # names(correlations) <- c("variable", "measure", "correlation")
-  # print(correlations)
-  
-  pearson_corr <- cor(joined[, variables], joined[, measures], method = "pearson")
+  pearson_corr <- cor(dataset[, variables], dataset[, measures], method = "pearson")
   print(pearson_corr)
+  return(pearson_corr)
 }
 
   
-
-panova <- function(person, variables, measures, vars.sources, meas.sources){
-  joined <- create_joined(person, variables, measures, vars.sources, meas.sources)
-  print(joined)
+# should be printing output?
+panova <- function(dataset = NA, person, variables, measures, vars.sources, 
+                   meas.sources){
+  if (!is.data.frame(dataset)){
+    dataset <- create_dataset(person, c(variables, measures), c(vars.sources, 
+                                                                meas.sources))
+  }
+  
   # for each measure, fit linear model with interactions, run anova
   for (i in 1:length(measures)){
     f <- paste(measures[[i]], " ~ ", 
                "(", paste(variables, collapse=" + "), ")^2", sep="")
     print(f)
-    lin_model <- do.call("lm", list(as.formula(f), data=as.name("joined")))
-    #print(summary(lin_model))
+    lin_model <- do.call("lm", list(as.formula(f), data=as.name("dataset")))
     lin_anova <- anova(lin_model)
     print(lin_anova)
+  }
+  # should return lists of anovas?
+}
+
+
+ttest <- function(dataset = NA, person, variables, measures, vars.sources,
+                  meas.sources){
+  if (!is.data.frame(dataset)){
+    dataset <- create_dataset(person, c(variables, measures), c(vars.sources,
+                                                                meas.sources))
   }
   
 }
 
 
-ttest <- function(person, variables, measures, vars.sources, meas.sources){
+pregression <- function(dataset = NA, person, variables, measures, vars.sources, 
+                        meas.sources){
+  if (!is.data.frame(dataset)){
+    dataset <- create_dataset(person, c(variables, measures), c(vars.sources,
+                                                                meas.sources))
+  }
   
-}
-
-
-pregression <- function(person, variables, measures, vars.sources, meas.sources){
-  joined <- create_joined(person, variables, measures, vars.sources, meas.sources)
-  print(joined)
   # for each measure, fit linear model with interactions, run anova
   for (i in 1:length(measures)){
     f <- paste(measures[[i]], " ~ ", 
                "(", paste(variables, collapse=" + "), ")^2", sep="")
     print(f)
-    lin_model <- do.call("lm", list(as.formula(f), data=as.name("joined")))
+    lin_model <- do.call("lm", list(as.formula(f), data=as.name("dataset")))
     print(summary(lin_model))
   }
 }
