@@ -4,6 +4,7 @@ source("Person.R")
 RA <- Person$new(user_email = "rohisha@gmail.com", user_pw = "datasamplepw",
                  user_info = list("name" = "RA", "age" = 23, "gender" = "female"),
                  target_steps = 10000,
+                 group_assignments = list(data.frame(NA), data.frame(NA)),
                  start_date = "2017-02-09", end_date = "2017-03-12")
 
 source("experiments.R")

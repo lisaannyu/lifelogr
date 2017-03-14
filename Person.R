@@ -7,9 +7,13 @@ Person <- R6::R6Class("Person",
   start_date = NA, # optional start date of interest
   end_date = NA, # optional end date of interest
   user_info = NULL, # optional list of user info, such as "age", "gender", "name", etc.
+  groupings = NULL, # named list of dataframes each with 2 columns: 1. a known 
+  # variable (date, weekend, etc.) and 2. "group" with the group assignment for 
+  # observations with that variable of that value
   initialize = function(user_email = NA, user_pw = NA, user_info = NA, 
                         target_steps = 10000,
-                        addl_data = NA, start_date = NA, end_date = NA) {
+                        addl_data = NA, group_assignments = NA,
+                        start_date = NA, end_date = NA) {
     self$addl_data <- addl_data
     self$start_date <- as.Date(strptime(start_date, format="%Y-%m-%d"))
     self$end_date <- as.Date(strptime(end_date, format="%Y-%m-%d"))
@@ -17,6 +21,7 @@ Person <- R6::R6Class("Person",
     self$user_info <- user_info
     self$fitbit <- private$get_fitbit_data(user_email, user_pw)
     self$util <- private$create_util_data(self$start_date, self$end_date)
+    self$groupings <- group_assignments
     }),
   
   private = list(
