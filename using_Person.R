@@ -1,19 +1,23 @@
 source("Person.R")
 
-
+# need to make this faster
 RA <- Person$new(user_email = "rohisha@gmail.com", user_pw = "datasamplepw",
                  user_info = list("name" = "RA", "age" = 23, "gender" = "female"),
                  target_steps = 10000,
-                 start_date = "2017-02-09", end_date = "2017-03-10")
+                 start_date = "2017-02-09", end_date = "2017-03-12")
 
 source("experiments.R")
 
 # Can run an experiment all together with desired Person, variables/measures, 
 #and analyses
-experiment(person = RA, variables = c("steps", "sleepDuration"),
+# will get an error with non numeric variables and correlation/anova/regression
+# (fix interaction/this for correlation?)
+experiment(person = RA, variables = c("steps", "sleepDuration", 
+                                      "day_of_week", "day_type", "month"),
            measures = c("distance", "rest_hr", "minsRestlessAwake"), 
-           analysis = c("plot", "correlation",
-                        "anova", "regression")) #vars.sources = NA, meas.sources = NA)
+           analysis = c("plot"), #, "correlation", "anova", "regression"),
+           vars.sources = c(rep("fitbit", 2), rep("util", 3)),
+           meas.sources = c(rep("fitbit", 3)))
 
 # Or can create just the joined dataset
 dataset <- create_dataset(person = RA,
@@ -32,12 +36,13 @@ correlation_df <- correlation(dataset, person = RA,
 
 ############## TO DO/FOR REFERENCE ###################
 
-# identifying weekend/weekdays? dealing with those columns before pulled out?
-# visualize when awake/restless normed to start/not?
 
-# add weekday day of week weekend etc as variables in person
+# add capability for t testing based on two groups in additional data
+
+# need to add capability for experimenting with time axis variables
 
 # sleep experimentation - curves and when drops etc.
+# visualize when awake/restless normed to start/not?
 
 
 
@@ -45,7 +50,7 @@ correlation_df <- correlation(dataset, person = RA,
 # [1] "isteps"           
 # [2] "idist"            
 # [3] "ifloors"          
-# [4] "iactive_min"      
+# [4] "iactive_min" 
 # [5] "ical_burn"        
 # [6] "ihr"              
 # [7] "steps"            

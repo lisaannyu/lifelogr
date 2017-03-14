@@ -1,6 +1,7 @@
 Person <- R6::R6Class("Person",
   public = list(
   fitbit = NULL, # list of fitbit data components of interest
+  util = NULL, # util/admin data
   target_steps = NULL,
   addl_data = NULL, # other data a user could provide (Apple, Fitbit, etc.)
   start_date = NA, # optional start date of interest
@@ -15,9 +16,33 @@ Person <- R6::R6Class("Person",
     self$target_steps <- target_steps
     self$user_info <- user_info
     self$fitbit <- private$get_fitbit_data(user_email, user_pw)
+    self$util <- private$create_util_data(self$start_date, self$end_date)
     }),
-                      
+  
   private = list(
+    create_util_data = function(start_date, end_date) {
+      data <- list() # data is list of lists: date and each of day_of_week, weekend, etc.
+      # (slightly inefficient)
+      #date
+      data$date <- seq(from = start_date, to = end_date, by = 1)
+      
+      #MTWTFSS
+      data$day_of_week <- data.frame("date" = data$date, 
+                                     "day_of_week" = weekdays(data$date))
+      
+      #1 if weekend, 0 otherwise
+      weekend <- c('Saturday', 'Sunday')
+      data$day_type <- data.frame("date" = data$date,
+                                  "day_type" = factor((data$day_of_week$day_of_week %in% weekend), 
+                            levels=c(FALSE, TRUE),
+                            labels=c('weekday', 'weekend')))
+      # Month
+      data$month <- data.frame("date" = data$date, 
+                                     "month" = lubridate::month(data$date, 
+                                                                label=TRUE))
+      return(data)
+    }, 
+    
     get_fitbit_data = function(user_email, user_pw) {
       data <- list()
       cookie <- fitbitScraper::login(email=user_email, password=user_pw)
