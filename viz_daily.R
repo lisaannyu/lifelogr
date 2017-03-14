@@ -1,3 +1,5 @@
+# need to fix minsVery in Person
+
 # steps
 # distance
 # floors
@@ -20,7 +22,7 @@ plot_daily <- function(Person, measure_data_name, measure_var_name) {
 # Plot 1: Steps
 plot_steps <- function(Person) {
   p <- plot_daily(Person, "steps", "steps")
-  p + modelr::geom_ref_line(h = 10000, colour = "red", size = 1)
+  p + modelr::geom_ref_line(h = Person$target_steps, colour = "red", size = 1)
 }
 plot_steps(RA)
 
@@ -69,3 +71,40 @@ plot_cal <- function(Person) {
   return(p)
 }
 plot_cal(RA)
+
+# Plot 5: Minutes Very - not really sure what this is
+plot_mins_very <- function(Person) {
+  plot_daily(Person, "minsVery", "minutesVery")
+}
+plot_mins_very(RA)
+
+# Plot 6: Resting Heart Rate
+plot_rest_hr <- function(Person) {
+  plot_daily(Person, "rest_hr", "restingHeartRate") +
+    ggplot2::labs(y = "Resting Heart Rate (bpm)", title = "Resting Heart Rate")
+}
+plot_rest_hr(RA)
+# Should be between 60 and 100, but can be lower, especially for physically active people
+# maybe add this info to the Shiny app
+
+# Calculate maximum heart rate
+max_hr <- 220 - RA$user_info$age
+max_hr * c(0.5, 0.85)
+
+RA$fitbit$hr_zones
+
+# not sure what this is
+# https://help.fitbit.com/articles/en_US/Help_article/1565#zones
+# peak zone: > 85% maximum
+max_hr * 0.85
+# cardio: 70 - 84% max
+max_hr * c(0.7, 0.84)
+# fat burn: 50 - 69% max
+max_hr * c(0.5, 0.69)
+# out of zone: below 50%
+max_hr * 0.5
+
+# after looking at fitbit website, looks like 
+  # peak (IN_DEFAULT_ZONE_2): 0 mins
+  # cardio (zone2): 1 min
+  # fat burn (zone1): 63 mins
