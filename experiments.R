@@ -93,10 +93,10 @@ pplot <- function(person, variables, measures, vars.sources, meas.sources){
   # NOTE: maybe not do individual plots if desired
   for (i in 1:length(measures)){
     for (j in 1:length(variables)){
-      print(ggplot(joined) +
-              aes_string(x = variables[[j]],
+      print(ggplot2::ggplot(joined) +
+              ggplot2::aes_string(x = variables[[j]],
                                   y = measures[[i]]) +
-              geom_point() + ggtitle(paste(variables[[j]], "vs", measures[[i]])))
+              ggplot2::geom_point() + ggplot2::ggtitle(paste(variables[[j]], "vs", measures[[i]])))
     }
   }
 }
