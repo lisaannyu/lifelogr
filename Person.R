@@ -121,12 +121,18 @@ Person <- R6::R6Class("Person",
                                 what = "getTimeInHeartRateZonesPerDay",
                                 start_date = as.character(start), 
                                 end_date = as.character(end))
-      names(data$hr_zones) <- stringr::str_replace_all(names(data$hr_zones), 
-                                    pattern = "IN_DEFAULT_ZONE_\\d", "IN_DEFAULT_ZONE")
-      data$hr_zones <- plyr::rename(data$hr_zones,
-                                     c("IN_DEFAULT_ZONE" = "peak",
-                                       "zone1" = "cardio",
-                                       "zone2" = "fat_burn"))
+      # not consistent
+      # if ("IN_DEFAULT_ZONE_3" %in% names(data$hr_zones)) {
+      #   data$hr_zones <- plyr::rename(data$hr_zones,
+      #                                  c("IN_DEFAULT_ZONE_3" = "peak",
+      #                                    "zone1" = "cardio",
+      #                                    "zone2" = "fat_burn"))
+      # } else if ("IN_DEFAULT_ZONE_2" %in% names(data$hr_zones)) {
+      #   data$hr_zones <- plyr::rename(data$hr_zones,
+      #                                 c("IN_DEFAULT_ZONE_2" = "cardio",
+      #                                   "zone1" = "fat_burn",
+      #                                   "zone2" = "peak"))
+      # }
       data$sleep <- fitbitScraper::get_sleep_data(cookie, 
                                    start_date = char_start, 
                                    end_date = char_end)[[2]]

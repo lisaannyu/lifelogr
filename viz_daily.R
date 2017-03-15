@@ -1,5 +1,15 @@
-
-# Generic Function - Line graph for a single continuous variable
+#' @include global_var.r
+#' #' A generic function to create a line graph for a single continuous variable
+#' 
+#' @param Person
+#' @param measure_data_name
+#' @param measure_var_name
+#' @return 
+#' @export
+#' @examples
+#' add(1, 2)
+#' add(rnorm(10), rnorm(10))
+#'
 plot_daily <- function(Person, measure_data_name, measure_var_name) {
   data <- Person$fitbit[[measure_data_name]]
   p <- ggplot2::ggplot(data = data,
@@ -63,9 +73,12 @@ plot_cal <- function(Person) {
 }
 plot_cal(RA)
 
-# Plot 5: Minutes Very - not really sure what this is
+# Plot 5: Minutes Very
 plot_mins_very <- function(Person) {
-  plot_daily(Person, "minsVery", "minutesVery")
+  p <- plot_daily(Person, "minsVery", "minutesVery")
+  p <- p + ggplot2::labs(y = "Time Very Active (mins)", 
+                    title = "Time Spent Very Active by Day")
+  return(p)
 }
 plot_mins_very(RA)
 
@@ -88,18 +101,27 @@ calc_hr_zones <- function(Person) {
   hr_zones$fat_burn <- round(max_hr * HR_FAT_BURN_PROP)
   return(hr_zones)
 }
+calc_hr_zones(RA)
 
-plot_hr_zones <- function(Person) {
-  data <- Person$fitbit$hr_zones
-  data <- tidyr::gather(data, key = "zone", value = "mins", -time, -date)
-  ggplot2::ggplot(data = data, mapping = ggplot2::aes(x = date, y = mins, fill =
-                                                        zone)) +
-    ggplot2::geom_area(position = "stack") +
-    ggplot2::labs(x = "Date", y = "Minutes", title = "Heart Rate Zones") # +
-    # This is probably not right - hard to do w/o being able to test this
-    # ggplot2::guides(fill = ggplot2::guide_legend(labels = 
-    #     stringr::str_c(plot_hr_zones(Person))))
-  # calculate heart rate zones
-    
+# Inconsistent mapping - can't use this
+# plot_hr_zones <- function(Person) {
+#   data <- Person$fitbit$hr_zones
+#   print(data)
+#   data <- tidyr::gather(data, key = "zone", value = "mins", -time, -date)
+#   ggplot2::ggplot(data = data, mapping = ggplot2::aes(x = date, y = mins, fill =
+#                                                         zone)) +
+#     ggplot2::geom_area(position = "stack") +
+#     ggplot2::labs(x = "Date", y = "Minutes", title = "Heart Rate Zones") +
+#     ggplot2::guides(fill = ggplot2::guide_legend(labels = stringr::str_to_title))
+#   # want to list the heart rate zones on there too
+#     
+# }
+# plot_hr_zones(RA)
+
+# Plot 8: Weight
+plot_daily_weight <- function(Person) {
+  p <- plot_daily(Person, "weight", "weight") 
+  p + ggplot2::labs(y = "Weight (lbs)")
 }
-plot_hr_zones(RA)
+plot_daily_weight(RA)
+# also want to plot weights over course of the day
