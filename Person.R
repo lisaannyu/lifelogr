@@ -122,9 +122,9 @@ Person <- R6::R6Class("Person",
                                 start_date = as.character(start), 
                                 end_date = as.character(end))
       data$hr_zones <- plyr::rename(data$hr_zones,
-                                     c("IN_DEFAULT_ZONE_2" = "peak",
-                                       "zone2" = "cardio",
-                                        "zone1" = "fat_burn"))
+                                     c("IN_DEFAULT_ZONE_3" = "peak",
+                                       "zone1" = "cardio",
+                                       "zone2" = "fat_burn"))
       data$sleep <- fitbitScraper::get_sleep_data(cookie, 
                                    start_date = char_start, 
                                    end_date = char_end)[[2]]
