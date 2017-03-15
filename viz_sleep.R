@@ -78,51 +78,67 @@ tidy_sleep_weekday <- function(Person) {
 
 
 # Plot 6: start and end
-plot_sleep_start_end <- function(Person) {
-    # Pull relevant data
-    data <- create_dataset(person = Person,
-                              all_variables = c("sleep", "day_type"),
-                              all_sources = c("fitbit", "util"))
-    data <- dplyr::select(data, date, startTime, startDateTime, endTime, 
-                          endDateTime, day_type)
-    
-    # If went to sleep before midnight adjust the start time
-    data$startTime <- 
-      ifelse(as.Date(as.POSIXct(data$startTime, format = "%H:%M")) !=
-             as.Date(as.POSIXct(data$endTime, format = "%H:%M")),
-             as.POSIXct(data$startTime, format = "%H:%M") - lubridate::days(1),
-             as.POSIXct(data$startTime, format = "%H:%M"))
+# want y axis to be month
+plot_sleep_start_end <- function(Person, color_var = "day_type") {
+  # Pull relevant data
+  data <- create_dataset(person = Person,
+                         all_variables = c("sleep", "day_type", "day_of_week", "month"),
+                         all_sources = c("fitbit", rep("util", 3)))
+  data <- dplyr::select(data, date, startTime, startDateTime, endTime,
+                        endDateTime, day_type, day_of_week)
 
-    p <- ggplot2::ggplot(data = data) +
-      ggplot2::geom_segment(mapping =
-                            ggplot2::aes(x = date,
-                                         xend = date,
-                                         y = as.POSIXct(startTime, 
-                                                        origin = "1970-01-01"),
-                                         yend = as.POSIXct(endTime, 
-                                                           format = "%H:%M"),
-                                         color = day_type)) +
-      ggplot2::labs(x = "Date", y = "Hours Asleep") +
-      ggplot2::coord_cartesian(xlim = c(max(data$date), min(data$date))) +
-      ggplot2::scale_y_datetime(date_labels = "%H:%M %p", 
-                                date_breaks = "3 hours",
-                                ) +
-      ggplot2::guides(color = ggplot2::guide_legend(NULL))  +
-      ggplot2::scale_color_discrete(labels = stringr::str_to_title) +
-      ggplot2::coord_flip()
-    return(p)
+  # If went to sleep before midnight adjust the start time
+  data$startTime <-
+    ifelse(as.Date(as.POSIXct(data$startTime, format = "%H:%M")) !=
+             as.Date(as.POSIXct(data$endTime, format = "%H:%M")),
+           as.POSIXct(data$startTime, format = "%H:%M") - lubridate::days(1),
+           as.POSIXct(data$startTime, format = "%H:%M"))
+
+  data$startTime <- as.POSIXct(data$startTime, origin = "1970-01-01")
+  data$endTime <- as.POSIXct(data$endTime, format = "%H:%M")
+  print(str(data))
+
+  p <- ggplot2::ggplot(data = data) +
+    ggplot2::geom_segment(mapping =
+                            ggplot2::aes_string(x = data$date,
+                                         xend = data$date,
+                                         y = data$startTime,
+                                         yend = data$endTime,
+                                         color = color_var)) +
+    ggplot2::labs(x = "Date", y = "Hours Asleep") +
+    ggplot2::coord_cartesian(xlim = c(max(data$date), min(data$date))) +
+    ggplot2::scale_y_datetime(date_labels = "%H:%M %p",
+                              date_breaks = "3 hours",
+    ) +
+    ggplot2::guides(color = ggplot2::guide_legend(NULL))  +
+    ggplot2::scale_color_discrete(labels = stringr::str_to_title) +
+    ggplot2::coord_flip()
+  return(p)
 }
+
+# toggle weekday/day of week
+# add avg
 
 # Plot 7: Rohisha's idea: raw time vs time after sleep: restless periods
 create_restless_date_time <- function(Person) {
-  lubridate::make_datetime(year = Person$fitbit$sleep$breaks[[1]]$startDateTime[[1]][1],
-                           month = Person$fitbit$sleep$breaks[[1]]$startDateTime[[1]][2],
-                           day = Person$fitbit$sleep$breaks[[1]]$startDateTime[[1]][3],
-                           hour = Person$fitbit$sleep$breaks[[1]]$startDateTime[[1]][4],
-                           min = Person$fitbit$sleep$breaks[[1]]$startDateTime[[1]][5],
-                           sec = Person$fitbit$sleep$breaks[[1]]$startDateTime[[1]][6],
-                           tz = Sys.timezone()) 
+  n <- nrow(Person$fitbit$sleep$breaks[[1]])
+
+  # not sure why this isn't working
+  sapply(1:n, function(x) { create_restless_date_time_break(Person, x) })
 }
+
+create_restless_date_time_break <- function(Person, n_break) {
+  breaks <- Person$fitbit$sleep$breaks[[1]]$startDateTime[[n_break]]
+  date <- lubridate::make_datetime(year = breaks[1],
+                           month = breaks[2],
+                           day = breaks[3],
+                           hour = breaks[4],
+                           min = breaks[5],
+                           sec = breaks[6],
+                           tz = Sys.timezone())
+  return(as.POSIXct(date, origin = "1970-01-01"))
+}
+create_restless_date_time_break(RA)
 
 create_restless_date_time(RA)
 

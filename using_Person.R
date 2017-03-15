@@ -43,7 +43,8 @@ plot_sleep_restless_prop(RA)
 plot_sleep_restless_min(RA)
 plot_sleep_quality(RA)
 plot_sleep_weekday(RA)
-plot_sleep_start_end(RA)
+plot_sleep_start_end(RA, "day_type")
+plot_sleep_start_end(RA, "day_of_week")
 ############## TO DO/FOR REFERENCE ###################
 
 

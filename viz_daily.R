@@ -1,14 +1,5 @@
-# need to fix minsVery in Person
 
-# steps
-# distance
-# floors
-# minutesVery
-# caloriesBurnedVsIntake
-# getTimeInHeartRateZonesPerDay
-# getRestingHeartRateData
-
-# Generic Function - because plotting a line graph by day seems to be trivial
+# Generic Function - Line graph for a single continuous variable
 plot_daily <- function(Person, measure_data_name, measure_var_name) {
   data <- Person$fitbit[[measure_data_name]]
   p <- ggplot2::ggplot(data = data,
@@ -87,24 +78,28 @@ plot_rest_hr(RA)
 # Should be between 60 and 100, but can be lower, especially for physically active people
 # maybe add this info to the Shiny app
 
-# Calculate maximum heart rate
-max_hr <- 220 - RA$user_info$age
-max_hr * c(0.5, 0.85)
+# Plot 7: Heart Rate Zones
+calc_hr_zones <- function(Person) {
+  age <- Person$user_info$age
+  max_hr <- HR_MAX_BEFORE_AGE - age
+  hr_zones <- list(peak = NULL, cardio = NULL, fat_burn = NULL)
+  hr_zones$peak <- round(max_hr * HR_PEAK_PROP)
+  hr_zones$cardio <- round(max_hr * HR_CARDIO_PROP)
+  hr_zones$fat_burn <- round(max_hr * HR_FAT_BURN_PROP)
+  return(hr_zones)
+}
 
-RA$fitbit$hr_zones
-
-# not sure what this is
-# https://help.fitbit.com/articles/en_US/Help_article/1565#zones
-# peak zone: > 85% maximum
-max_hr * 0.85
-# cardio: 70 - 84% max
-max_hr * c(0.7, 0.84)
-# fat burn: 50 - 69% max
-max_hr * c(0.5, 0.69)
-# out of zone: below 50%
-max_hr * 0.5
-
-# after looking at fitbit website, looks like 
-  # peak (IN_DEFAULT_ZONE_2): 0 mins
-  # cardio (zone2): 1 min
-  # fat burn (zone1): 63 mins
+plot_hr_zones <- function(Person) {
+  data <- Person$fitbit$hr_zones
+  data <- tidyr::gather(data, key = "zone", value = "mins", -time, -date)
+  ggplot2::ggplot(data = data, mapping = ggplot2::aes(x = date, y = mins, fill =
+                                                        zone)) +
+    ggplot2::geom_area(position = "stack") +
+    ggplot2::labs(x = "Date", y = "Minutes", title = "Heart Rate Zones") # +
+    # This is probably not right - hard to do w/o being able to test this
+    # ggplot2::guides(fill = ggplot2::guide_legend(labels = 
+    #     stringr::str_c(plot_hr_zones(Person))))
+  # calculate heart rate zones
+    
+}
+plot_hr_zones(RA)

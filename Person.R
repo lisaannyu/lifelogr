@@ -32,8 +32,9 @@ Person <- R6::R6Class("Person",
       data$date <- seq(from = start_date, to = end_date, by = 1)
       
       #MTWTFSS
-      data$day_of_week <- data.frame("date" = data$date, 
-                                     "day_of_week" = weekdays(data$date))
+      data$day_of_week <- data.frame("date" = data$date,
+                                     "day_of_week" = 
+                                       lubridate::wday(data$date, label = TRUE))
       
       #1 if weekend, 0 otherwise
       weekend <- c('Saturday', 'Sunday')
@@ -120,6 +121,11 @@ Person <- R6::R6Class("Person",
                                 what = "getTimeInHeartRateZonesPerDay",
                                 start_date = as.character(start), 
                                 end_date = as.character(end))
+      # Not sure why this doesn't work
+      # data$hr_zones <- dplyr::rename(data$hr_zones,
+      #                                peak = IN_DEFAULT_ZONE_2, 
+      #                                cardio = zone2, 
+      #                                fat_burn = zone1)
       data$sleep <- fitbitScraper::get_sleep_data(cookie, 
                                    start_date = char_start, 
                                    end_date = char_end)[[2]]
