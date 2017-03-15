@@ -137,6 +137,7 @@ Person <- R6::R6Class("Person",
       
       data$cal_ratio$date <- as.Date(strptime(data$cal_ratio$time, format = "%Y-%m-%d"))
       data$minsVery$date <- as.Date(strptime(data$minsVery$time, format = "%Y-%m-%d"))
+      data$minsVery$hr_zones <- as.Date(strptime(data$hr_zones$time, format = "%Y-%m-%d"))
       data$sleep$date <- as.Date(strptime(data$sleep$date, format = "%Y-%m-%d"))
       data$sleep$startDateTime <- as.POSIXct(strptime(data$sleep$startDateTime, 
           format = "%Y-%m-%d %H:%M:%S"))
