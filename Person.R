@@ -32,8 +32,9 @@ Person <- R6::R6Class("Person",
       data$date <- seq(from = start_date, to = end_date, by = 1)
       
       #MTWTFSS
-      data$day_of_week <- data.frame("date" = data$date, 
-                                     "day_of_week" = weekdays(data$date))
+      data$day_of_week <- data.frame("date" = data$date,
+                                     "day_of_week" = 
+                                       lubridate::wday(data$date, label = TRUE))
       
       #1 if weekend, 0 otherwise
       weekend <- c('Saturday', 'Sunday')
@@ -120,6 +121,18 @@ Person <- R6::R6Class("Person",
                                 what = "getTimeInHeartRateZonesPerDay",
                                 start_date = as.character(start), 
                                 end_date = as.character(end))
+      # not consistent
+      # if ("IN_DEFAULT_ZONE_3" %in% names(data$hr_zones)) {
+      #   data$hr_zones <- plyr::rename(data$hr_zones,
+      #                                  c("IN_DEFAULT_ZONE_3" = "peak",
+      #                                    "zone1" = "cardio",
+      #                                    "zone2" = "fat_burn"))
+      # } else if ("IN_DEFAULT_ZONE_2" %in% names(data$hr_zones)) {
+      #   data$hr_zones <- plyr::rename(data$hr_zones,
+      #                                 c("IN_DEFAULT_ZONE_2" = "cardio",
+      #                                   "zone1" = "fat_burn",
+      #                                   "zone2" = "peak"))
+      # }
       data$sleep <- fitbitScraper::get_sleep_data(cookie, 
                                    start_date = char_start, 
                                    end_date = char_end)[[2]]
@@ -137,6 +150,7 @@ Person <- R6::R6Class("Person",
       
       data$cal_ratio$date <- as.Date(strptime(data$cal_ratio$time, format = "%Y-%m-%d"))
       data$minsVery$date <- as.Date(strptime(data$minsVery$time, format = "%Y-%m-%d"))
+      data$hr_zones$date <- as.Date(strptime(data$hr_zones$time, format = "%Y-%m-%d"))
       data$sleep$date <- as.Date(strptime(data$sleep$date, format = "%Y-%m-%d"))
       data$sleep$startDateTime <- as.POSIXct(strptime(data$sleep$startDateTime, 
           format = "%Y-%m-%d %H:%M:%S"))
