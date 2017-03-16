@@ -1,4 +1,4 @@
-#' @include global_var.r
+#' @include global_var.R
 #' #' A generic function to create a line graph for a single continuous variable
 #' 
 #' @param Person
@@ -48,7 +48,6 @@ plot_distance <- function(Person, unit = "mi") {
 plot_distance(RA)
 plot_distance(RA, "mi")
 plot_distance(RA, "km")
-plot_distance(RA, "hello")
 
 # Plot 4: Calories burned vs intake
 # I expect the intake to be highly inaccurate: who actually records all they intake?
@@ -125,3 +124,16 @@ plot_daily_weight <- function(Person) {
 }
 plot_daily_weight(RA)
 # also want to plot weights over course of the day
+
+# plot <- function(Person, type = c("weight", "sleep", etc.)){
+#   switch(type)
+#   case "weight"
+#   plot_weight(obj)
+#   case "sleep"
+#   plot_sleep(obj)
+#   ...
+# }
+# 
+# plot_weight <- function(Person){
+#   plot_weight
+# }
