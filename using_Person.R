@@ -37,15 +37,36 @@ correlation_df <- correlation(dataset, person = RA,
 
 ############## TO DO/FOR REFERENCE ###################
 
+# analyze sleep function for aggregating heart rate, etc. curves
 
 # add capability for t testing based on two groups in additional data
 
-# need to add capability for experimenting with time axis variables
 
 # sleep experimentation - curves and when drops etc.
 # visualize when awake/restless normed to start/not?
 
+# figure out how to aggregate hr zone data, time intervals 
 
+
+# 
+# For the date-times, can you create POSIXct objects?
+# 
+# Like so: lubridate::ymd_hms(df$startDateTime, tz = Sys.timezone())
+# 
+# And for dates you can just use lubridate::ymd(df$date) to create Date objects
+# 
+# For the time data frame, could you also have another variable called time_only or something like that?  And then we can use this cheater way:
+#   
+# data$time <- lubridate::make_datetime(year = "1970", month = "01", day = "01",
+#                                       hour = lubridate::hour(data$time),
+#                                       min = lubridate::minute(data$time))
+# #person$fitbit$daily gives dataframe with names "date", "rest_hr", "steps", etc.
+#person$fitbit[, c("date", "steps")]
+
+#person$fitbit$intraday
+
+#person$fitbit$steps gives df with names date, steps
+#lubridate
 
 # names(RA$fitbit)
 # [1] "isteps"           
