@@ -1,8 +1,9 @@
 Package: fitbitData
-Title: What the Package Does (one line, title case)
+Title: What the Package Does (one line, title case) xxx
 Version: 0.0.0.9000
-Authors@R: person("Lisa Ann", "Yu", email = "lisaann.yu@gmail.com", role = c("aut", "cre"))
-Description: What the package does (one paragraph).
+Authors@R: c(person("Rohisha", "Adke", email = "xxx", role = ""), # only need one email in there
+person("Lisa Ann", "Yu", email = "lisaann.yu@gmail.com", role = c("aut", "cre")))
+Description: What the package does (one paragraph).xxx
 Depends: R (>= 3.3.2)
 License: What license is it under?
 Encoding: UTF-8

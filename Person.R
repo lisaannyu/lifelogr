@@ -37,11 +37,14 @@ Person <- R6::R6Class("Person",
                                        lubridate::wday(data$date, label = TRUE))
       
       #1 if weekend, 0 otherwise
-      weekend <- c('Saturday', 'Sunday')
+      # weekend <- c('Saturday', 'Sunday')
+      # data$day_type <- data.frame("date" = data$date,
+      #                             "day_type" = factor((data$day_of_week$day_of_week %in% weekend), 
+      #                       levels=c(FALSE, TRUE),
+      #                       labels=c('weekday', 'weekend')))
       data$day_type <- data.frame("date" = data$date,
-                                  "day_type" = factor((data$day_of_week$day_of_week %in% weekend), 
-                            levels=c(FALSE, TRUE),
-                            labels=c('weekday', 'weekend')))
+                                  "day_type" = 
+                                    factor(ifelse(lubridate::wday(data$date) %in% c(1, 7), "weekend", "weekday")))
       # Month
       data$month <- data.frame("date" = data$date, 
                                      "month" = lubridate::month(data$date, 
