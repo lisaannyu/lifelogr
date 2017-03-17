@@ -71,16 +71,6 @@ pregression(dataset, person = RA, variables = list("fitbit_daily" = c("sleepDura
 
 
 # Sleep visualizations
-source("viz_sleep.R")
-# Would like to create a suite of plots in R (like lm's 4 diagnostic plots)
-# Will create a switch table too later
-plot_sleep_over_time(RA)
-plot_sleep_restless_prop(RA)
-plot_sleep_restless_min(RA)
-plot_sleep_quality(RA)
-plot_sleep_weekday(RA)
-plot_sleep_start_end(RA, "day_type")
-plot_sleep_start_end(RA, "day_of_week")
 
 
 # Building the package
@@ -88,6 +78,9 @@ pkgName <- "fitbitData"
 
 # Save RA as EX for example purposes
 save(EX, file = "../data/EX.rda") # might have to change the file directory
+
+# Add documentation
+devtools::document(pkg = pkgName)
 
 # Add imports to DESCRIPTION
 devtools::use_package("ggplot2", type = "Imports", pkg = pkgName)

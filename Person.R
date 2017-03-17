@@ -1,3 +1,4 @@
+#' @include global_var.R
 Person <- R6::R6Class("Person",
   public = list(
   fitbit_daily = NULL, # dataframe of daily fitbit data
@@ -174,6 +175,9 @@ Person <- R6::R6Class("Person",
         joined <- dplyr::select(joined, -time)
         # doesn't work...figure out if desired (not actually a datetime)
         joined$datetime <- joined$date#lubridate::ymd_hms(joined$time, tz = Sys.timezone())
+        
+        # converts distance to km
+        joined$distanceKm <- joined$distance * MI_TO_KM
         
         # converts startDateTime, endDateTime to datetime objects
         joined$startDateTime <- lubridate::ymd_hms(joined$startDateTime, tz = Sys.timezone())
