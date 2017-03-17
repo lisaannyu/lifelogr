@@ -22,18 +22,31 @@
 # ways to assess
 # plot one vs other, do a linear regression and anova, histogram? etc.
 
+
+
+# Returns lists, merged by first level
+merge_lists <- function(list_of_lists){
+  keys <- unique(unlist(lapply(list_of_lists, names)))
+  merged_list <- setNames(do.call(mapply,
+                                    c(FUN=c, 
+                                      lapply(list_of_lists, `[`, keys))), keys)
+  return(merged_list)
+}
+  
+  
 # Do the specified analysis of the impact of the variables on the measure
 # person: Person object to do analysis on
-# variables options:
+# variables options: named list for each source, with variables desired from that source
 # measure options:
 # analysis options:
-# vars.sources: each variable is assumed to be of type fitbit unless told otherwise
-# meas.sources: each measured variable is assumed to be of type fitbit unless 
 # told otherwise
+# NOTE: verify how to require one of the options for time_vars
+
+
 experiment <- function(person, variables, measures,
                        analysis = c("plot", "correlation", 
                                     "anova", "t_test", "regression"),
-                       vars.sources = NA, meas.sources = NA) {
+                       time_var = c("time", "date", "datetime")) {
   # NOTE: change sleep to time slept, amount restless. add exercise, own var
   #c("steps", "dist", "rest_hr","hr_zones", "sleep", "weight", own variable)
   
@@ -50,22 +63,19 @@ experiment <- function(person, variables, measures,
   # }
   
   # create dataset
-  dataset <- create_dataset(person, all_variables = c(variables, measures),
-                            all_sources = c(vars.sources, meas.sources))
+  dataset <- create_dataset(person, all_variables = merge_lists(list(variables,
+                                                                     measures)),
+                            time_var = time_var)
 
+  # print(dataset)
   # call the type of analysis requested
   for (type in analysis){
     switch(type,
-           "plot" = pplot(dataset, person, variables, measures, vars.sources, 
-                          meas.sources), 
-           "correlation" = correlation(dataset, person, variables, measures, 
-                                       vars.sources, meas.sources),
-           "anova" = panova(dataset, person, variables, measures, 
-                                 vars.sources, meas.sources),
-           "t_test" = pttest(dataset, person, variables, measures, 
-                           vars.sources, meas.sources),
-           "regression" = pregression(dataset, person, variables, measures, 
-                            vars.sources, meas.sources)
+           "plot" = pplot(dataset, person, variables, measures, time_var), 
+           "correlation" = correlation(dataset, person, variables, measures),
+           "anova" = panova(dataset, person, variables, measures),
+           "t_test" = pttest(dataset, person, variables, measures),
+           "regression" = pregression(dataset, person, variables, measures)
            # print error: your analysis didn't match any options
            )
   }
@@ -77,10 +87,11 @@ experiment <- function(person, variables, measures,
 # Make sure should be specifying time_var options as such
 create_dataset <- function(person, all_variables,
                            time_var = c("time", "date", "datetime")){
-
+  all_dfs <- list()
   # for each source (name of a df), grab columns from that source + time_var
   for (source in names(all_variables)){
     all_dfs[[source]] <- person[[source]][, c(time_var, all_variables[[source]])]
+    print(all_variables[[source]])
   }
   
   dataset <- Reduce(function(x, y) merge(x, y, all=TRUE, by = time_var), all_dfs)
@@ -93,52 +104,59 @@ create_dataset <- function(person, all_variables,
 # it'll call this for you
 # NOTE: maybe shouldn't be directly printing plots
 # NOTE: test what happens when variables aren't on the same time scale
-pplot <- function(dataset = NA, person, variables, measures, vars.sources, 
-                  meas.sources){
+pplot <- function(dataset = NA, person, variables, measures, time_var){
   # plot each variable against each measure
   if (!is.data.frame(dataset)){
-    dataset <- create_dataset(person, c(variables, measures), c(vars.sources,
-                                                                meas.sources))
+    # need to put the combining thing in
+    dataset <- create_dataset(person, all_variables = merge_lists(list(variables,
+                                                                       measures)),
+                              time_var = time_var)
   }
-  # NOTE: maybe not do individual plots if desired
-  for (i in 1:length(measures)){
-    for (j in 1:length(variables)){
-      print(ggplot2::ggplot(dataset) +
-              ggplot2::aes_string(x = variables[[j]],
-                                  y = measures[[i]]) +
-              ggplot2::geom_point() + ggplot2::ggtitle(paste(variables[[j]], 
-                                                             "vs", measures[[i]])))
+
+  for (meas.source in names(measures)){
+    for (measure in measures[[meas.source]]){
+      for (var.source in names(variables)){
+        for (variable in variables[[var.source]]){
+
+          print(ggplot2::ggplot(dataset) +
+                  ggplot2::aes_string(x = variable, y = measure) +
+                  ggplot2::geom_point() + ggplot2::ggtitle(paste(variable, 
+                                                                 "vs", measure)))
+          
+        }
+      }
     }
   }
 }
 
 
-correlation <- function(dataset = NA, person, variables, measures, 
-                        vars.sources, meas.sources){
+correlation <- function(dataset = NA, person, variables, measures){
   if (!is.data.frame(dataset)){
-    dataset <- create_dataset(person, all_variables = c(variables, measures),
-                              all_sources = c(vars.sources, meas.sources))
+    dataset <- create_dataset(person, all_variables = merge_lists(list(variables,
+                                                                       measures)),
+                              time_var = time_var)
     
     }
   
-  pearson_corr <- cor(dataset[, variables], dataset[, measures], method = "pearson")
+  pearson_corr <- cor(dataset[, unlist(variables)], dataset[, unlist(measures)], method = "pearson")
   print(pearson_corr)
   return(pearson_corr)
 }
 
   
 # should be printing output?
-panova <- function(dataset = NA, person, variables, measures, vars.sources, 
-                   meas.sources){
+panova <- function(dataset = NA, person, variables, measures){
   if (!is.data.frame(dataset)){
-    dataset <- create_dataset(person, c(variables, measures), c(vars.sources, 
-                                                                meas.sources))
+    dataset <- create_dataset(person, all_variables = merge_lists(list(variables,
+                                                                       measures)),
+                              time_var = time_var)
   }
-  
+  measures_flat <- unlist(measures)
+  variables_flat <- unlist(variables)
   # for each measure, fit linear model with interactions, run anova
-  for (i in 1:length(measures)){
-    f <- paste(measures[[i]], " ~ ", 
-               "(", paste(variables, collapse=" + "), ")^2", sep="")
+  for (i in 1:length(measures_flat)){
+    f <- paste(measures_flat[[i]], " ~ ", 
+               "(", paste(variables_flat, collapse=" + "), ")^2", sep="")
     print(f)
     lin_model <- do.call("lm", list(as.formula(f), data=as.name("dataset")))
     lin_anova <- anova(lin_model)
@@ -151,24 +169,27 @@ panova <- function(dataset = NA, person, variables, measures, vars.sources,
 ttest <- function(dataset = NA, person, variables, measures, vars.sources,
                   meas.sources){
   if (!is.data.frame(dataset)){
-    dataset <- create_dataset(person, c(variables, measures), c(vars.sources,
-                                                                meas.sources))
+    dataset <- create_dataset(person, all_variables = merge_lists(list(variables,
+                                                                       measures)),
+                              time_var = time_var)
   }
   
 }
 
 
-pregression <- function(dataset = NA, person, variables, measures, vars.sources, 
-                        meas.sources){
+pregression <- function(dataset = NA, person, variables, measures){
   if (!is.data.frame(dataset)){
-    dataset <- create_dataset(person, c(variables, measures), c(vars.sources,
-                                                                meas.sources))
+    dataset <- create_dataset(person, all_variables = merge_lists(list(variables,
+                                                                       measures)),
+                              time_var = time_var)
   }
   
+  measures_flat <- unlist(measures)
+  variables_flat <- unlist(variables)
   # for each measure, fit linear model with interactions, run anova
-  for (i in 1:length(measures)){
-    f <- paste(measures[[i]], " ~ ", 
-               "(", paste(variables, collapse=" + "), ")^2", sep="")
+  for (i in 1:length(measures_flat)){
+    f <- paste(measures_flat[[i]], " ~ ", 
+               "(", paste(variables_flat, collapse=" + "), ")^2", sep="")
     print(f)
     lin_model <- do.call("lm", list(as.formula(f), data=as.name("dataset")))
     print(summary(lin_model))

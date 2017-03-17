@@ -34,8 +34,11 @@ Person <- R6::R6Class("Person",
     create_util_data = function(start_date, end_date) {
       
       # date range between start and end date
-      df <- tibble::data_frame(date = lubridate::ymd(seq(from = start_date,
-                                              to = end_date, by = 1)))
+      df <- tibble::data_frame(date = lubridate::ymd(as.Date(as.POSIXct(seq(from = start_date,
+                                              to = end_date, by = 1)))))
+      
+      #      joined$date <- lubridate::ymd(as.Date(as.POSIXct(joined$datetime, Sys.timezone())))
+      df$datetime <- df$date
       # MTWTFSS
       df$day_of_week <- lubridate::wday(df$date, label = TRUE)
       
@@ -167,7 +170,7 @@ Person <- R6::R6Class("Person",
         joined <- tibble::as_data_frame(Reduce(function(x, y) merge(x, y, all=TRUE, 
                                                                     by = "time"),
                                                daily))
-        joined$date <- lubridate::ymd(joined$time, tz = Sys.timezone())
+        joined$date <- lubridate::ymd(as.Date(as.POSIXct(joined$time, tz = Sys.timezone())))
         joined <- dplyr::select(joined, -time)
         # doesn't work...figure out if desired (not actually a datetime)
         joined$datetime <- joined$date#lubridate::ymd_hms(joined$time, tz = Sys.timezone())
