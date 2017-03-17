@@ -153,10 +153,10 @@ Person <- R6::R6Class("Person",
         daily$rest_hr <- fitbitScraper::get_daily_data(cookie, what = "getRestingHeartRateData",
                                   start_date = as.character(start),
                                   end_date = as.character(end))
-        daily$hr_zones <- fitbitScraper::get_daily_data(cookie,
-                                  what = "getTimeInHeartRateZonesPerDay",
-                                  start_date = as.character(start),
-                                  end_date = as.character(end))
+        # daily$hr_zones <- fitbitScraper::get_daily_data(cookie,
+        #                           what = "getTimeInHeartRateZonesPerDay",
+        #                           start_date = as.character(start),
+        #                           end_date = as.character(end))
 
         daily$sleep <- fitbitScraper::get_sleep_data(cookie,
                                      start_date = char_start,
@@ -174,6 +174,10 @@ Person <- R6::R6Class("Person",
         joined <- dplyr::select(joined, -time)
         # doesn't work...figure out if desired (not actually a datetime)
         joined$datetime <- joined$date#lubridate::ymd_hms(joined$time, tz = Sys.timezone())
+        
+        # converts startDateTime, endDateTime to datetime objects
+        joined$startDateTime <- lubridate::ymd_hms(joined$startDateTime, tz = Sys.timezone())
+        joined$endDateTime <- lubridate::ymd_hms(joined$endDateTime, tz = Sys.timezone())
         return(joined)
       }
     

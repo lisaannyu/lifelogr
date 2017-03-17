@@ -7,6 +7,12 @@ RA <- Person$new(user_email = "rohisha@gmail.com", user_pw = "datasamplepw",
                  group_assignments = list(data.frame(NA), data.frame(NA)),
                  start_date = "2017-02-09", end_date = "2017-03-12")
 
+EX <- Person$new(user_email = "rohisha@gmail.com", user_pw = "datasamplepw",
+                 user_info = list("name" = "EX", "age" = 29, "gender" = "female"),
+                 target_steps = 10000,
+                 group_assignments = list(data.frame(NA), data.frame(NA)),
+                 start_date = "2017-01-19", end_date = "2017-02-17")
+
 
 source("experiments.R")
 # Can run an experiment all together with desired Person, variables/measures, 
@@ -75,6 +81,9 @@ plot_sleep_quality(RA)
 plot_sleep_weekday(RA)
 plot_sleep_start_end(RA, "day_type")
 plot_sleep_start_end(RA, "day_of_week")
+
+# Save RA as EX for example purposes
+save(EX, file = "fitbitData/data/EX.rda")
 ############## TO DO/FOR REFERENCE ###################
 
 # analyze sleep function for aggregating heart rate, etc. curves
