@@ -60,7 +60,7 @@ recommend strategies based on their data (for example, if a user walks a lot on
 the weekdays but not weekends and is not meeting their target step count, 
 suggest walks on the weekends, at times of day when they are usually active on 
 the weekdays according to their heart rate).
-  
+
 5. Experimentation framework. The package will provide the framework for a user 
 to easily perform A/B or other testing on him/herself - for example, decide 
 he/she wants to know if his/her heart rate is higher in a statistically 
