@@ -8,7 +8,7 @@ RA <- Person$new(user_email = "rohisha@gmail.com", user_pw = "datasamplepw",
                  start_date = "2017-02-09", end_date = "2017-03-12")
 
 EX <- Person$new(user_email = "rohisha@gmail.com", user_pw = "datasamplepw",
-                 user_info = list("name" = "EX", "age" = 29, "gender" = "female"),
+                 user_info = list("name" = "EX", "age" = 29, "gender" = "male"),
                  target_steps = 10000,
                  group_assignments = list(data.frame(NA), data.frame(NA)),
                  start_date = "2017-01-19", end_date = "2017-02-17")
@@ -82,8 +82,16 @@ plot_sleep_weekday(RA)
 plot_sleep_start_end(RA, "day_type")
 plot_sleep_start_end(RA, "day_of_week")
 
+
+# Building the package
+pkgName <- "fitbitData"
+
 # Save RA as EX for example purposes
-save(EX, file = "fitbitData/data/EX.rda")
+save(EX, file = "../data/EX.rda") # might have to change the file directory
+
+# Add imports to DESCRIPTION
+devtools::use_package("ggplot2", type = "Imports", pkg = pkgName)
+devtools::use_package("shiny", type = "Imports", pkg = pkgName)
 ############## TO DO/FOR REFERENCE ###################
 
 # analyze sleep function for aggregating heart rate, etc. curves

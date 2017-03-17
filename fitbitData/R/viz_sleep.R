@@ -1,4 +1,4 @@
-#' @include viz_daily.R
+#' @include viz_daily.R, experiments.R
 
 #' A function to plot a series of six sleep graphs
 #' 
@@ -61,18 +61,26 @@ plot_sleep <- function(Person) {
 #' 
 #' @param Person The user's data
 #' @return A tidy data frame with the columns weekday, measure, and hours
+#' @importFrom dplyr mutate group_by summarize
+#' @importFrom tidyr gather
+#' @importFrom lubridate wday
+#' @export
 #' @examples
-#' EX <- data.frame
+#' load(EX)
 #' tidy_sleep_weekday(EX)
 #'
 tidy_sleep_weekday <- function(Person) {
-  data <- dplyr::mutate(Person$fitbit$sleep, 
-                       weekday = lubridate::wday(date, label = TRUE))
-  # PROBABLY WANT TO USE A LEFT JOIN RATHER THAN ADDING THIS NEW COLUMN?
-  data <- dplyr::group_by(data, weekday)
-  data <- dplyr::summarize(data, sleepDurationHrs = mean(sleepDuration / 60),
-                          minAsleepHrs = mean(minAsleep / 60))
-  data <- tidyr::gather(data, key = "measure", value = "hours", -weekday)
+  data <- create_dataset(person = Person,
+                         all_variables = 
+                           list("fitbit_daily" = c("sleepDurationHrs", 
+                                                   "minAsleepHrs"),
+                                "util" = c("day_of_week", "day_type")), 
+                         time_var = c("date"))
+  data <- dplyr::group_by(data, day_of_week)
+  data <- dplyr::summarize(data, 
+                           sleepDuration = mean(sleepDurationHrs, na.rm = TRUE),
+                           minAsleep = mean(minAsleepHrs, na.rm = TRUE))
+  data <- tidyr::gather(data, key = "measure", value = "hours", -day_of_week)
   return(data)
 }
 
@@ -83,6 +91,7 @@ tidy_sleep_weekday <- function(Person) {
 #' 
 #' @param Person The user's data
 #' @return A ggplot2 object, prints to screen
+#' @importFrom ggplot2 ggplot aes geom_col labs guides guide_legend scale_fill_discrete
 #' @export
 #' @examples
 #' plot_sleep_weekday(EX)
@@ -90,7 +99,7 @@ tidy_sleep_weekday <- function(Person) {
 # Plot 1: by day of week
 plot_sleep_weekday <- function(Person) {
   p <- ggplot2::ggplot(data = tidy_sleep_weekday(Person),
-                  mapping = ggplot2::aes(x = weekday, 
+                  mapping = ggplot2::aes(x = day_of_week, 
                                          y = hours,
                                          fill = measure)) +
     ggplot2::geom_col(position = "dodge") +
@@ -111,6 +120,7 @@ plot_sleep_weekday <- function(Person) {
 #' @param color_var "day_type" by default for weekend/weekday, or "day_of_week"
 #' for day of week.  Determines color of the lines.
 #' @return A ggplot2 object, prints to screen
+#' @importFrom ggplot2 ggplot aes geom_col labs guides guide_legend scale_fill_discrete
 #' @export
 #' @examples
 #' plot_sleep_start_end(EX)
@@ -126,21 +136,26 @@ plot_sleep_start_end <- function(Person, color_var = "day_type") {
   
   # Pull relevant data
   data <- create_dataset(person = Person,
-                         all_variables = c("sleep", "day_type", "day_of_week"),
-                         all_sources = c("fitbit", rep("util", 2)))
-  data <- dplyr::select(data, date, startTime, startDateTime, endTime,
-                        endDateTime, day_type, day_of_week)
+                         all_variables = 
+                           list("fitbit_daily" = c("startTime", 
+                                                   "startDateTime",
+                                                   "endTime",
+                                                   "endDateTime"),
+                                "util" = c("day_of_week", "day_type")), 
+                         time_var = c("date"))
   
   # If went to sleep before midnight adjust the start time
-  data$startTime <-
-    ifelse(as.Date(as.POSIXct(data$startTime, format = "%H:%M")) !=
-             as.Date(as.POSIXct(data$endTime, format = "%H:%M")),
-           as.POSIXct(data$startTime, format = "%H:%M") - lubridate::days(1),
-           as.POSIXct(data$startTime, format = "%H:%M"))
+  # data$startTime <-
+  #   ifelse(as.Date(as.POSIXct(data$startTime, format = "%H:%M")) !=
+  #            as.Date(as.POSIXct(data$endTime, format = "%H:%M")),
+  #          as.POSIXct(data$startTime, format = "%H:%M") - lubridate::days(1),
+  #          as.POSIXct(data$startTime, format = "%H:%M"))
+  # 
+  # data$startTime <- as.POSIXct(data$startTime, origin = "1970-01-01")
+  # data$endTime <- as.POSIXct(data$endTime, format = "%H:%M")
   
-  data$startTime <- as.POSIXct(data$startTime, origin = "1970-01-01")
-  data$endTime <- as.POSIXct(data$endTime, format = "%H:%M")
   
+  # COME BACK TO THIS
   p <- ggplot2::ggplot(data = data) +
     ggplot2::geom_segment(mapping =
                             ggplot2::aes_string(x = data$date,
@@ -167,16 +182,22 @@ plot_sleep_start_end <- function(Person, color_var = "day_type") {
 #' duration and time asleep (in hours).
 #' 
 #' @param Person The user's data
-#' @return A data frame with the columns date, sleep_time, and mins
+#' @return A data frame with the columns date, sleep_time, and hrs
+#' @importFrom tidyr gather
 #' @examples
-#' plot_sleep_over_time(EX)
+#' data(EX)
+#' tidy_sleep_over_time(EX)
 #'
 tidy_sleep_over_time <- function(Person) {
-  data <- dplyr::select(Person$fitbit$sleep, date, sleepDuration, minAsleep)
+  data <- create_dataset(person = Person,
+                         all_variables = 
+                           list("fitbit_daily" = c("sleepDurationHrs", 
+                                                   "minAsleepHrs")), 
+                         time_var = c("date"))
   data <- tidyr::gather(data = data, 
                        key = "sleep_type", 
-                       value = "mins", 
-                       sleepDuration, minAsleep)
+                       value = "hrs", 
+                       sleepDurationHrs, minAsleepHrs)
   return(data)
 }
 
@@ -189,13 +210,15 @@ tidy_sleep_over_time <- function(Person) {
 #' @param Person The user's data
 #' @return A ggplot2 object, prints to screen
 #' @export
+#' @importFrom ggplot2 ggplot geom_line aes labs guides guide_legend scale_color_discrete
 #' @examples
-#' plot_sleep_weekday(EX)
+#' load("../data/EX.rda")
+#' plot_sleep_over_time(EX)
 #'
 plot_sleep_over_time <- function(Person) {
     p <- ggplot2::ggplot(data = tidy_sleep_over_time(Person)) +
       ggplot2::geom_line(mapping = ggplot2::aes(x = date, 
-                                                y = mins / 60, 
+                                                y = hrs, 
                                                 color = sleep_type)) +
       ggplot2::labs(x = "Date", y = "Sleep Duration (hours)",
                     title = "Sleep Over Time") +
@@ -216,18 +239,26 @@ plot_sleep_over_time <- function(Person) {
 #' @param Person The user's data
 #' @return A ggplot2 object, prints to screen
 #' @export
+#' @importFrom ggplot2 ggplot geom_line aes labs
 #' @examples
+#' load("../data/EX.rda")
 #' plot_sleep_restless_prop(EX)
 #'
 plot_sleep_restless_prop <- function(Person) {
-  p <- ggplot2::ggplot(data = Person$fitbit$sleep) +
-    ggplot2::geom_line(mapping = 
-                         ggplot2::aes(x = date, 
-                                      y = (((sleepDuration - minAsleep) / 
-                                              sleepDuration) / 60) * 100),
-                       color = CARDINAL) +
-    ggplot2::labs(x = "Date", y = "Percent of Restless Sleep",
-                  title = "Quality of Sleep: Restlessness (%)")
+  data <- create_dataset(person = Person,
+                         all_variables = 
+                           list("fitbit_daily" = c("sleepDurationHrs", 
+                                                   "minAsleepHrs")), 
+                         time_var = c("date"))
+  p <- 
+    ggplot2::ggplot(data = data) +
+      ggplot2::geom_line(mapping = 
+                           ggplot2::aes(x = date, 
+                                        y = ((sleepDurationHrs - minAsleepHrs) / 
+                                                sleepDurationHrs) * 100),
+                         color = CARDINAL) +
+      ggplot2::labs(x = "Date", y = "Percent of Restless Sleep",
+                    title = "Quality of Sleep: Restlessness (%)")
   print(p)
 }
 

@@ -178,6 +178,11 @@ Person <- R6::R6Class("Person",
         # converts startDateTime, endDateTime to datetime objects
         joined$startDateTime <- lubridate::ymd_hms(joined$startDateTime, tz = Sys.timezone())
         joined$endDateTime <- lubridate::ymd_hms(joined$endDateTime, tz = Sys.timezone())
+        
+        # adds vars for sleepDuration and minAsleep in hours - do we want to keep this here? or 
+        # just do in viz_sleep
+        joined$sleepDurationHrs <- joined$sleepDuration / 60
+        joined$minAsleepHrs <- joined$minAsleep / 60
         return(joined)
       }
     
