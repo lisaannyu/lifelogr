@@ -5,9 +5,8 @@ RA <- Person$new(user_email = "rohisha@gmail.com", user_pw = "datasamplepw",
                  user_info = list("name" = "RA", "age" = 23, "gender" = "female"),
                  target_steps = 10000,
                  group_assignments = list(data.frame(NA), data.frame(NA)),
-                 start_date = "2017-02-09", end_date = "2017-03-12")
+                 start_date = "2017-03-09", end_date = "2017-03-12")
 
-source("experiments.R")
 
 # Can run an experiment all together with desired Person, variables/measures, 
 #and analyses
@@ -20,17 +19,21 @@ experiment(person = RA, variables = c("steps", "sleepDuration",
            vars.sources = c(rep("fitbit", 2), rep("util", 3)),
            meas.sources = c(rep("fitbit", 3)))
 
+source("experiments.R")
 # Or can create just the joined dataset
 dataset <- create_dataset(person = RA,
-                          all_variables = c("steps", "sleepDuration", "distance",
-                                            "rest_hr", "minsRestlessAwake"),
-                          all_sources = rep("fitbit", 5))
+                          all_variables = list("fitbit_daily" = c("steps", 
+                                                            "sleepDuration", 
+                                                            "distance",
+                                                            "restingHeartRate"),
+                                               "util" = c("day_of_week")), 
+                          time_var = "date")
 
 # Then run each analysis on that dataset separately
 correlation_df <- correlation(dataset, person = RA, 
                               variables = c("steps", "sleepDuration"),
-                              measures = c("distance", "rest_hr",
-                                           "minsRestlessAwake"),
+                              measures = c("distance", "rest_hr"),
+                                           #",minsRestlessAwake"),
                               vars.sources = rep("fitbit", 2), 
                               meas.sources = rep("fitbit", 3))
 

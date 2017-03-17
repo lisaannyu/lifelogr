@@ -41,12 +41,13 @@ experiment <- function(person, variables, measures,
   # NOTE: rename functions to be something relevant to this package (p_)
   
   # set to be fitbit sources if no sources given
-  if (is.na(vars.sources)){
-    vars.sources <- rep("fitbit", times = length(variables))
-  }
-  if (is.na(meas.sources)){
-    meas.sources <- rep("fitbit", times = length(measures))
-  }
+  # NEED TO FIX SINCE COULD BE INTRADAY OR DAILY
+  # if (is.na(vars.sources)){
+  #   vars.sources <- rep("fitbit", times = length(variables))
+  # }
+  # if (is.na(meas.sources)){
+  #   meas.sources <- rep("fitbit", times = length(measures))
+  # }
   
   # create dataset
   dataset <- create_dataset(person, all_variables = c(variables, measures),
@@ -70,22 +71,19 @@ experiment <- function(person, variables, measures,
   }
 }
 
+# example: all_variables = list("fitbit_daily" = c("x", "y", "z"), "util" = c("d", "e", "f"))
+# Collect all the variables and measures into one df - across Person's types of data
+# NOTE: time_var must exist in each one of all_sources
+# Make sure should be specifying time_var options as such
+create_dataset <- function(person, all_variables,
+                           time_var = c("time", "date", "datetime")){
+
+  # for each source (name of a df), grab columns from that source + time_var
+  for (source in names(all_variables)){
+    all_dfs[[source]] <- person[[source]][, c(time_var, all_variables[[source]])]
+  }
   
-# Collect all the variables and measures into one df
-# NOTE: won't work if isn't date variable (if is a time variable)
-create_dataset <- function(person, all_variables, all_sources){
-  # rbind each dataset of interest together
-  all_dfs <- list()
-  print(all_variables)
-  print(all_sources)
-  
-  for (i in 1:length(all_variables)){
-    print(data.frame(person[[all_sources[[i]]]][[all_variables[[i]]]]))
-    all_dfs[[all_variables[[i]]]] <- data.frame(person[[all_sources[[i]]]][[all_variables[[i]]]])
-    }
-  
-  print(all_dfs)
-  dataset <- Reduce(function(x, y) merge(x, y, all=TRUE, by = "date"), all_dfs)
+  dataset <- Reduce(function(x, y) merge(x, y, all=TRUE, by = time_var), all_dfs)
   return(dataset)
 }
 
