@@ -24,10 +24,10 @@ plot_sleep <- function(Person) {
   readline(prompt = "Press [enter] to continue")
   dev.flush()
   
-  dev.hold()
-  plot_sleep_start_end(Person)
-  readline(prompt = "Press [enter] to continue")
-  dev.flush()
+  # dev.hold()
+  # plot_sleep_start_end(Person)
+  # readline(prompt = "Press [enter] to continue")
+  # dev.flush()
   
   dev.hold()
   plot_sleep_over_time(Person)
@@ -176,30 +176,6 @@ plot_sleep_start_end <- function(Person, color_var = "day_type") {
 }
 
 # Quality of Sleep
-#' A function to make the sleep data tidy.  
-#' 
-#' @description Returns a line plot plotting sleep over time.  Includes sleep
-#' duration and time asleep (in hours).
-#' 
-#' @param Person The user's data
-#' @return A data frame with the columns date, sleep_time, and hrs
-#' @importFrom tidyr gather
-#' @examples
-#' data(EX)
-#' tidy_sleep_over_time(EX)
-#'
-tidy_sleep_over_time <- function(Person) {
-  data <- create_dataset(person = Person,
-                         all_variables = 
-                           list("fitbit_daily" = c("sleepDurationHrs", 
-                                                   "minAsleepHrs")), 
-                         time_var = c("date"))
-  data <- tidyr::gather(data = data, 
-                       key = "sleep_type", 
-                       value = "hrs", 
-                       sleepDurationHrs, minAsleepHrs)
-  return(data)
-}
 
 # Plot 3
 #' A function to plot sleep over time.  
@@ -216,16 +192,13 @@ tidy_sleep_over_time <- function(Person) {
 #' plot_sleep_over_time(EX)
 #'
 plot_sleep_over_time <- function(Person) {
-    p <- ggplot2::ggplot(data = tidy_sleep_over_time(Person)) +
-      ggplot2::geom_line(mapping = ggplot2::aes(x = date, 
-                                                y = hrs, 
-                                                color = sleep_type)) +
-      ggplot2::labs(x = "Date", y = "Sleep Duration (hours)",
-                    title = "Sleep Over Time") +
-      ggplot2::guides(color = ggplot2::guide_legend(title = "Sleep Type", 
-                                                    reverse = TRUE)) +
-      ggplot2::scale_color_discrete(labels = c("Time Asleep", "Sleep Duration"))
-    print(p)
+  p <- plot_daily(Person, measures = c("sleepDurationHrs", "minAsleepHrs")) +
+    ggplot2::labs(y = "Sleep Duration (hours)",
+                  title = "Sleep Over Time") +
+    ggplot2::guides(color = ggplot2::guide_legend(title = "Sleep Type",
+                                                  reverse = TRUE)) +
+    ggplot2::scale_color_discrete(labels = c("Time Asleep", "Sleep Duration"))
+  print(p)
 }
 
 
@@ -272,12 +245,14 @@ plot_sleep_restless_prop <- function(Person) {
 #' @param Person The user's data
 #' @return A ggplot2 object, prints to screen
 #' @export
+#' @importFrom ggplot2 labs
 #' @examples
+#' load("../data/EX.rda")
 #' plot_sleep_restless_min(EX)
 #'
 plot_sleep_restless_min <- function(Person) {
-  p <- plot_daily(Person, "sleep", "restlessDuration")
-  p <- p + ggplot2::labs(x = "Date", y = "Length of Restless Sleep (minutes)",
+  p <- plot_daily(Person, "restlessDuration")
+  p <- p + ggplot2::labs(y = "Length of Restless Sleep (minutes)",
                     title = "Quality of Sleep: Restlessness (mins)")
   print(p)
 }
@@ -292,11 +267,13 @@ plot_sleep_restless_min <- function(Person) {
 #' @param Person The user's data
 #' @return A ggplot2 object, prints to screen
 #' @export
+#' @importFrom ggplot2 labs
 #' @examples
+#' load("../data/EX.rda")
 #' plot_sleep_quality(EX)
 #'
 plot_sleep_quality <- function(Person) {
-  p <- plot_daily(Person, "sleep", "sleepQualityScoreA")
+  p <- plot_daily(Person, "sleepQualityScoreA")
   p <- p + ggplot2::labs(y = "Sleep Quality Score", 
                          title = "Quality of Sleep: Quality Score")
   print(p)
