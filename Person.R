@@ -115,6 +115,7 @@ Person <- R6::R6Class("Person",
                                               hour = lubridate::hour(joined$datetime),
                                               min = lubridate::minute(joined$datetime), 
                                               sec = lubridate::second(joined$datetime))
+      joined <- plyr::rename(joined, replace = c("active-minutes" = "activeMin"))
       return(joined)
       },
      
