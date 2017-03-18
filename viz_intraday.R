@@ -1,71 +1,191 @@
 #' @include global_var.r
-#' #' A generic function to create a line graph for a single continuous variable
+#' Line graph for a single continuous variable.
 #' 
-#' @param Person
-#' @param measure_var_name
-#' @param unit
-#' @return 
+#' @description Plots a line graph for a single continuous variable.  User can
+#' specify if they want to look at an aggregate of a variable over the course of 
+#' a day or look at that variable at every interval (i.e. every 15 minutes for 
+#' the entire date range)
+#' 
+#' @param Person The user's data
+#' @param measure_var character vector denoting the variables of interest.
+#' Options are one or more of: "steps", "floors", "distance", "caloriesBurned",
+#' "bpm" (heart rate), "weight"
+#' @param avg_to_get_typical_day Logical variable "daily" for an aggregate of the variable over
+#' the course of a day, or "intraday" for the variable at every interval over
+#' the range
+#' @return A ggplot2 object, printed to screen xxx (is this true? or will i change it so it returns nothing?)
 #' @export
 #' @examples
-plot_i <- function(Person, measure_var_name, unit = "daily") {
-  if (unit == "daily") {
-    # Put data in right format
-    data <- Person$fitbit_intraday[ , c("time", measure_var_name)]
+#' load("../data/EX.rda")
+#' plot_i(EX, "steps")
+#' plot_i(EX, "distance", "intraday")
+#' plot_i_cal(EX)
+#' plot_i_cal(EX, "intraday")
+#' plot_i_active_min(EX)
+#' plot_i_active_min(EX, "intraday")
+plot_i <- function(Person, measure_var, avg_to_get_typical_day = TRUE) {
+  if (avg_to_get_typical_day) {
+    
+    # Pull and wrangle data
+    data <- Person$fitbit_intraday[ , c("time", measure_var)]
     data <- dplyr::group_by(data, time)
     data <- dplyr::summarize_(data, avg = 
-                                stringr::str_c("mean(", measure_var_name, ", na.rm = TRUE)"))
+                                stringr::str_c("mean(", measure_var, ", na.rm = TRUE)"))
     data <- data[complete.cases(data), ]
 
     p <- ggplot2::ggplot(data = data,
                          mapping = ggplot2::aes(x = time, y = avg)) +
-      ggplot2::geom_line(color = CARDINAL)  +
+      ggplot2::geom_step(color = CARDINAL)  +
       ggplot2::scale_x_datetime(date_labels = "%H:%M %p", 
                                 date_breaks = "3 hours") +
-      ggplot2::labs(x = "Time")
-  } else if (unit == "intraday") {
-    data <- Person$fitbit_intraday[ , c("datetime", measure_var_name)]
+      ggplot2::labs(x = "Time of Typical Day",
+                    title = stringr::str_c(
+                      "Average",
+                      stringr::str_to_title(measure_var),
+                      "Per 15 Min Interval vs Time of Day", sep = " "))
+  } else if (!avg_to_get_typical_day) {
+    data <- Person$fitbit_intraday[ , c("datetime", measure_var)]
     data <- data[complete.cases(data), ]
     p <- ggplot2::ggplot(data = data,
-                         mapping = ggplot2::aes(x = datetime, y = data[[measure_var_name]])) +
-      ggplot2::geom_line(color = CARDINAL, alpha = 0.5) +
-      ggplot2::labs(x = "Date")
+                         mapping = ggplot2::aes(x = datetime, y = data[[measure_var]])) +
+      ggplot2::geom_step(color = CARDINAL, alpha = 0.5) +
+      ggplot2::labs(x = "Date-Time",
+                    title = stringr::str_c(stringr::str_to_title(measure_var),
+                      "Per 15 Min Interval vs Date-Time", sep = " "))
   } else {
-    stop("'unit' must be 'daily' or 'intraday'")
+    stop("must have a logical value for avg_to_get_typical_day")
   }
-    p <- p +
-      ggplot2::labs(y = stringr::str_to_title(
-                      stringr::str_extract(measure_var_name, "[^i].*")),
-                    title = stringr::str_c(stringr::str_to_title(
-                      stringr::str_extract(measure_var_name, "[^i].*")),
-                      " by Time of Day"))
+  p <- p +
+      ggplot2::labs(y = stringr::str_to_title(measure_var))
     return(p)
 }
 
-# create a switch table
-plot_i(RA, "steps")
-plot_i(RA, "steps", "intraday")
-plot_i(RA, "floors")
-plot_i(RA, "floors", "intraday")
-plot_i(RA, "distance")
-plot_i(RA, "distance", "intraday")
-plot_i(RA, "caloriesBurned") # calls plot_i_cal
-plot_i(RA, "caloriesBurned", "intraday") # calls plot_i_cal
-plot_i(RA, "bpm")
-plot_i(RA, "bpm", "intraday")
-# plot_i(RA, "`active-minutes`") - deal with this later
 
-plot_i_cal <- function(Person, unit = "daily") {
-  p <- plot_i(Person, "caloriesBurned", unit)
-  p <- p + 
-    ggplot2::labs(y = "Calories Burned",
-                  title = "Calories Burned by Time of Day")
+
+#' User-friendly way to plot intraday variables.
+#' 
+#' @description xxx
+#' 
+#' @param Person The user's data
+#' @param measure_var Character vector of length 1 denoting the variable of 
+#' interest.  Options include: "steps", "floors", "distance", "caloriesBurned",
+#' "activeMin", "bpm" (heart rate), "weight".
+#' @param avg_to_get_typical_day Logical vector of length 1.  If TRUE, plot gives
+#' an aggregate of the variable over the course of a typical day.  If FALSE, 
+#' plot gives the variable at every interval over the range specified when the
+#' Person object was instantiated.
+#' @param ... Extra arguments used to specify unit for the distance and weight
+#' plots.
+#' @return 
+#' 
+#' @export
+#' @examples
+#' load("../data/EX.rda")
+#' plot_intraday(EX, "steps")
+#' plot_intraday(EX, "distance", unit = "km")
+#' plot_intraday(EX, "caloriesBurned", FALSE)
+#' plot_intraday(EX, "steps", FALSE)
+#' plot_intraday(EX, "bpm")
+plot_intraday <- function(Person, measure_var, avg_to_get_typical_day = TRUE, ...) {
+  switch(measure_var,
+         steps = plot_i(Person, "steps", avg_to_get_typical_day),
+         floors = plot_i(Person, "floors", avg_to_get_typical_day),
+         distance = plot_i_distance(Person, avg_to_get_typical_day, ...),
+         caloriesBurned = plot_i_cal(Person, avg_to_get_typical_day),
+         activeMin = plot_i_active_min(Person, avg_to_get_typical_day),
+         bpm = plot_i_hr(Person, avg_to_get_typical_day),
+         weight = plot_i_weight(Person, avg_to_get_typical_day, ...)
+         )
+}
+
+#' User-friendly way to plot intraday variables.
+#' 
+#' @description xxx
+#' 
+#' @param Person The user's data
+#' @param avg_to_get_typical_day Logical vector of length 1.  If TRUE, plot gives
+#' an aggregate of the variable over the course of a typical day.  If FALSE, 
+#' plot gives the variable at every interval over the range specified when the
+#' Person object was instantiated.
+#' @param unit The unit of distance, 'mi' by default, but can also specify 'km'
+#' @return 
+#' 
+#' @export
+#' @importFrom ggplot2 labs
+#' 
+#' @examples
+#' load("../data/EX.rda")
+#' plot_i_distance(EX, FALSE)
+#' plot_i_distance(EX, unit = "km")
+plot_i_distance <- function(Person, avg_to_get_typical_day = TRUE, unit = "mi") {
+  if (unit == 'mi') {
+    p <- plot_i(Person, "distance", avg_to_get_typical_day) +
+      ggplot2::labs(y = "Distance (mi)")
+  } else if (unit == "km") {
+    p <- plot_i(Person, "distanceKm", avg_to_get_typical_day) +
+      ggplot2::labs(y = "Distance (km)")
+    if (avg_to_get_typical_day) {
+      p <- p + ggplot2::labs(title = 
+                               "Average Distance Per 15 Min Interval vs Time of Day")
+    } else if (!avg_to_get_typical_day) {
+      p <- p + ggplot2::labs(title = 
+                               "Distance Per 15 Min Interval vs Date-Time")
+    }
+  } else {
+    stop("unit must be 'lb' or 'kg'")
+  }
   return(p)
 }
-plot_i_cal(RA)
-plot_i_cal(RA, "intraday")
 
-# Heart Rate Data
-# Heart Rate Zones
+#' @describeIn plot_i Line graph for calories burned over time.
+plot_i_cal <- function(Person, avg_to_get_typical_day = TRUE) {
+  p <- plot_i(Person, "caloriesBurned", avg_to_get_typical_day)
+  if (avg_to_get_typical_day) {
+    p <- p + 
+      ggplot2::labs(y = "Calories Burned",
+                    title = "Average Calories Burned Per 15 Min Interval vs Time of Day")
+  } else if (!(avg_to_get_typical_day)) {
+    p <- p + 
+      ggplot2::labs(y = "Calories Burned",
+                    title = "Calories Burned Per 15 Min Interval vs Date-Time")
+  }
+  return(p)
+}
+
+#' @describeIn plot_i Line graph for active minutes per 15 minute interval over 
+#' time.
+plot_i_active_min <- function(Person, avg_to_get_typical_day = TRUE) {
+  p <- plot_i(Person, "activeMin", avg_to_get_typical_day)
+  if (avg_to_get_typical_day) {
+    p <- p + 
+      ggplot2::labs(y = "Minutes Active (per 15 minutes)",
+                    title = "Average Active Minutes Per 15 Min Interval vs Time of Day")
+  } else if (!(avg_to_get_typical_day)) {
+    p <- p + 
+      ggplot2::labs(y = "Minutes Active (per 15 minutes)",
+                    title = "Average Active Minutes Per 15 Min Interval vs Date-Time")
+  }
+  return(p)
+}
+
+
+#' Calculate Heart Rate Zones.
+#' 
+#' @description Heart Rate Zones are calculated on the basis of age.  The 
+#' estimated maximum heart rate is calculated as 220 - the age of the user.  
+#' The peak heart rate zone is 85% greater than maximum heart rate, the cardio
+#' heart rate zone is between 70 and 84% of maximum, and the fat burn heart
+#' rate zone is between 50 and 69% of maximum.
+#' 
+#' @param Person The user's data
+#' @return Returns a list with 3 vectors of length 2: peak, cardio, and fat_burn
+#' @seealso \url{https://help.fitbit.com/articles/en_US/Help_article/1565#zones}
+#' 
+#' @export
+#' 
+#' @example
+#' load("../data/EX.rda")
+#' get_hr_zones(EX)
 get_hr_zones <- function(Person) {
   age <- Person$user_info$age
   max_hr <- HR_MAX_BEFORE_AGE - age
@@ -76,26 +196,28 @@ get_hr_zones <- function(Person) {
   return(hr_zones)
 }
 
-plot_i_hr <- function(Person, unit = "daily") {
-  if (unit == "daily") {
-    p <- plot_i(Person, "bpm", unit) + 
+#' @describeIn plot_i Line graph for heart rate per 5 minute interval across a
+#' typical day or over date-time.
+#' @seealso \code{\link{get_hr_zones}}
+plot_i_hr <- function(Person, avg_to_get_typical_day = TRUE) {
+  if (avg_to_get_typical_day) {
+    p <- plot_i(Person, "bpm", avg_to_get_typical_day) + 
       ggplot2::labs(y = "Heart Rate (bpm)",
-                    title = "Heart Rate by Time of Day")
-  } else if (unit == "intraday") {
-    p <- plot_i_hr_intraday(Person)
+                    title = "Average Heart Rate Per 5 Min Interval vs Time of Day")
+  } else if (!avg_to_get_typical_day) {
+    p <- plot_i_hr_datetime(Person)
   } else {
-    stop("unit must be 'daily' or 'intraday'")
+    stop("'avg_to_get_typical_day' must be a logical value")
   }
   return(p)
 }
 
-plot_i_hr(RA)
-plot_i_hr(RA, "intraday")
-
-plot_i_hr_intraday <- function(Person) {
+#' @describeIn plot_i Line graph for heart rate per 5 minute interval across a
+#' typical day.
+plot_i_hr_avg_datetime <- function(Person) {
   hr_zones <- get_hr_zones(Person)
 
-  p <- plot_i(Person, "bpm", "intraday")  + 
+  p <- plot_i(Person, "bpm", avg_to_get_typical_day = FALSE)  + 
     ggplot2::annotate("rect",
                       xmin = rep(as.POSIXct(Person$start_date), 3),
                       xmax = rep(as.POSIXct(Person$end_date), 3),
@@ -109,37 +231,36 @@ plot_i_hr_intraday <- function(Person) {
                       label = c("Fat burn", "Cardio", "Peak"),
                       hjust = -0.1,
                       vjust = -0.1) +
-    ggplot2::labs(x = "Date", y = "Heart Rate (bpm)",
-                 title = "Heart Rate over 5 minute intervals over time")
+    ggplot2::labs(x = "Date-Time", y = "Heart Rate (bpm)",
+                 title = "Average Heart Rate Per 5 Min Interval vs Date-Time")
   return(p)
 }
 
-plot_i_hr_intraday(RA)
+#' @describeIn plot_i Line graph for weight over time.
+plot_i_weight <- function(Person, avg_to_get_typical_day = TRUE, unit = "lb") {
+  if (unit == "lb") {
+    p <- plot_i(Person, "weight", avg_to_get_typical_day) +
+      ggplot2::labs(y = "Weight (lbs)")
+  } else if (unit == "kg") {
+    p <- plot_i(Person, "weightKg", avg_to_get_typical_day) +
+      ggplot2::labs(y = "Weight (kg)")
+  } else {
+    stop("unit must be 'lb' or 'kg'")
+  }
+  
+  if (avg_to_get_typical_day) {
+    p <- p +
+      ggplot2::labs(title = "Weight vs Time of Day")
+  } else if (!(avg_to_get_typical_day)) {
+    p <- p +
+      ggplot2::labs(title = "Weight vs Date-Time")
+  } else {
+    stop("'avg_to_get_typical_day' must be a logical value")
+  }
+  return(p)
+}
 
-# Person$data$ical_burn$activityLevel -> Very Active
 # Overlay sleep with Heart Rate
-
-
-# also want to plot weights over course of the day
 
 # Multiple Measures
 
-# Plot 8: Weight
-plot_daily_weight <- function(Person) {
-  p <- plot_i(Person, "weight") 
-  p + ggplot2::labs(y = "Weight (lbs)")
-}
-plot_daily_weight(RA)
-
-# plot <- function(Person, type = c("weight", "sleep", etc.)){
-#   switch(type)
-#   case "weight"
-#   plot_weight(obj)
-#   case "sleep"
-#   plot_sleep(obj)
-#   ...
-# }
-# 
-# plot_weight <- function(Person){
-#   plot_weight
-# }

@@ -116,6 +116,8 @@ Person <- R6::R6Class("Person",
                                               min = lubridate::minute(joined$datetime), 
                                               sec = lubridate::second(joined$datetime))
       joined <- plyr::rename(joined, replace = c("active-minutes" = "activeMin"))
+      joined$distanceKm <- joined$distance * MI_TO_KM
+      joined$weightKg <- joined$weight * LB_TO_KG
       return(joined)
       },
      
