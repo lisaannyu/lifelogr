@@ -37,7 +37,7 @@ Person <- R6::R6Class("Person",
       # ^ NOTE: need to do the manipulations to get it into the same format as fitbit
     # or have the user pass in a matching dataframe
     #list of group assignments
-    self$groupings <- group_assignments
+    self$groupings <- group_assignments # convert these to tibbles
     }),
   
   private = list(

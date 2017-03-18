@@ -165,14 +165,51 @@ panova <- function(dataset = NA, person, variables, measures){
   # should return lists of anovas?
 }
 
-
-ttest <- function(dataset = NA, person, variables, measures, vars.sources,
-                  meas.sources){
+# Groupings is an optional list of group assignments to do the ttest on - 
+# otherwise, does the test on each of the group_assignments person contains
+# dataset, if passed in, is the dataset with everything in it except the group
+# assignments variables
+# compares (averages, t test if only two, variance, ?plot, ?histogram) 
+#  each variable in variables_to_compare between the groups in groupings
+# For now, variables is a simple list, 1D, no sources
+# group assignments variable has to be named 'group'
+# names_of_groupings are names of groupings want to analyze (must be in person
+# named that way or passed in in addl)
+# Maybe should be able to pass groupings_df directly to this function
+ttest <- function(dataset = NA, person, names_of_groupings = NA, 
+                  addl_grouping_assignments = NA, variables_to_compare){
   if (!is.data.frame(dataset)){
-    dataset <- create_dataset(person, all_variables = merge_lists(list(variables,
-                                                                       measures)),
-                              time_var = time_var)
+    # PRINT ERROR
+    # don't want users to have to think at the level of time variables so requiring
+    # them to pass in a dataset but debatable
   }
+  if (all(is.na(names_of_groupings))){
+    names_of_groupings <- names(person$groupings)
+  }
+  
+  # append addl_grouping_assignments to person's grouping assignments
+  all_group_maps <- c(person$groupings, addl_grouping_assignments)
+  
+  # From the dataset, keep the variables to compare, join on each groupings 
+  # assignment with the column labeled by the groupings name
+  # dataset <- dataset[, variables_to_compare]
+  for (grouping in names_of_groupings){
+    print(grouping)
+    # join this grouping onto the dataset
+    merge_var <- names(all_group_maps[[grouping]])[names(all_group_maps[[grouping]]) != "group"]
+    g_dataset <- merge(dataset, all_group_maps[[grouping]], by = merge_var)
+
+    # for each variable in variables to compare
+    compare_groups <- function(variable){
+      print(variable)
+      print(dplyr::summarise_(dplyr::group_by(g_dataset, group),
+                mean = lazyeval::interp(~mean(v), v=as.name(variable)),
+                sd = lazyeval::interp(~sd(v), v=as.name(variable))))
+    }
+    
+    lapply(variables_to_compare, compare_groups)
+  }
+  return(dataset)
   
 }
 
