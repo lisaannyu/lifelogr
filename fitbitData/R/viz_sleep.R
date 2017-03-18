@@ -1,6 +1,6 @@
 #' @include viz_daily.R, experiments.R
 
-#' A function to plot a series of six sleep graphs
+#' Plot a series of six sleep graphs
 #' 
 #' @description Returns six plots: two are related to quantity of sleep, and 
 #' four are related to quality of sleep
@@ -17,9 +17,9 @@
 #' @export
 #' @example
 #' load("../data/EX.rda")
-#' plot_sleep(EX)
+#' plot_sleep_all(EX)
 #'
-plot_sleep <- function(Person) {
+plot_sleep_all <- function(Person) {
   dev.hold()
   plot_sleep_weekday(Person)
   readline(prompt = "Press [enter] to continue")
@@ -51,6 +51,38 @@ plot_sleep <- function(Person) {
   invisible()
 }
 
+#' Plot sleep.
+#' 
+#' @description Returns one of six plots: two are related to quantity of sleep, 
+#' and four are related to quality of sleep
+#' 1.  Sleep by day of week (bar graph)
+#' 2.  Start and end of sleep period for each day in the range
+#' 3.  Duration of sleep and time asleep over time
+#' 4.  Proportion of time spent restless out of total sleep duration over time
+#' 5.  Time spent restless over time (in minutes)
+#' 6.  Sleep quality over time (subjective score, out of 100)
+#' 
+#' @param Person The user's data
+#' @param plot_type The type of plot.  Options include: "by_weekday", 
+#' "by_start_end_time", "by_datetime", "by_restless_prop", "by_restless_min", 
+#' "by_quality".  Default is to plot all six.
+#' @return A ggplot2 object
+#' @export
+#' @example
+#' load("../data/EX.rda")
+#' plot_sleep(EX)
+#'
+plot_sleep <- function(Person, plot_type = "all") {
+  switch(plot_type,
+    by_weekday = plot_sleep_weekday(Person),
+    by_start_end_time = plot_sleep_start_end(Person),
+    by_datetime = plot_sleep_over_time(Person),
+    by_restless_prop = plot_sleep_restless_prop(Person),
+    by_restless_min = plot_sleep_restless_min(Person),
+    by_quality = plot_sleep_quality(Person),
+    all = plot_sleep_all(Person)
+  )
+}
 
 # Quantity of Sleep
 
