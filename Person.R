@@ -11,7 +11,9 @@ Person <- R6::R6Class("Person",
   groupings = NULL, # named list of dataframes each with 2 columns: 1. a known 
   # variable (date, weekend, etc.) and 2. "group" with the group assignment for 
   # observations with that variable of that value
+  apple = NULL,
   initialize = function(user_email = NA, user_pw = NA, user_info = NA, 
+                        apple_data_file = NA,
                         target_steps = 10000,
                         addl_data = NA, group_assignments = NA,
                         start_date = NA, end_date = NA) {
@@ -27,6 +29,14 @@ Person <- R6::R6Class("Person",
     #self$fitbit_daily <- private$get_fitbit_daily(user_email, user_pw) 
     self$fitbit_intraday <- private$get_fitbit_intraday(user_email, user_pw)
     self$fitbit_daily <- private$get_fitbit_daily(user_email, user_pw)
+    
+    if (!is.na(apple_data_file)){
+      self$apple <- read.csv(apple_data_file) # user needs to pass in path from this
+      # directory to file
+    }
+      # ^ NOTE: need to do the manipulations to get it into the same format as fitbit
+    # or have the user pass in a matching dataframe
+    #list of group assignments
     self$groupings <- group_assignments
     }),
   
