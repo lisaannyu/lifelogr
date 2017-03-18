@@ -1,4 +1,4 @@
-#' @include global_var.R, experiment.R
+#' @include global_var.R, experiments.R
 #' 
 #' Tidy daily data.
 #' 
@@ -140,27 +140,39 @@ plot_distance <- function(Person, unit = "mi") {
 }
 
 # Plot 4: Calories burned vs intake
-# I expect the intake to be highly inaccurate: who actually records all they intake?
-# interesting to put with weight
-# plot_cal <- function(Person) {
-#   if (sum(Person$fitbit$cal_ratio$caloriesIntake) == 0) {
-#     p <- plot_daily(Person, "cal_ratio", "caloriesBurned")
-#     p <- p + ggplot2::labs(y = "Calories", title = "Calories Burned")
-#   } else if (sum(Person$fitbit$cal_ratio$caloriesIntake) != 0) {
-#     data <- Person$fitbit$cal_ratio
-#     data <- tidyr::gather(data, key = "measure", value = "cal", -time)
-# 
-#     # should I create a generic 2 lines function?
-#     ggplot2::ggplot(data = data, mapping = ggplot2::aes(x = time, y = cal)) +
-#       ggplot2::geom_line(mapping = ggplot2::aes(color = measure)) +
-#       ggplot2::labs(x = "Date", y = "Calories", 
-#                     title = "Calories Burned and Consumed") +
-#       ggplot2::guides(color = ggplot2::guide_legend(NULL)) +
-#       ggplot2::scale_color_discrete(labels = c("Burned", "Consumed"))
-#   }
-#   return(p)
-# }
-# plot_cal(RA)
+#' Plot calories over time.  
+#' 
+#' @description Returns a line plot plotting calories burned over time.  If
+#' calories consumed are in the dataset, it also plots calories consumed.
+#' 
+#' @param Person The user's data
+#' 
+#' @export
+#' @importFrom ggplot2 labs ggplot geom_line aes guides guide_legend scale_color_discrete
+#' @example
+#' load("../data/EX.rda")
+#' plot_cal(EX)
+plot_cal <- function(Person) {
+  data <- create_dataset(person = Person,
+                         all_variables = 
+                           list("fitbit_daily" = c("caloriesBurned", "caloriesIntake")), 
+                         time_var = c("date"))
+  if (sum(data$caloriesIntake, na.rm = TRUE) == 0) {
+    p <- plot_daily(Person, "caloriesBurned")
+    p <- p + ggplot2::labs(y = "Calories", title = "Calories Burned")
+  } else if (sum(data$caloriesIntake, na.rm = TRUE) != 0) {
+    data <- tidy_multi_meas_data(data)
+
+    p <- ggplot2::ggplot(data = data, mapping = 
+                           ggplot2::aes(x = date, y = value)) +
+      ggplot2::geom_line(mapping = ggplot2::aes(color = measures)) +
+      ggplot2::labs(x = "Date", y = "Calories",
+                    title = "Calories Burned and Consumed") +
+      ggplot2::guides(color = ggplot2::guide_legend("Calories")) +
+      ggplot2::scale_color_discrete(labels = c("Burned", "Consumed"))
+  } 
+  return(p)
+}
 
 # Plot 5: Minutes Very
 #' Plot minutes 'very active' over time.  
@@ -172,6 +184,7 @@ plot_distance <- function(Person, unit = "mi") {
 #' 
 #' @export
 #' @importFrom ggplot2 labs
+#' 
 #' @examples
 #' load("../data/EX.rda")
 #' plot_mins_very(EX)
@@ -183,31 +196,24 @@ plot_mins_very <- function(Person) {
 }
 
 # Plot 6: Resting Heart Rate
+#' Plot resting heart rate over time.  
+#' 
+#' @description Returns a line plot plotting heart rate (in beats per minute)
+#' over time.  According to the National Institute of Health, the average
+#' resting heart rate for persons 10 and older (including seniors) is 60 - 100.
+#' However, well-trained athletes can have resting heart rates between 40 and 
+#' 60.
+#' 
+#' @param Person The user's data
+#' 
+#' @export
+#' @importFrom ggplot2 labs
+#' 
+#' @examples
+#' load("../data/EX.rda")
+#' plot_rest_hr(EX)
 plot_rest_hr <- function(Person) {
   plot_daily(Person, "restingHeartRate") +
     ggplot2::labs(y = "Resting Heart Rate (bpm)", title = "Resting Heart Rate")
 }
 plot_rest_hr(EX)
-# Should be between 60 and 100, but can be lower, especially for physically active people
-# maybe add this info to the Shiny app
-
-
-# Plot 8: Weight
-plot_daily_weight <- function(Person) {
-  p <- plot_daily(Person, "weight", "weight") 
-  p + ggplot2::labs(y = "Weight (lbs)")
-}
-plot_daily_weight(RA)
-
-# plot <- function(Person, type = c("weight", "sleep", etc.)){
-#   switch(type)
-#   case "weight"
-#   plot_weight(obj)
-#   case "sleep"
-#   plot_sleep(obj)
-#   ...
-# }
-# 
-# plot_weight <- function(Person){
-#   plot_weight
-# }
