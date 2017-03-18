@@ -8,6 +8,7 @@ group_months <- data.frame("month"= c("Jan", "Feb", "March", "April", "May",
 
 # need to make this faster
 RA <- Person$new(user_email = "rohisha@gmail.com", user_pw = "datasamplepw",
+                 apple_data_file = "apple.csv",
                  user_info = list("name" = "RA", "age" = 23, "gender" = "female"),
                  target_steps = 10000,
                  group_assignments = list("group_months" = group_months, data.frame(NA)),
