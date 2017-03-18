@@ -1,11 +1,17 @@
 source("Person.R")
 
+group_months <- data.frame("month"= c("Jan", "Feb", "March", "April", "May",
+                                        "June", "July", "Aug",
+                                        "Sept", "Oct", "Nov", "Dec"),
+                              "group" = c(0, 0, 0, 1, 1, 1, 1, 1, 1, 0, 0, 0))
+
+
 # need to make this faster
 RA <- Person$new(user_email = "rohisha@gmail.com", user_pw = "datasamplepw",
                  user_info = list("name" = "RA", "age" = 23, "gender" = "female"),
                  target_steps = 10000,
-                 group_assignments = list(data.frame(NA), data.frame(NA)),
-                 start_date = "2017-02-09", end_date = "2017-03-12")
+                 group_assignments = list("group_months" = group_months, data.frame(NA)),
+                 start_date = "2017-03-11", end_date = "2017-03-12")
 
 EX <- Person$new(user_email = "rohisha@gmail.com", user_pw = "datasamplepw",
                  user_info = list("name" = "EX", "age" = 29, "gender" = "male"),
@@ -87,36 +93,15 @@ devtools::use_package("ggplot2", type = "Imports", pkg = pkgName)
 devtools::use_package("shiny", type = "Imports", pkg = pkgName)
 ############## TO DO/FOR REFERENCE ###################
 
-# analyze sleep function for aggregating heart rate, etc. curves
-
 # add capability for t testing based on two groups in additional data
-
-
+# analyze sleep function for aggregating heart rate, etc. curves
 # sleep experimentation - curves and when drops etc.
 # visualize when awake/restless normed to start/not?
 
 # figure out how to aggregate hr zone data, time intervals 
+# add 15 min bpm average column
+# figure out time, date, datetimes
 
-
-# 
-# For the date-times, can you create POSIXct objects?
-# 
-# Like so: lubridate::ymd_hms(df$startDateTime, tz = Sys.timezone())
-# 
-# And for dates you can just use lubridate::ymd(df$date) to create Date objects
-# 
-# For the time data frame, could you also have another variable called time_only or something like that?  And then we can use this cheater way:
-#   
-# data$time <- lubridate::make_datetime(year = "1970", month = "01", day = "01",
-#                                       hour = lubridate::hour(data$time),
-#                                       min = lubridate::minute(data$time))
-# #person$fitbit$daily gives dataframe with names "date", "rest_hr", "steps", etc.
-#person$fitbit[, c("date", "steps")]
-
-#person$fitbit$intraday
-
-#person$fitbit$steps gives df with names date, steps
-#lubridate
 
 # names(RA$fitbit)
 # [1] "isteps"           

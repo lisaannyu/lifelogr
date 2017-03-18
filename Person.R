@@ -27,6 +27,8 @@ Person <- R6::R6Class("Person",
     #self$fitbit_daily <- private$get_fitbit_daily(user_email, user_pw) 
     self$fitbit_intraday <- private$get_fitbit_intraday(user_email, user_pw)
     self$fitbit_daily <- private$get_fitbit_daily(user_email, user_pw)
+    
+    #list of group assignments
     self$groupings <- group_assignments
     }),
   
