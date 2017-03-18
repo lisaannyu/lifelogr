@@ -189,6 +189,13 @@ Person <- R6::R6Class("Person",
         joined$datetime <- joined$date#lubridate::ymd_hms(joined$time, tz = Sys.timezone())
         joined$minsRestlessAwake <- joined$sleepDuration - joined$minAsleep
         
+        # create sleepDurationHrs and minAsleepHrs and restlessProp
+        joined <- dplyr::mutate(joined,
+                                sleepDurationHrs = sleepDuration / 60,
+                                minAsleepHrs = minAsleep / 60,
+                                restlessProp = 
+                                  (sleepDurationHrs - minAsleepHrs) / 
+                                  sleepDurationHrs * 100)
         return(joined)
       }
     

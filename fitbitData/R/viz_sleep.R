@@ -15,7 +15,8 @@
 #' @return A ggplot2 object
 #' @importFrom ggplot2 ggplot aes geom_col guides guide_legend scale_fill_discrete
 #' @export
-#' @examples
+#' @example
+#' load("../data/EX.rda")
 #' plot_sleep(EX)
 #'
 plot_sleep <- function(Person) {
@@ -24,10 +25,10 @@ plot_sleep <- function(Person) {
   readline(prompt = "Press [enter] to continue")
   dev.flush()
   
-  # dev.hold()
-  # plot_sleep_start_end(Person)
-  # readline(prompt = "Press [enter] to continue")
-  # dev.flush()
+  dev.hold()
+  plot_sleep_start_end(Person)
+  readline(prompt = "Press [enter] to continue")
+  dev.flush()
   
   dev.hold()
   plot_sleep_over_time(Person)
@@ -65,8 +66,8 @@ plot_sleep <- function(Person) {
 #' @importFrom tidyr gather
 #' @importFrom lubridate wday
 #' @export
-#' @examples
-#' load(EX)
+#' @example
+#' load("../data/EX.rda")
 #' tidy_sleep_weekday(EX)
 #'
 tidy_sleep_weekday <- function(Person) {
@@ -94,6 +95,7 @@ tidy_sleep_weekday <- function(Person) {
 #' @importFrom ggplot2 ggplot aes geom_col labs guides guide_legend scale_fill_discrete
 #' @export
 #' @examples
+#' load("../data/EX.rda")
 #' plot_sleep_weekday(EX)
 #'
 # Plot 1: by day of week
@@ -123,6 +125,7 @@ plot_sleep_weekday <- function(Person) {
 #' @importFrom ggplot2 ggplot aes geom_col labs guides guide_legend scale_fill_discrete
 #' @export
 #' @examples
+#' load("../data/EX.rda")
 #' plot_sleep_start_end(EX)
 #' plot_sleep_start_end(EX, "day_of_week")
 #'
@@ -145,17 +148,14 @@ plot_sleep_start_end <- function(Person, color_var = "day_type") {
                          time_var = c("date"))
   
   # If went to sleep before midnight adjust the start time
-  # data$startTime <-
-  #   ifelse(as.Date(as.POSIXct(data$startTime, format = "%H:%M")) !=
-  #            as.Date(as.POSIXct(data$endTime, format = "%H:%M")),
-  #          as.POSIXct(data$startTime, format = "%H:%M") - lubridate::days(1),
-  #          as.POSIXct(data$startTime, format = "%H:%M"))
-  # 
-  # data$startTime <- as.POSIXct(data$startTime, origin = "1970-01-01")
-  # data$endTime <- as.POSIXct(data$endTime, format = "%H:%M")
-  
-  
-  # COME BACK TO THIS
+  data$startTime <- 
+    ifelse(as.Date(as.POSIXct(data$startTime, format = "%H:%M")) !=
+             as.Date(as.POSIXct(data$endTime, format = "%H:%M")),
+           as.POSIXct(data$startTime, format = "%H:%M") - lubridate::days(1),
+           as.POSIXct(data$startTime, format = "%H:%M"))
+  data$startTime <- as.POSIXct(data$startTime, origin = "1970-01-01", tz = Sys.timezone())
+  data$endTime <- as.POSIXct(data$endTime, format = "%H:%M")
+
   p <- ggplot2::ggplot(data = data) +
     ggplot2::geom_segment(mapping =
                             ggplot2::aes_string(x = data$date,
@@ -163,13 +163,13 @@ plot_sleep_start_end <- function(Person, color_var = "day_type") {
                                                 y = data$startTime,
                                                 yend = data$endTime,
                                                 color = color_var)) +
-    ggplot2::labs(x = "Date", y = "Hours Asleep", 
-                  title = "Sleep Start and End Times") +
+    ggplot2::labs(x = "Date", y = "Hours Asleep",
+                  title = "Sleep Start and End Times")  +
     ggplot2::coord_cartesian(xlim = c(max(data$date), min(data$date))) +
     ggplot2::scale_y_datetime(date_labels = "%H:%M %p",
                               date_breaks = "3 hours",
-    ) +
-    ggplot2::guides(color = ggplot2::guide_legend(NULL))  +
+    )  +
+    ggplot2::guides(color = ggplot2::guide_legend(NULL)) +
     ggplot2::scale_color_discrete(labels = stringr::str_to_title) +
     ggplot2::coord_flip()
   print(p)
@@ -218,18 +218,8 @@ plot_sleep_over_time <- function(Person) {
 #' plot_sleep_restless_prop(EX)
 #'
 plot_sleep_restless_prop <- function(Person) {
-  data <- create_dataset(person = Person,
-                         all_variables = 
-                           list("fitbit_daily" = c("sleepDurationHrs", 
-                                                   "minAsleepHrs")), 
-                         time_var = c("date"))
-  p <- 
-    ggplot2::ggplot(data = data) +
-      ggplot2::geom_line(mapping = 
-                           ggplot2::aes(x = date, 
-                                        y = ((sleepDurationHrs - minAsleepHrs) / 
-                                                sleepDurationHrs) * 100),
-                         color = CARDINAL) +
+  p <- plot_daily(Person, "restlessProp")
+  p <- p + 
       ggplot2::labs(x = "Date", y = "Percent of Restless Sleep",
                     title = "Quality of Sleep: Restlessness (%)")
   print(p)
