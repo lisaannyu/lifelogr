@@ -1,6 +1,9 @@
 #' @include global_var.R
 #' @include experiments.R
+#' 
 
+source("lifelogr/R/Person.R")
+source("lifelogr/R/global_var.R")
 group_months <- data.frame("month" = c("Jan", "Feb", "Mar", "Apr", "May",
                                         "Jun", "Jul", "Aug",
                                         "Sep", "Oct", "Nov", "Dec"),
@@ -122,3 +125,4 @@ devtools::use_package("tibble", type = "Imports", pkg = pkgName)
 
 # use command line to do R CMD BUILD lifelogr
 # use command line to do R CMD CHECK lifelogr._0...
+
