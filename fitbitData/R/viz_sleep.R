@@ -2,7 +2,7 @@
 
 #' Plot a series of six sleep graphs
 #' 
-#' @description Returns six plots: two are related to quantity of sleep, and 
+#' @description Prints six plots: two are related to quantity of sleep, and 
 #' four are related to quality of sleep
 #' 1.  Sleep by day of week (bar graph)
 #' 2.  Start and end of sleep period for each day in the range
@@ -53,7 +53,7 @@ plot_sleep_all <- function(Person) {
 
 #' Plot sleep.
 #' 
-#' @description Returns one of six plots: two are related to quantity of sleep, 
+#' @description Prints one of six plots: two are related to quantity of sleep, 
 #' and four are related to quality of sleep
 #' 1.  Sleep by day of week (bar graph)
 #' 2.  Start and end of sleep period for each day in the range

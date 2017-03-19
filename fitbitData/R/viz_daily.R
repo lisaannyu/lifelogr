@@ -1,43 +1,121 @@
 #' @include global_var.R, experiments.R
+#' Plot a series of six graphs.
+#' 
+#' @description Prints six plots, each showing daily totals over time: 
+#' 1.  Steps
+#' 2.  Floors
+#' 3.  Distance: in the default unit, miles
+#' 4.  Calories
+#' 5.  Minutes 'very active'
+#' 6.  Resting heart rate
+#' 
+#' @param Person The user's data
+#' @return NULL, but plots printed to screen
+#' @export
+#' @example
+#' load("../data/EX.rda")
+#' plot_daily_all(EX)
+#'
+plot_daily_all <- function(Person) {
+  
+  dev.hold()
+  plot_steps(Person)
+  readline(prompt = "Press [enter] to continue")
+  dev.flush()
+  
+  dev.hold()
+  plot_floors(Person)
+  readline(prompt = "Press [enter] to continue")
+  dev.flush()
+  
+  dev.hold()
+  plot_distance(Person)
+  readline(prompt = "Press [enter] to continue")
+  dev.flush()
+  
+  dev.hold()
+  plot_cal(Person)
+  readline(prompt = "Press [enter] to continue")
+  dev.flush()
+  
+  dev.hold()
+  plot_mins_very(Person)
+  readline(prompt = "Press [enter] to continue")
+  dev.flush()
+  
+  dev.hold()
+  plot_rest_hr(Person)
+  readline(prompt = "Press [enter] to continue")
+  invisible()
+}
+
+#' Plot daily health totals.
+#' 
+#' @description Prints one of six plots, each showing daily totals over time.
+#' 
+#' @param Person The user's data
+#' @param measure_var Default is to print all six plots.  Options include:
+#'     "steps", "floors", "distance", "calories", "mins_very", "rest_hr", "all".
+#' @param ... Extra arguments used to specify unit for the distance plot.
+#' @return NULL, but plots printed to screen
+#' @export
+#' @examples
+#' load("../data/EX.rda")
+#' plot_daily(EX, "steps")
+#' plot_daily(EX, "distance", "km")
+#'
+plot_daily <- function(Person, measure_var = "all", ...) {
+  switch(measure_var,
+         steps = plot_steps(Person),
+         floors = plot_floors(Person),
+         distance = plot_distance(Person, ...),
+         calories = plot_cal(Person),
+         mins_very = plot_mins_very(Person),
+         rest_hr = plot_rest_hr(Person),
+         all = plot_daily_all(Person)
+  )
+}
+
 #' 
 #' Tidy daily data.
 #' 
 #' @description Tidy daily data with multiple measures.
 #' 
 #' @param data Data with columns date and other columns of interest.  If 
-#' multiple measures are passed in, they must be of the same type
-#' @return Tidy data with the columns date, measures, and value
+#'     multiple measures are passed in, they must be of the same type.
+#' @return Tidy tibble with the columns date, measures, and value.
 #' 
 #' @export
 #' @importFrom tidyr gather
 #' 
 #' @example
-#' a <- tibble::tibble(date = c("1970-01-01", "1970-01-02", "1970-01-03"), 
-#' sleepDurationHrs = c(7.5, 8.0, 7.9), 
-#' minAsleepHrs = c(7.4, 7.0, 7.7)
-#' )
+#' a <- tibble::tibble(date = 
+#'          lubridate::ymd("1970-01-01", "1970-01-02", "1970-01-03"), 
+#'          sleepDurationHrs = c(7.5, 8.0, 7.9), 
+#'          minAsleepHrs = c(7.4, 7.0, 7.7))
 #' tidy_multi_meas_data(a)
 tidy_multi_meas_data <- function(data) {
   return(tidyr::gather(data, key = "measures", value = "value", -date))
 }
 
-#' A function to create a line graph for a single continuous variable.
+#' Line graph for continuous variable(s).
 #' 
-#' @description Returns a generic line graph with axis labels based on the
-#' names of the variables passed in
+#' @description A "quick-and-dirty" approach to plotting a generic line graph 
+#'     with default axis labels.  Can plot one or more variables.
 #' 
 #' @param Person The user's data
-#' @param measure_data_name
-#' @param measure_var_name
-#' @return 
+#' @param measures A character vector of length one or more indicating the 
+#'     variable(s) of interest.  Options include: "steps", "floors", "distance",
+#'      "calories", "mins_very", "rest_hr".
+#' @return NULL, but plot printed to screen
 #' @export
 #' @importFrom ggplot2 ggplot aes geom_line labs
-#' @importFrom stringr str_to_title
+#' @importFrom stringr str_to_title str_c
 #' @examples
 #' load("../data/EX.rda")
-#' plot_daily(EX, "steps")
-#' plot_daily(EX, c("steps", "distance"))
-plot_daily <- function(Person, measures) {
+#' plot_d(EX, "steps")
+#' plot_d(EX, c("steps", "distance"))
+plot_d <- function(Person, measures) {
   data <- create_dataset(person = Person,
                          all_variables = 
                            list("fitbit_daily" = measures), 
@@ -46,15 +124,21 @@ plot_daily <- function(Person, measures) {
     p <- 
       ggplot2::ggplot(data = data,
                       mapping = ggplot2::aes(x = date, y = data[[measures]]))  +
+      ggplot2::geom_point(color = CARDINAL) +
       ggplot2::geom_line(color = CARDINAL)  +
       ggplot2::labs(y = stringr::str_to_title(measures),
-                    title = stringr::str_to_title(measures))
+                    title = stringr::str_c("Total", 
+                                           stringr::str_to_title(measures),
+                                           "Per Day",
+                                           sep = " "))
   } else if (length(measures) > 1) {
     data <- tidy_multi_meas_data(data)
     p <- 
       ggplot2::ggplot(data = data,
                       mapping = ggplot2::aes(x = date, y = value, color = measures)) +
-      ggplot2::geom_line()
+      ggplot2::geom_point() +
+      ggplot2::geom_line() +
+      ggplot2::labs(title = "Totals Per Day")
   } else {
     stop("Enter a measure you wish to plot")
   }
@@ -65,14 +149,13 @@ plot_daily <- function(Person, measures) {
   return(p)
 }
 
-# Plot 1: Steps
 #' Plot steps per day over time.  
 #' 
-#' @description Returns a line plot plotting steps per day over time.  The
-#' reference line refers to the user's target number of steps.
+#' @description Prints a line plot plotting steps per day over time.  The
+#'     reference line refers to the user's target number of steps.
 #' 
 #' @param Person The user's data
-#' @return A ggplot2 object, prints to screen
+#' @return NULL, but plot printed to screen
 #' 
 #' @export
 #' @importFrom modelr geom_ref_line
@@ -82,41 +165,40 @@ plot_daily <- function(Person, measures) {
 #' plot_steps(EX)
 #'
 plot_steps <- function(Person) {
-  p <- plot_daily(Person, "steps") + 
+  p <- plot_d(Person, "steps") + 
     modelr::geom_ref_line(h = Person$target_steps, colour = "orange", 
                           size = 0.7) +
     ggplot2::labs(title = "Number of Steps Per Day")
-  return(p)
+  print(p)
 }
 
-#' Plot steps per day over time.  
+#' Plot number of floors per day over time.  
 #' 
-#' @description Returns a line plot plotting steps per day over time.  The
-#' reference line refers to the user's target number of steps.
+#' @description Prints a line plot plotting number of floors per day over time.
 #' 
 #' @param Person The user's data
-#' @return A ggplot2 object, prints to screen
+#' @return NULL, but plot printed to screen
 #' 
 #' @export
 #' @importFrom ggplot2 labs
 #' @example
 #' load("../data/EX.rda")
 #' plot_floors(EX)
-# Plot 2: Floors
 plot_floors <- function(Person) {
-  p <- plot_daily(Person, "floors") +
+  p <- plot_d(Person, "floors") +
     ggplot2::labs(title = "Number of Floors Per Day")
+  print(p)
 }
 
-# Plot 3: Distance
+
 #' Plot distance per day over time.  
 #' 
-#' @description Returns a line plot plotting distance in miles or kilometers per 
-#' day over time
+#' @description Prints a line plot plotting distance in miles or kilometers per 
+#'     day over time.
 #' 
 #' @param Person The user's data
 #' @param unit a unit of distance, 'mi' or 'km'.  The default value is 'mi'
-#' @return A ggplot2 object, prints to screen
+#' @return NULL, but plot printed to screen
 #' 
 #' @export
 #' @importFrom ggplot2 labs
@@ -128,27 +210,29 @@ plot_floors <- function(Person) {
 plot_distance <- function(Person, unit = "mi") {
   
   if (unit == "mi") {
-    p <- plot_daily(Person, "distance")
+    p <- plot_d(Person, "distance")
   } else if (unit == "km") {
-    p <- plot_daily(Person, "distanceKm")
+    p <- plot_d(Person, "distanceKm")
   } else {
     stop("'unit' must be 'mi' or 'km'")
   }
   
   p <- p + ggplot2::labs(y = paste0("Distance (", unit, ")"), title = "Distance")
-  return(p)
+  print(p)
 }
 
-# Plot 4: Calories burned vs intake
+
 #' Plot calories over time.  
 #' 
-#' @description Returns a line plot plotting calories burned over time.  If
-#' calories consumed are in the dataset, it also plots calories consumed.
+#' @description Prints a line plot plotting calories burned over time.  If
+#'     calories consumed are in the dataset, it also plots calories consumed.
 #' 
 #' @param Person The user's data
+#' @return NULL, but plot printed to screen
 #' 
 #' @export
-#' @importFrom ggplot2 labs ggplot geom_line aes guides guide_legend scale_color_discrete
+#' @importFrom ggplot2 labs ggplot geom_line aes guides guide_legend 
+#'     scale_color_discrete
 #' @example
 #' load("../data/EX.rda")
 #' plot_cal(EX)
@@ -158,7 +242,7 @@ plot_cal <- function(Person) {
                            list("fitbit_daily" = c("caloriesBurned", "caloriesIntake")), 
                          time_var = c("date"))
   if (sum(data$caloriesIntake, na.rm = TRUE) == 0) {
-    p <- plot_daily(Person, "caloriesBurned")
+    p <- plot_d(Person, "caloriesBurned")
     p <- p + ggplot2::labs(y = "Calories", title = "Calories Burned")
   } else if (sum(data$caloriesIntake, na.rm = TRUE) != 0) {
     data <- tidy_multi_meas_data(data)
@@ -171,49 +255,52 @@ plot_cal <- function(Person) {
       ggplot2::guides(color = ggplot2::guide_legend("Calories")) +
       ggplot2::scale_color_discrete(labels = c("Burned", "Consumed"))
   } 
-  return(p)
+  print(p)
 }
 
-# Plot 5: Minutes Very
+
 #' Plot minutes 'very active' over time.  
 #' 
-#' @description Returns a line plot plotting minutes 'very active' per day over 
-#' time.  'Very active' is a subjective term defined by fitbit
+#' @description Prints a line plot plotting minutes 'very active' per day over 
+#'     time.  'Very active' is a subjective term defined by fitbit.
 #' 
 #' @param Person The user's data
+#' @return NULL, but plot printed to screen
 #' 
 #' @export
 #' @importFrom ggplot2 labs
 #' 
-#' @examples
+#' @example
 #' load("../data/EX.rda")
 #' plot_mins_very(EX)
 plot_mins_very <- function(Person) {
-  p <- plot_daily(Person, "minutesVery")
+  p <- plot_d(Person, "minutesVery")
   p <- p + ggplot2::labs(y = "Time 'Very Active' (mins)", 
                     title = "Time Spent 'Very Active' by Day")
-  return(p)
+  print(p)
 }
 
-# Plot 6: Resting Heart Rate
+
 #' Plot resting heart rate over time.  
 #' 
-#' @description Returns a line plot plotting heart rate (in beats per minute)
-#' over time.  According to the National Institute of Health, the average
-#' resting heart rate for persons 10 and older (including seniors) is 60 - 100.
-#' However, well-trained athletes can have resting heart rates between 40 and 
-#' 60.
+#' @description Prints a line plot plotting heart rate (in beats per minute)
+#'     over time.  According to the National Institute of Health, the average
+#'     resting heart rate for persons 10 and older (including seniors) is 60 - 
+#'     100.  However, well-trained athletes can have resting heart rates between
+#'      40 and 60.
 #' 
 #' @param Person The user's data
+#' @return NULL, but plot printed to screen
 #' 
 #' @export
 #' @importFrom ggplot2 labs
 #' 
-#' @examples
+#' @example
 #' load("../data/EX.rda")
 #' plot_rest_hr(EX)
+#' @seealso \url{http://www.heart.org/HEARTORG/HealthyLiving/PhysicalActivity/FitnessBasics/Target-Heart-Rates_UCM_434341_Article.jsp#.WM3bCxiZMdU}
 plot_rest_hr <- function(Person) {
-  plot_daily(Person, "restingHeartRate") +
+  p <- plot_d(Person, "restingHeartRate") +
     ggplot2::labs(y = "Resting Heart Rate (bpm)", title = "Resting Heart Rate")
+  print(p)
 }
-plot_rest_hr(EX)

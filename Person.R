@@ -197,6 +197,10 @@ Person <- R6::R6Class("Person",
                                 restlessProp = 
                                   (sleepDurationHrs - minAsleepHrs) / 
                                   sleepDurationHrs * 100)
+        
+        # create distanceKm
+        joined <- dplyr::mutate(joined,
+                                distanceKm = distance * MI_TO_KM)
         return(joined)
       }
     
