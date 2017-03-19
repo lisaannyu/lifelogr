@@ -1,4 +1,4 @@
-#' @include global_var.r
+#' @include global_var.R
 #' Line graph for a single continuous variable.
 #' 
 #' @description Plots a line graph for a single continuous variable.  User can
@@ -13,7 +13,7 @@
 #' @param avg_to_get_typical_day Logical variable "daily" for an aggregate of the variable over
 #' the course of a day, or "intraday" for the variable at every interval over
 #' the range
-#' @return A ggplot2 object, printed to screen xxx (is this true? or will i change it so it returns nothing?)
+#' @return NULL, but plot printed to screen.
 #' @export
 #' @examples
 #' load("../data/EX.rda")
@@ -69,14 +69,14 @@ plot_i <- function(Person, measure_var, avg_to_get_typical_day = TRUE) {
 #' @param Person The user's data
 #' @param measure_var Character vector of length 1 denoting the variable of 
 #' interest.  Options include: "steps", "floors", "distance", "caloriesBurned",
-#' "activeMin", "bpm" (heart rate), "weight".
+#' "activeMin", "bpm" (heart rate), "weight".  By default, all are plotted.
 #' @param avg_to_get_typical_day Logical vector of length 1.  If TRUE, plot gives
 #' an aggregate of the variable over the course of a typical day.  If FALSE, 
 #' plot gives the variable at every interval over the range specified when the
 #' Person object was instantiated.
 #' @param ... Extra arguments used to specify unit for the distance and weight
 #' plots.
-#' @return 
+#' @return NULL, but plots print to screen
 #' 
 #' @export
 #' @examples
@@ -86,16 +86,67 @@ plot_i <- function(Person, measure_var, avg_to_get_typical_day = TRUE) {
 #' plot_intraday(EX, "caloriesBurned", FALSE)
 #' plot_intraday(EX, "steps", FALSE)
 #' plot_intraday(EX, "bpm")
-plot_intraday <- function(Person, measure_var, avg_to_get_typical_day = TRUE, ...) {
+plot_intraday <- function(Person, measure_var = "all", 
+                          avg_to_get_typical_day = TRUE, ...) {
   switch(measure_var,
-         steps = plot_i(Person, "steps", avg_to_get_typical_day),
-         floors = plot_i(Person, "floors", avg_to_get_typical_day),
+         steps = plot_i_steps(Person, avg_to_get_typical_day),
+         floors = plot_i_floors(Person, avg_to_get_typical_day),
          distance = plot_i_distance(Person, avg_to_get_typical_day, ...),
          caloriesBurned = plot_i_cal(Person, avg_to_get_typical_day),
          activeMin = plot_i_active_min(Person, avg_to_get_typical_day),
          bpm = plot_i_hr(Person, avg_to_get_typical_day),
-         weight = plot_i_weight(Person, avg_to_get_typical_day, ...)
+         weight = plot_i_weight(Person, avg_to_get_typical_day, ...),
+         all = plot_intraday_all(Person)
          )
+}
+
+#' User-friendly way to plot intraday variables.
+#' 
+#' @description Plots all seven intraday variables using default settings.
+#' 
+#' @param Person The user's data.
+#' 
+#' @return NULL, plots print to screen
+#' 
+#' @export
+#' @example
+#' load("../data/EX.rda")
+#' plot_intraday_all(EX)
+plot_intraday_all <- function(Person) {
+    dev.hold()
+    plot_intraday(Person, "steps")
+    readline(prompt = "Press [enter] to continue")
+    dev.flush()
+    
+    dev.hold()
+    plot_intraday(Person, "floors")
+    readline(prompt = "Press [enter] to continue")
+    dev.flush()
+    
+    dev.hold()
+    plot_intraday(Person, "distance")
+    readline(prompt = "Press [enter] to continue")
+    dev.flush()
+    
+    dev.hold()
+    plot_intraday(Person, "caloriesBurned")
+    readline(prompt = "Press [enter] to continue")
+    dev.flush()
+    
+    dev.hold()
+    plot_intraday(Person, "activeMin")
+    readline(prompt = "Press [enter] to continue")
+    dev.flush()
+    
+    dev.hold()
+    plot_intraday(Person, "bpm")
+    readline(prompt = "Press [enter] to continue")
+    dev.flush()
+    
+    dev.hold()
+    plot_intraday(Person, "weight")
+    readline(prompt = "Press [enter] to continue")
+    invisible()
 }
 
 #' User-friendly way to plot intraday variables.
@@ -134,10 +185,25 @@ plot_i_distance <- function(Person, avg_to_get_typical_day = TRUE, unit = "mi") 
   } else {
     stop("unit must be 'lb' or 'kg'")
   }
-  return(p)
+  print(p)
 }
 
-#' @describeIn plot_i Line graph for calories burned over time.
+#' @describeIn plot_i Line graph for steps taken per 15 minute interval over 
+#' date-time.
+plot_i_steps <- function(Person, avg_to_get_typical_day = TRUE) {
+  p <- plot_i(Person, "steps", avg_to_get_typical_day)
+  print(p)
+}
+
+#' @describeIn plot_i Line graph for floors gone up per 15 minute interval over 
+#' date-time.
+plot_i_floors <- function(Person, avg_to_get_typical_day = TRUE) {
+  p <- plot_i(Person, "floors", avg_to_get_typical_day)
+  print(p)
+}
+
+#' @describeIn plot_i Line graph for calories burned per 15 minute interval over 
+#' date-time.
 plot_i_cal <- function(Person, avg_to_get_typical_day = TRUE) {
   p <- plot_i(Person, "caloriesBurned", avg_to_get_typical_day)
   if (avg_to_get_typical_day) {
@@ -149,11 +215,11 @@ plot_i_cal <- function(Person, avg_to_get_typical_day = TRUE) {
       ggplot2::labs(y = "Calories Burned",
                     title = "Calories Burned Per 15 Min Interval vs Date-Time")
   }
-  return(p)
+  print(p)
 }
 
 #' @describeIn plot_i Line graph for active minutes per 15 minute interval over 
-#' time.
+#' date-time.
 plot_i_active_min <- function(Person, avg_to_get_typical_day = TRUE) {
   p <- plot_i(Person, "activeMin", avg_to_get_typical_day)
   if (avg_to_get_typical_day) {
@@ -165,7 +231,7 @@ plot_i_active_min <- function(Person, avg_to_get_typical_day = TRUE) {
       ggplot2::labs(y = "Minutes Active (per 15 minutes)",
                     title = "Average Active Minutes Per 15 Min Interval vs Date-Time")
   }
-  return(p)
+  print(p)
 }
 
 
@@ -209,7 +275,7 @@ plot_i_hr <- function(Person, avg_to_get_typical_day = TRUE) {
   } else {
     stop("'avg_to_get_typical_day' must be a logical value")
   }
-  return(p)
+  print(p)
 }
 
 #' @describeIn plot_i Line graph for heart rate per 5 minute interval across a
@@ -257,7 +323,7 @@ plot_i_weight <- function(Person, avg_to_get_typical_day = TRUE, unit = "lb") {
   } else {
     stop("'avg_to_get_typical_day' must be a logical value")
   }
-  return(p)
+  print(p)
 }
 
 # Overlay sleep with Heart Rate
