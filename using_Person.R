@@ -36,7 +36,7 @@ indiv_months <- data.frame("month"= c("Jan", "Feb", "Mar", "Apr", "May",
                                       "Sep", "Oct", "Nov", "Dec"),
                            "group" = c(1:12))
 
-td <- ttest(dataset, person = RA, 
+td <- group_stats(dataset, person = RA, 
             addl_grouping_assignments = list("indiv_months" = indiv_months), 
             names_of_groupings = c("group_months", "indiv_months"),
                   variables_to_compare = c("steps"))
@@ -130,13 +130,10 @@ devtools::use_package("tibble", type = "Imports", pkg = pkgName)
 ############## TO DO/FOR REFERENCE ###################
 
 # --- must do ------
-# take in a dataframe
-# figure out time, date, datetimes
-# run t test if two groups in data
 # documentation
-# convert apple data
 # error messages and other notes in code
 # build package
+# (shiny app, testing, vignettes, build and check package, style)
 
 
 # ----- lower priority --------------
