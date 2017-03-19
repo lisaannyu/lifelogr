@@ -1,6 +1,9 @@
-#' @include global_var.R
-#' @include experiments.R
+# #' @include global_var.R
+# #' @include Person.R
+# #' @include experiments.R
 
+source("lifelogr/R/global_var.R")
+source("lifelogr/R/Person.R")
 group_months <- data.frame("month" = c("Jan", "Feb", "Mar", "Apr", "May",
                                         "Jun", "Jul", "Aug",
                                         "Sep", "Oct", "Nov", "Dec"),
@@ -95,7 +98,7 @@ pregression(dataset, person = RA, variables = list("fitbit_daily" = c("sleepDura
        measures = list("fitbit_daily" = c("restingHeartRate")))
 
 # Building the package
-pkgName <- "lifelogr"
+pkgName <- "lifelogr" # have to change file path if move this file
 
 # Save RA as EX for example purposes
 # save(EX, file = "/Users/lisaannyu/GitHub/stats290-project/lifelogr/data/EX.rda") # might have to change the file directory
