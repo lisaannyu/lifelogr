@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 # #' @include global_var.R
 # #' @include Person.R
 # #' @include experiments.R
@@ -106,6 +107,8 @@ pkgName <- "lifelogr" # have to change file path if move this file
 # Add documentation
 devtools::document(pkg = pkgName)
 
+# probably need: importFrom(R6, R6Class)
+
 # Add imports to DESCRIPTION
 devtools::use_package("ggplot2", type = "Imports", pkg = pkgName)
 devtools::use_package("shiny", type = "Imports", pkg = pkgName)
@@ -124,44 +127,3 @@ devtools::use_package("tibble", type = "Imports", pkg = pkgName)
 # use command line to do R CMD BUILD lifelogr
 # use command line to do R CMD CHECK lifelogr._0...
 
-
-############## TO DO/FOR REFERENCE ###################
-
-# --- must do ------
-# documentation
-# error messages and other notes in code
-# build package
-# (shiny app, testing, vignettes, build and check package, style)
-
-
-# ----- lower priority --------------
-# set up shiny tabs
-
-# figure out how to aggregate hr zone data, time intervals 
-# add 15 min bpm average column
-# analyze sleep function for aggregating heart rate, etc. curves
-# sleep experimentation - curves and when drops etc.
-# visualize when awake/restless normed to start/not?
-
-
-
-# names(RA$fitbit)
-# [1] "isteps"           
-# [2] "idist"            
-# [3] "ifloors"          
-# [4] "iactive_min" 
-# [5] "ical_burn"        
-# [6] "ihr"              
-# [7] "steps"            
-# [8] "dist"             
-# [9] "distance"         
-# [10] "floors"           
-# [11] "minsVery"         
-# [12] "cal_ratio"        
-# [13] "rest_hr"          
-# [14] "hr_zones"         
-# [15] "sleep"            
-# [16] "weight"           
-# [17] "sleepDuration"    
-# [18] "minsRestlessAwake"
-# 
