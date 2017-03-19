@@ -18,7 +18,7 @@ function.  Specifically, it calculates the sleep duration and time asleep for
 each day of the week (in hours).
 }
 \examples{
-EX <- data.frame
+data(EX)
 tidy_sleep_weekday(EX)
 
 }

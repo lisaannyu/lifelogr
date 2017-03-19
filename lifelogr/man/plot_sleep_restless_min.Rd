@@ -17,6 +17,7 @@ Returns a line plot plotting the length of restless sleep
 over time (in minutes).
 }
 \examples{
+data(EX)
 plot_sleep_restless_min(EX)
 
 }

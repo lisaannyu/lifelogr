@@ -1,3 +1,4 @@
+#' @include global_var.R
 Person <- R6::R6Class("Person",
   public = list(
   fitbit_daily = NULL, # dataframe of daily fitbit data
@@ -115,6 +116,9 @@ Person <- R6::R6Class("Person",
                                               hour = lubridate::hour(joined$datetime),
                                               min = lubridate::minute(joined$datetime), 
                                               sec = lubridate::second(joined$datetime))
+      joined <- plyr::rename(joined, replace = c("active-minutes" = "activeMin"))
+      joined$distanceKm <- joined$distance * MI_TO_KM
+      joined$weightKg <- joined$weight * LB_TO_KG
       return(joined)
       },
      
@@ -186,6 +190,17 @@ Person <- R6::R6Class("Person",
         joined$datetime <- joined$date#lubridate::ymd_hms(joined$time, tz = Sys.timezone())
         joined$minsRestlessAwake <- joined$sleepDuration - joined$minAsleep
         
+        # create sleepDurationHrs and minAsleepHrs and restlessProp
+        joined <- dplyr::mutate(joined,
+                                sleepDurationHrs = sleepDuration / 60,
+                                minAsleepHrs = minAsleep / 60,
+                                restlessProp = 
+                                  (sleepDurationHrs - minAsleepHrs) / 
+                                  sleepDurationHrs * 100)
+        
+        # create distanceKm
+        joined <- dplyr::mutate(joined,
+                                distanceKm = distance * MI_TO_KM)
         return(joined)
       }
     

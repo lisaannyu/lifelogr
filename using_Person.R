@@ -1,6 +1,6 @@
 source("Person.R")
 
-group_months <- data.frame("month"= c("Jan", "Feb", "Mar", "Apr", "May",
+group_months <- data.frame("month" = c("Jan", "Feb", "Mar", "Apr", "May",
                                         "Jun", "Jul", "Aug",
                                         "Sep", "Oct", "Nov", "Dec"),
                               "group" = c(0, 0, 0, 1, 1, 1, 1, 1, 1, 0, 0, 0))
@@ -16,7 +16,7 @@ RA <- Person$new(user_email = "rohisha@gmail.com", user_pw = "datasamplepw",
 
 # should probably change input to fitbit_user_email
 EX <- Person$new(user_email = "rohisha@gmail.com", user_pw = "datasamplepw",
-                 apple_data_file = "apple.csv",
+                 # apple_data_file = "apple.csv",
                  user_info = list("name" = "EX", "age" = 29, "gender" = "male"),
                  target_steps = 10000,
                  group_assignments = list(data.frame(NA), data.frame(NA)),
@@ -100,10 +100,10 @@ pregression(dataset, person = RA, variables = list("fitbit_daily" = c("sleepDura
 
 
 # Building the package
-pkgName <- "fitbitData"
+pkgName <- "lifelogr"
 
 # Save RA as EX for example purposes
-save(EX, file = "../data/EX.rda") # might have to change the file directory
+save(EX, file = "/Users/lisaannyu/GitHub/stats290-project/lifelogr/data/EX.rda") # might have to change the file directory
 
 # Add documentation
 devtools::document(pkg = pkgName)
@@ -111,6 +111,20 @@ devtools::document(pkg = pkgName)
 # Add imports to DESCRIPTION
 devtools::use_package("ggplot2", type = "Imports", pkg = pkgName)
 devtools::use_package("shiny", type = "Imports", pkg = pkgName)
+devtools::use_package("dplyr", type = "Imports", pkg = pkgName)
+devtools::use_package("lubridate", type = "Imports", pkg = pkgName)
+devtools::use_package("modelr", type = "Imports", pkg = pkgName)
+devtools::use_package("stringr", type = "Imports", pkg = pkgName)
+devtools::use_package("tidyr", type = "Imports", pkg = pkgName)
+devtools::use_package("grDevices", type = "Imports", pkg = pkgName)
+devtools::use_package("lazyeval", type = "Imports", pkg = pkgName)
+devtools::use_package("stats", type = "Imports", pkg = pkgName)
+
+# not sure if this should be imports or depends
+devtools::use_package("tibble", type = "Imports", pkg = pkgName)
+
+# use command line to do R CMD BUILD fitbitData
+# use command line to do R CMD CHECK fitbitData._0...
 ############## TO DO/FOR REFERENCE ###################
 
 # add capability for t testing based on two groups in additional data
