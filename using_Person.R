@@ -1,10 +1,12 @@
-<<<<<<< HEAD
 # #' @include global_var.R
 # #' @include Person.R
 # #' @include experiments.R
 
 source("lifelogr/R/global_var.R")
 source("lifelogr/R/Person.R")
+source("lifelogr/R/experiments.R")
+
+
 group_months <- data.frame("month" = c("Jan", "Feb", "Mar", "Apr", "May",
                                         "Jun", "Jul", "Aug",
                                         "Sep", "Oct", "Nov", "Dec"),
@@ -27,7 +29,6 @@ EX <- Person$new(user_email = "rohisha@gmail.com", user_pw = "datasamplepw",
                  group_assignments = list(data.frame(NA), data.frame(NA)),
                  start_date = "2017-01-19", end_date = "2017-02-17")
 
-source("lifelogr/R/experiments.R")
 dataset <- create_dataset(person = RA,
                           all_variables = list("util" = c("month"),
                                                "fitbit_daily" = c("steps")), 
@@ -120,6 +121,9 @@ devtools::use_package("tidyr", type = "Imports", pkg = pkgName)
 devtools::use_package("grDevices", type = "Imports", pkg = pkgName)
 devtools::use_package("lazyeval", type = "Imports", pkg = pkgName)
 devtools::use_package("stats", type = "Imports", pkg = pkgName)
+
+devtools::use_package(package = "R6", pkg = pkgName)
+
 
 # not sure if this should be imports or depends
 devtools::use_package("tibble", type = "Imports", pkg = pkgName)
