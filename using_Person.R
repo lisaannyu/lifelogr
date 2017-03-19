@@ -100,10 +100,10 @@ pregression(dataset, person = RA, variables = list("fitbit_daily" = c("sleepDura
 
 
 # Building the package
-pkgName <- "fitbitData"
+pkgName <- "lifelogr"
 
 # Save RA as EX for example purposes
-save(EX, file = "/Users/lisaannyu/GitHub/stats290-project/fitbitData/data/EX.rda") # might have to change the file directory
+save(EX, file = "/Users/lisaannyu/GitHub/stats290-project/lifelogr/data/EX.rda") # might have to change the file directory
 
 # Add documentation
 devtools::document(pkg = pkgName)

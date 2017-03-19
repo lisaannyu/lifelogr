@@ -37,7 +37,7 @@ plot_i <- function(Person, measure_var, avg_to_get_typical_day = TRUE) {
     data <- data[stats::complete.cases(data), ]
 
     p <- ggplot2::ggplot(data = data,
-                         mapping = ggplot2::aes(x = time, y = avg)) +
+                         mapping = ggplot2::aes(x = data$time, y = data$avg)) +
       ggplot2::geom_step(color = CARDINAL)  +
       ggplot2::scale_x_datetime(date_labels = "%H:%M %p", 
                                 date_breaks = "3 hours") +
@@ -50,7 +50,7 @@ plot_i <- function(Person, measure_var, avg_to_get_typical_day = TRUE) {
     data <- Person$fitbit_intraday[ , c("datetime", measure_var)]
     data <- data[stats::complete.cases(data), ]
     p <- ggplot2::ggplot(data = data,
-                         mapping = ggplot2::aes(x = datetime, y = data[[measure_var]])) +
+                         mapping = ggplot2::aes(x = data$datetime, y = data[[measure_var]])) +
       ggplot2::geom_step(color = CARDINAL, alpha = 0.5) +
       ggplot2::labs(x = "Date-Time",
                     title = stringr::str_c(stringr::str_to_title(measure_var),

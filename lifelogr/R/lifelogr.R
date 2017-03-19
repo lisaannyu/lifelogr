@@ -11,3 +11,11 @@
 #' @docType package
 #' @name lifelogr
 NULL
+
+# utils::globalVariables(names = c("os",
+#                                  "Nonwindows",
+#                                  "Windows",
+#                                  "value",
+#                                  "agent",
+#                                  "count",
+#                                  "tz"))

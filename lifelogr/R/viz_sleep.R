@@ -134,7 +134,8 @@ tidy_sleep_weekday <- function(Person) {
 #'
 # Plot 1: by day of week
 plot_sleep_weekday <- function(Person) {
-  p <- ggplot2::ggplot(data = tidy_sleep_weekday(Person),
+  data <- tidy_sleep_weekday(Person)
+  p <- ggplot2::ggplot(data = data,
                   mapping = ggplot2::aes(x = day_of_week, 
                                          y = hours,
                                          fill = measure)) +

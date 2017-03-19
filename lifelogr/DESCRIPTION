@@ -1,8 +1,9 @@
-Package: fitbitData
-Title: What the Package Does (one line, title case) xxx
+Package: lifelogr
+Title: Life Logging in R
 Version: 0.0.0.9000
 Authors@R: c(person("Rohisha", "Adke", email = "rohisha@gmail.com", role = c("aut", "cre")), person("Lisa Ann", "Yu", email = "lisaann.yu@gmail.com", role = "aut"))
-Description: What the package does (one paragraph).xxx
+Description: The lifelogr package provides a framework for creating 
+visualizations and experimenting on onself.
 Depends: R (>= 3.3.2),
     tibble
 License: GPL (>= 2)
@@ -13,6 +14,7 @@ Collate:
     'experiments.R'
     'fitbitApp.R'
     'global_var.R'
+    'lifelogr.R'
     'viz_daily.R'
     'viz_intraday.R'
     'viz_sleep.R'
@@ -25,4 +27,6 @@ Imports: ggplot2,
     stringr,
     tidyr,
     grDevices,
-    lazyeval
+    lazyeval,
+    stats,
+    tibble

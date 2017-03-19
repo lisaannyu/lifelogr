@@ -91,6 +91,7 @@ plot_daily <- function(Person, measure_var = "all", ...) {
 #' 
 #' @export
 #' @importFrom tidyr gather
+#' @importFrom tibble tibble
 #' 
 #' @examples
 #' a <- tibble::tibble(date = 
@@ -139,7 +140,8 @@ plot_d <- function(Person, measures) {
     data <- tidy_multi_meas_data(data)
     p <- 
       ggplot2::ggplot(data = data,
-                      mapping = ggplot2::aes(x = date, y = value, color = measures)) +
+                      mapping = ggplot2::aes(x = date, y = data$value, color = 
+                                               measures)) +
       ggplot2::geom_point() +
       ggplot2::geom_line() +
       ggplot2::labs(title = "Totals Per Day")
@@ -221,7 +223,8 @@ plot_distance <- function(Person, unit = "mi") {
     stop("'unit' must be 'mi' or 'km'")
   }
   
-  p <- p + ggplot2::labs(y = paste0("Distance (", unit, ")"), title = "Distance")
+  p <- p + ggplot2::labs(y = paste0("Distance (", unit, ")"), title = 
+                           "Distance")
   print(p)
 }
 
@@ -252,8 +255,8 @@ plot_cal <- function(Person) {
     data <- tidy_multi_meas_data(data)
 
     p <- ggplot2::ggplot(data = data, mapping = 
-                           ggplot2::aes(x = date, y = value)) +
-      ggplot2::geom_line(mapping = ggplot2::aes(color = measures)) +
+                           ggplot2::aes(x = date, y = data$value)) +
+      ggplot2::geom_line(mapping = ggplot2::aes(color = data$measures)) +
       ggplot2::labs(x = "Date", y = "Calories",
                     title = "Calories Burned and Consumed") +
       ggplot2::guides(color = ggplot2::guide_legend("Calories")) +
