@@ -74,7 +74,7 @@ experiment <- function(person, variables, measures,
            "plot" = pplot(dataset, person, variables, measures, time_var), 
            "correlation" = correlation(dataset, person, variables, measures),
            "anova" = panova(dataset, person, variables, measures),
-           "t_test" = pttest(dataset, person, variables, measures),
+           "compare_groups" = compare_groups(dataset, person, variables, measures),
            "regression" = pregression(dataset, person, variables, measures)
            # print error: your analysis didn't match any options
            )
@@ -176,7 +176,7 @@ panova <- function(dataset = NA, person, variables, measures){
 # names_of_groupings are names of groupings want to analyze (must be in person
 # named that way or passed in in addl)
 # Maybe should be able to pass groupings_df directly to this function
-ttest <- function(dataset = NA, person, names_of_groupings = NA, 
+compare_groups <- function(dataset = NA, person, names_of_groupings = NA, 
                   addl_grouping_assignments = NA, variables_to_compare){
   if (!is.data.frame(dataset)){
     # PRINT ERROR
@@ -200,15 +200,16 @@ ttest <- function(dataset = NA, person, names_of_groupings = NA,
     g_dataset <- merge(dataset, all_group_maps[[grouping]], by = merge_var)
 
     # for each variable in variables to compare
-    compare_groups <- function(variable){
+    group_stats <- function(variable){
       print(variable)
       print(dplyr::summarise_(dplyr::group_by(g_dataset, group),
                 mean = lazyeval::interp(~mean(v), v=as.name(variable)),
                 sd = lazyeval::interp(~sd(v), v=as.name(variable))))
     }
     
-    lapply(variables_to_compare, compare_groups)
+    lapply(variables_to_compare, group_stats)
   }
+  # RETURN EACH stats
   return(dataset)
   
 }
