@@ -118,6 +118,9 @@ devtools::use_package("shiny", type = "Imports", pkg = pkgName)
 # sleep experimentation - curves and when drops etc.
 # visualize when awake/restless normed to start/not?
 
+# set up shiny tabs
+# documentation
+
 # figure out how to aggregate hr zone data, time intervals 
 # add 15 min bpm average column
 # figure out time, date, datetimes
