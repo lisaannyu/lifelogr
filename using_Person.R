@@ -23,7 +23,7 @@ EX <- Person$new(user_email = "rohisha@gmail.com", user_pw = "datasamplepw",
                  start_date = "2017-01-19", end_date = "2017-02-17")
 
 
-source("experiments.R")
+source("lifelogr/R/experiments.R")
 
 dataset <- create_dataset(person = RA,
                           all_variables = list("util" = c("month"),
@@ -36,7 +36,7 @@ indiv_months <- data.frame("month"= c("Jan", "Feb", "Mar", "Apr", "May",
                                       "Sep", "Oct", "Nov", "Dec"),
                            "group" = c(1:12))
 
-td <- group_stats(dataset, person = RA, 
+td <- compare_groups(dataset, person = RA, 
             addl_grouping_assignments = list("indiv_months" = indiv_months), 
             names_of_groupings = c("group_months", "indiv_months"),
                   variables_to_compare = c("steps"))
