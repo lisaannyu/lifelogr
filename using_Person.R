@@ -1,4 +1,5 @@
-source("Person.R")
+#' @include global_var.R
+#' @include experiments.R
 
 group_months <- data.frame("month" = c("Jan", "Feb", "Mar", "Apr", "May",
                                         "Jun", "Jul", "Aug",
@@ -21,9 +22,6 @@ EX <- Person$new(user_email = "rohisha@gmail.com", user_pw = "datasamplepw",
                  target_steps = 10000,
                  group_assignments = list(data.frame(NA), data.frame(NA)),
                  start_date = "2017-01-19", end_date = "2017-02-17")
-
-
-source("experiments.R")
 
 dataset <- create_dataset(person = RA,
                           all_variables = list("util" = c("month"),
@@ -95,15 +93,11 @@ pregression(dataset, person = RA, variables = list("fitbit_daily" = c("sleepDura
                                                                  "distance")),
        measures = list("fitbit_daily" = c("restingHeartRate")))
 
-
-# Sleep visualizations
-
-
 # Building the package
 pkgName <- "lifelogr"
 
 # Save RA as EX for example purposes
-save(EX, file = "/Users/lisaannyu/GitHub/stats290-project/lifelogr/data/EX.rda") # might have to change the file directory
+# save(EX, file = "/Users/lisaannyu/GitHub/stats290-project/lifelogr/data/EX.rda") # might have to change the file directory
 
 # Add documentation
 devtools::document(pkg = pkgName)
@@ -123,8 +117,8 @@ devtools::use_package("stats", type = "Imports", pkg = pkgName)
 # not sure if this should be imports or depends
 devtools::use_package("tibble", type = "Imports", pkg = pkgName)
 
-# use command line to do R CMD BUILD fitbitData
-# use command line to do R CMD CHECK fitbitData._0...
+# use command line to do R CMD BUILD lifelogr
+# use command line to do R CMD CHECK lifelogr._0...
 
 
 ############## TO DO/FOR REFERENCE ###################
