@@ -18,6 +18,7 @@ over time.  The proportion is calculated as the difference between sleep
 duration and time spent asleep over sleep duration.
 }
 \examples{
+data(EX)
 plot_sleep_restless_prop(EX)
 
 }

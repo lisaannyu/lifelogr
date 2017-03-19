@@ -1,4 +1,6 @@
 #' @include global_var.R
+NULL
+
 #' Line graph for a single continuous variable.
 #' 
 #' @description Provides a "quick-and-dirty" approach to plotting a line graph 
@@ -18,9 +20,10 @@
 #' 
 #' @return ggplot object
 #' @export
+#' @importFrom stats complete.cases
 #' 
 #' @examples
-#' load("../data/EX.rda")
+#' data(EX)
 #' plot_i(EX, "steps")
 #' plot_i(EX, "distance", FALSE)
 plot_i <- function(Person, measure_var, avg_to_get_typical_day = TRUE) {
@@ -31,7 +34,7 @@ plot_i <- function(Person, measure_var, avg_to_get_typical_day = TRUE) {
     data <- dplyr::group_by(data, time)
     data <- dplyr::summarize_(data, avg = 
                                 stringr::str_c("mean(", measure_var, ", na.rm = TRUE)"))
-    data <- data[complete.cases(data), ]
+    data <- data[stats::complete.cases(data), ]
 
     p <- ggplot2::ggplot(data = data,
                          mapping = ggplot2::aes(x = time, y = avg)) +
@@ -45,7 +48,7 @@ plot_i <- function(Person, measure_var, avg_to_get_typical_day = TRUE) {
                       "Per 15 Min Interval vs Time of Day", sep = " "))
   } else if (!avg_to_get_typical_day) {
     data <- Person$fitbit_intraday[ , c("datetime", measure_var)]
-    data <- data[complete.cases(data), ]
+    data <- data[stats::complete.cases(data), ]
     p <- ggplot2::ggplot(data = data,
                          mapping = ggplot2::aes(x = datetime, y = data[[measure_var]])) +
       ggplot2::geom_step(color = CARDINAL, alpha = 0.5) +
@@ -84,7 +87,7 @@ plot_i <- function(Person, measure_var, avg_to_get_typical_day = TRUE) {
 #' 
 #' @export
 #' @examples
-#' load("../data/EX.rda")
+#' data(EX)
 #' plot_intraday(EX, "steps")
 #' plot_intraday(EX, "distance", unit = "km")
 #' plot_intraday(EX, "caloriesBurned", FALSE)
@@ -116,8 +119,9 @@ plot_intraday <- function(Person, measure_var = "all",
 #' @seealso \code{\link{plot_i}}
 #' 
 #' @export
-#' @example
-#' load("../data/EX.rda")
+#' @importFrom grDevices dev.flush dev.hold
+#' @examples
+#' data(EX)
 #' plot_intraday_all(EX)
 plot_intraday_all <- function(Person) {
     dev.hold()
@@ -172,7 +176,7 @@ plot_intraday_all <- function(Person) {
 #' @importFrom ggplot2 labs
 #' 
 #' @examples
-#' load("../data/EX.rda")
+#' data(EX)
 #' plot_i_distance(EX, FALSE)
 #' plot_i_distance(EX, unit = "km")
 plot_i_distance <- function(Person, avg_to_get_typical_day = TRUE, unit = "mi") {
@@ -256,8 +260,8 @@ plot_i_active_min <- function(Person, avg_to_get_typical_day = TRUE) {
 #' 
 #' @export
 #' 
-#' @example
-#' load("../data/EX.rda")
+#' @examples
+#' data(EX)
 #' get_hr_zones(EX)
 get_hr_zones <- function(Person) {
   age <- Person$user_info$age
@@ -310,6 +314,8 @@ plot_i_hr_avg_datetime <- function(Person) {
 }
 
 #' @describeIn plot_i Line graph for weight over time.
+#' @param unit Unit of measurement for plot_i_weight().  Default is "lb", but 
+#'     "kb" can also be specified
 plot_i_weight <- function(Person, avg_to_get_typical_day = TRUE, unit = "lb") {
   if (unit == "lb") {
     p <- plot_i(Person, "weight", avg_to_get_typical_day) +

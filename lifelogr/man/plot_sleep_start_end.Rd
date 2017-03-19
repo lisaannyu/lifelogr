@@ -20,6 +20,7 @@ Returns a plot with start time of sleep and end time of sleep
 each night, colored by weekday vs. weekend.
 }
 \examples{
+data(EX)
 plot_sleep_start_end(EX)
 plot_sleep_start_end(EX, "day_of_week")
 

@@ -1,4 +1,7 @@
-#' @include global_var.R, experiments.R
+#' @include global_var.R
+#' @include experiments.R
+NULL
+
 #' Plot a series of six graphs.
 #' 
 #' @description Prints six plots, each showing daily totals over time: 
@@ -11,9 +14,10 @@
 #' 
 #' @param Person The user's data
 #' @return NULL, but plots printed to screen
+#' @importFrom grDevices dev.flush dev.hold
 #' @export
-#' @example
-#' load("../data/EX.rda")
+#' @examples
+#' data(EX)
 #' plot_daily_all(EX)
 #'
 plot_daily_all <- function(Person) {
@@ -60,7 +64,7 @@ plot_daily_all <- function(Person) {
 #' @return NULL, but plots printed to screen
 #' @export
 #' @examples
-#' load("../data/EX.rda")
+#' data(EX)
 #' plot_daily(EX, "steps")
 #' plot_daily(EX, "distance", "km")
 #'
@@ -88,7 +92,7 @@ plot_daily <- function(Person, measure_var = "all", ...) {
 #' @export
 #' @importFrom tidyr gather
 #' 
-#' @example
+#' @examples
 #' a <- tibble::tibble(date = 
 #'          lubridate::ymd("1970-01-01", "1970-01-02", "1970-01-03"), 
 #'          sleepDurationHrs = c(7.5, 8.0, 7.9), 
@@ -112,7 +116,7 @@ tidy_multi_meas_data <- function(data) {
 #' @importFrom ggplot2 ggplot aes geom_line labs
 #' @importFrom stringr str_to_title str_c
 #' @examples
-#' load("../data/EX.rda")
+#' data(EX)
 #' plot_d(EX, "steps")
 #' plot_d(EX, c("steps", "distance"))
 plot_d <- function(Person, measures) {
@@ -160,8 +164,8 @@ plot_d <- function(Person, measures) {
 #' @export
 #' @importFrom modelr geom_ref_line
 #' @importFrom ggplot2 labs
-#' @example
-#' load("../data/EX.rda")
+#' @examples
+#' data(EX)
 #' plot_steps(EX)
 #'
 plot_steps <- function(Person) {
@@ -181,8 +185,8 @@ plot_steps <- function(Person) {
 #' 
 #' @export
 #' @importFrom ggplot2 labs
-#' @example
-#' load("../data/EX.rda")
+#' @examples
+#' data(EX)
 #' plot_floors(EX)
 plot_floors <- function(Person) {
   p <- plot_d(Person, "floors") +
@@ -203,7 +207,7 @@ plot_floors <- function(Person) {
 #' @export
 #' @importFrom ggplot2 labs
 #' @examples
-#' load("../data/EX.rda")
+#' data(EX)
 #' plot_distance(EX)
 #' plot_distance(EX, "mi")
 #' plot_distance(EX, "km")
@@ -233,8 +237,8 @@ plot_distance <- function(Person, unit = "mi") {
 #' @export
 #' @importFrom ggplot2 labs ggplot geom_line aes guides guide_legend 
 #'     scale_color_discrete
-#' @example
-#' load("../data/EX.rda")
+#' @examples
+#' data(EX)
 #' plot_cal(EX)
 plot_cal <- function(Person) {
   data <- create_dataset(person = Person,
@@ -270,8 +274,8 @@ plot_cal <- function(Person) {
 #' @export
 #' @importFrom ggplot2 labs
 #' 
-#' @example
-#' load("../data/EX.rda")
+#' @examples
+#' data(EX)
 #' plot_mins_very(EX)
 plot_mins_very <- function(Person) {
   p <- plot_d(Person, "minutesVery")
@@ -295,8 +299,8 @@ plot_mins_very <- function(Person) {
 #' @export
 #' @importFrom ggplot2 labs
 #' 
-#' @example
-#' load("../data/EX.rda")
+#' @examples
+#' data(EX)
 #' plot_rest_hr(EX)
 #' @seealso \url{http://www.heart.org/HEARTORG/HealthyLiving/PhysicalActivity/FitnessBasics/Target-Heart-Rates_UCM_434341_Article.jsp#.WM3bCxiZMdU}
 plot_rest_hr <- function(Person) {

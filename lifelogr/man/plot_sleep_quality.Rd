@@ -17,6 +17,7 @@ Returns a line plot plotting sleep quality over time.  Sleep
 quality is a subjective score given by Fitbit
 }
 \examples{
+data(EX)
 plot_sleep_quality(EX)
 
 }

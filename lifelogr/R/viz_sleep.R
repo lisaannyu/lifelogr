@@ -1,6 +1,8 @@
-#' @include viz_daily.R, experiments.R
+#' @include viz_daily.R
+#' @include experiments.R
+NULL
 
-#' Plot a series of six sleep graphs
+#' Plot a series of six sleep graphs.
 #' 
 #' @description Prints six plots: two are related to quantity of sleep, and 
 #' four are related to quality of sleep
@@ -12,11 +14,11 @@
 #' 6.  Sleep quality over time (subjective score, out of 100)
 #' 
 #' @param Person The user's data
-#' @return A ggplot2 object
-#' @importFrom ggplot2 ggplot aes geom_col guides guide_legend scale_fill_discrete
+#' @return NULL, but plot prints to screen
 #' @export
-#' @example
-#' load("../data/EX.rda")
+#' @importFrom grDevices dev.flush dev.hold
+#' @examples
+#' data(EX)
 #' plot_sleep_all(EX)
 #'
 plot_sleep_all <- function(Person) {
@@ -68,8 +70,8 @@ plot_sleep_all <- function(Person) {
 #' "by_quality".  Default is to plot all six.
 #' @return A ggplot2 object
 #' @export
-#' @example
-#' load("../data/EX.rda")
+#' @examples
+#' data(EX)
 #' plot_sleep(EX)
 #'
 plot_sleep <- function(Person, plot_type = "all") {
@@ -98,8 +100,8 @@ plot_sleep <- function(Person, plot_type = "all") {
 #' @importFrom tidyr gather
 #' @importFrom lubridate wday
 #' @export
-#' @example
-#' load("../data/EX.rda")
+#' @examples
+#' data(EX)
 #' tidy_sleep_weekday(EX)
 #'
 tidy_sleep_weekday <- function(Person) {
@@ -127,7 +129,7 @@ tidy_sleep_weekday <- function(Person) {
 #' @importFrom ggplot2 ggplot aes geom_col labs guides guide_legend scale_fill_discrete
 #' @export
 #' @examples
-#' load("../data/EX.rda")
+#' data(EX)
 #' plot_sleep_weekday(EX)
 #'
 # Plot 1: by day of week
@@ -157,7 +159,7 @@ plot_sleep_weekday <- function(Person) {
 #' @importFrom ggplot2 ggplot aes geom_col labs guides guide_legend scale_fill_discrete
 #' @export
 #' @examples
-#' load("../data/EX.rda")
+#' data(EX)
 #' plot_sleep_start_end(EX)
 #' plot_sleep_start_end(EX, "day_of_week")
 #'
@@ -220,11 +222,11 @@ plot_sleep_start_end <- function(Person, color_var = "day_type") {
 #' @export
 #' @importFrom ggplot2 ggplot geom_line aes labs guides guide_legend scale_color_discrete
 #' @examples
-#' load("../data/EX.rda")
+#' data(EX)
 #' plot_sleep_over_time(EX)
 #'
 plot_sleep_over_time <- function(Person) {
-  p <- plot_daily(Person, measures = c("sleepDurationHrs", "minAsleepHrs")) +
+  p <- plot_d(Person, measures = c("sleepDurationHrs", "minAsleepHrs")) +
     ggplot2::labs(y = "Sleep Duration (hours)",
                   title = "Sleep Over Time") +
     ggplot2::guides(color = ggplot2::guide_legend(title = "Sleep Type",
@@ -246,11 +248,11 @@ plot_sleep_over_time <- function(Person) {
 #' @export
 #' @importFrom ggplot2 ggplot geom_line aes labs
 #' @examples
-#' load("../data/EX.rda")
+#' data(EX)
 #' plot_sleep_restless_prop(EX)
 #'
 plot_sleep_restless_prop <- function(Person) {
-  p <- plot_daily(Person, "restlessProp")
+  p <- plot_d(Person, "restlessProp")
   p <- p + 
       ggplot2::labs(x = "Date", y = "Percent of Restless Sleep",
                     title = "Quality of Sleep: Restlessness (%)")
@@ -269,11 +271,11 @@ plot_sleep_restless_prop <- function(Person) {
 #' @export
 #' @importFrom ggplot2 labs
 #' @examples
-#' load("../data/EX.rda")
+#' data(EX)
 #' plot_sleep_restless_min(EX)
 #'
 plot_sleep_restless_min <- function(Person) {
-  p <- plot_daily(Person, "restlessDuration")
+  p <- plot_d(Person, "restlessDuration")
   p <- p + ggplot2::labs(y = "Length of Restless Sleep (minutes)",
                     title = "Quality of Sleep: Restlessness (mins)")
   print(p)
@@ -291,11 +293,11 @@ plot_sleep_restless_min <- function(Person) {
 #' @export
 #' @importFrom ggplot2 labs
 #' @examples
-#' load("../data/EX.rda")
+#' data(EX)
 #' plot_sleep_quality(EX)
 #'
 plot_sleep_quality <- function(Person) {
-  p <- plot_daily(Person, "sleepQualityScoreA")
+  p <- plot_d(Person, "sleepQualityScoreA")
   p <- p + ggplot2::labs(y = "Sleep Quality Score", 
                          title = "Quality of Sleep: Quality Score")
   print(p)
