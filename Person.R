@@ -5,7 +5,6 @@ Person <- R6::R6Class("Person",
   fitbit_intraday = NULL, #dataframe of intraday fitbit data
   util = NULL, # util/admin data
   target_steps = NULL,
-  addl_data = NULL, # other data a user could provide (Apple, Fitbit, etc.)
   start_date = NA, # optional start date of interest
   end_date = NA, # optional end date of interest
   user_info = NULL, # optional list of user info, such as "age", "gender", "name", etc.
@@ -13,28 +12,29 @@ Person <- R6::R6Class("Person",
   # variable (date, weekend, etc.) and 2. "group" with the group assignment for 
   # observations with that variable of that value
   apple = NULL,
+  addl_data = NULL, # user's own df of other data
+  addl_data2 = NULL, # another df
   initialize = function(user_email = NA, user_pw = NA, user_info = NA, 
                         apple_data_file = NA,
                         target_steps = 10000,
-                        addl_data = NA, group_assignments = NA,
+                        addl_data = NA, addl_data2 = NA, group_assignments = NA,
                         start_date = NA, end_date = NA) {
     self$addl_data <- addl_data
+    self$addl_data2 <- addl_data2
     self$start_date <- as.Date(strptime(start_date, format="%Y-%m-%d"))
     self$end_date <- as.Date(strptime(end_date, format="%Y-%m-%d"))
     self$target_steps <- target_steps
     self$user_info <- user_info
     self$util <- private$create_util_data(self$start_date, self$end_date)
+
+    if (!is.na(apple_data_file)){
+      self$apple <- private$load_apple_data(apple_data_file) # user needs to pass in path from this
+      # directory to file
+    }
     
-    # NOTE: with this implementation need to make lookup table for source of variables
-    # probably shouldn't expect users to know intraday or daily
-    #self$fitbit_daily <- private$get_fitbit_daily(user_email, user_pw) 
     self$fitbit_intraday <- private$get_fitbit_intraday(user_email, user_pw)
     self$fitbit_daily <- private$get_fitbit_daily(user_email, user_pw)
     
-    if (!is.na(apple_data_file)){
-      self$apple <- read.csv(apple_data_file) # user needs to pass in path from this
-      # directory to file
-    }
       # ^ NOTE: need to do the manipulations to get it into the same format as fitbit
     # or have the user pass in a matching dataframe
     #list of group assignments
@@ -42,6 +42,15 @@ Person <- R6::R6Class("Person",
     }),
   
   private = list(
+    load_apple_data = function(apple_data_file){
+      raw_df <- read.csv(apple_data_file)
+      cleaned <- tibble::data_frame(raw_df)
+      
+      # TODO: convert dates/datetimes, names of columns to match fitbit data
+      
+      return(cleaned)
+    },
+    
     create_util_data = function(start_date, end_date) {
       
       # date range between start and end date
