@@ -1,3 +1,4 @@
+#' @include global_var.R
 Person <- R6::R6Class("Person",
   public = list(
   fitbit_daily = NULL, # dataframe of daily fitbit data
