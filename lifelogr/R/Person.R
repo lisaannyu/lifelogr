@@ -14,7 +14,7 @@ Person <- R6::R6Class("Person",
   apple = NULL,
   addl_data = NULL, # user's own df of other data
   addl_data2 = NULL, # another df
-  initialize = function(user_email = NA, user_pw = NA, user_info = NA, 
+  initialize = function(fitbit_user_email = NA, fitbit_user_pw = NA, user_info = NA, 
                         apple_data_file = NA,
                         target_steps = 10000,
                         addl_data = NA, addl_data2 = NA, group_assignments = NA,
@@ -32,8 +32,8 @@ Person <- R6::R6Class("Person",
       # directory to file
     }
     
-    self$fitbit_intraday <- private$get_fitbit_intraday(user_email, user_pw)
-    self$fitbit_daily <- private$get_fitbit_daily(user_email, user_pw)
+    self$fitbit_intraday <- private$get_fitbit_intraday(fitbit_user_email, fitbit_user_pw)
+    self$fitbit_daily <- private$get_fitbit_daily(fitbit_user_email, fitbit_user_pw)
     
       # ^ NOTE: need to do the manipulations to get it into the same format as fitbit
     # or have the user pass in a matching dataframe
@@ -73,9 +73,9 @@ Person <- R6::R6Class("Person",
       return(tibble::as_data_frame(df))
     }, 
     
-    get_fitbit_intraday = function(user_email, user_pw) {
+    get_fitbit_intraday = function(fitbit_user_email, fitbit_user_pw) {
       
-      cookie <- fitbitScraper::login(email=user_email, password=user_pw)
+      cookie <- fitbitScraper::login(email=fitbit_user_email, password=fitbit_user_pw)
       start <- self$start_date
       end <- self$end_date
       
@@ -134,10 +134,10 @@ Person <- R6::R6Class("Person",
       # Returns a tibble of joined variables recorded daily
       # NOTE: should put variables of interest here - ex: minsAwakeRestless, 
       # pull out into dataframe instead of doing manipulations in other places
-      get_fitbit_daily = function(user_email, user_pw) {
+      get_fitbit_daily = function(fitbit_user_email, fitbit_user_pw) {
         # better way than duplicating this (save somewhere/use to call 
         # both from a higher level function?)
-        cookie <- fitbitScraper::login(email=user_email, password=user_pw)
+        cookie <- fitbitScraper::login(email=fitbit_user_email, password=fitbit_user_pw)
         start <- self$start_date
         end <- self$end_date
         

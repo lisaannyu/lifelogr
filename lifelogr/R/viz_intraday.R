@@ -282,7 +282,7 @@ plot_i_hr <- function(Person, avg_to_get_typical_day = TRUE) {
       ggplot2::labs(y = "Heart Rate (bpm)",
                     title = "Average Heart Rate Per 5 Min Interval vs Time of Day")
   } else if (!avg_to_get_typical_day) {
-    p <- plot_i_hr_datetime(Person)
+    p <- plot_i_hr_avg_datetime(Person)
   } else {
     stop("'avg_to_get_typical_day' must be a logical value")
   }
