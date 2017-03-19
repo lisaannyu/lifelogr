@@ -125,19 +125,29 @@ devtools::use_package("tibble", type = "Imports", pkg = pkgName)
 
 # use command line to do R CMD BUILD fitbitData
 # use command line to do R CMD CHECK fitbitData._0...
+
+
 ############## TO DO/FOR REFERENCE ###################
 
-# add capability for t testing based on two groups in additional data
+# --- must do ------
+# take in a dataframe
+# figure out time, date, datetimes
+# run t test if two groups in data
+# documentation
+# convert apple data
+# error messages and other notes in code
+# build package
+
+
+# ----- lower priority --------------
+# set up shiny tabs
+
+# figure out how to aggregate hr zone data, time intervals 
+# add 15 min bpm average column
 # analyze sleep function for aggregating heart rate, etc. curves
 # sleep experimentation - curves and when drops etc.
 # visualize when awake/restless normed to start/not?
 
-# set up shiny tabs
-# documentation
-
-# figure out how to aggregate hr zone data, time intervals 
-# add 15 min bpm average column
-# figure out time, date, datetimes
 
 
 # names(RA$fitbit)
