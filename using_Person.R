@@ -101,6 +101,7 @@ pregression(dataset, person = RA, variables = list("fitbit_daily" = c("sleepDura
        measures = list("fitbit_daily" = c("restingHeartRate")))
 
 # Building the package
+pkgName <- "/Users/lisaannyu/GitHub/stats290-project/lifelogr"
 pkgName <- "lifelogr" # have to change file path if move this file
 
 # Save RA as EX for example purposes
@@ -128,6 +129,11 @@ devtools::use_package(package = "R6", pkg = pkgName)
 
 # not sure if this should be imports or depends
 devtools::use_package("tibble", type = "Imports", pkg = pkgName)
+
+# Testing
+# devtools::use_testthat() # one time only
+setwd("~/GitHub/stats290-project/lifelogr")
+devtools::test()
 
 # use command line to do R CMD BUILD lifelogr
 # use command line to do R CMD CHECK lifelogr._0...
