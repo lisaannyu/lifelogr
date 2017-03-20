@@ -3,8 +3,7 @@ Title: Life Logging in R
 Version: 0.0.0.9000
 Authors@R: c(person("Rohisha", "Adke", email = "rohisha@gmail.com", role = c("aut", "cre")), person("Lisa Ann", "Yu", email = "lisaann.yu@gmail.com", role = "aut"))
 Description: The lifelogr package provides a framework for creating visualizations and experimenting on onself.
-Depends: R (>= 3.3.2),
-    tibble
+Depends: R (>= 3.3.2)
 License: GPL (>= 2)
 Encoding: UTF-8
 LazyData: true
@@ -32,7 +31,8 @@ Imports:
     stats,
     R6,
     fitbitScraper,
-    tibble
+    tibble,
+    plyr
 Suggests: testthat,
     knitr,
     rmarkdown

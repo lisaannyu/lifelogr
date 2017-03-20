@@ -215,7 +215,7 @@ pkgName <- "/Users/lisaannyu/GitHub/stats290-project/lifelogr"
 pkgName <- "lifelogr" # have to change file path if move this file
 
 # Save RA as EX for example purposes
-# save(EX, file = "/Users/lisaannyu/GitHub/stats290-project/lifelogr/data/EX.rda") # might have to change the file directory
+save(EX, file = "/Users/lisaannyu/GitHub/stats290-project/lifelogr/data/EX.rda") # might have to change the file directory
 
 # Add documentation
 devtools::document(pkg = pkgName)

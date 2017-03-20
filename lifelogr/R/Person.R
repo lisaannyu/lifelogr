@@ -149,7 +149,8 @@ Person <- R6::R6Class("Person",
                                active_cal = `Active Calories (kcal)`)
 
       # Convert datetime variable to dttm type
-      cleaned$datetime <- lubridate::dmy_hm(cleaned$datetime)
+      cleaned$datetime <- lubridate::dmy_hm(cleaned$datetime, 
+                                            tz = Sys.timezone())
       # fitbit steps data is in 15 min intervals, while Apple steps data is in
       # hour intervals
       cleaned$steps <- cleaned$steps / 4
@@ -163,7 +164,12 @@ Person <- R6::R6Class("Person",
       df <- tibble::data_frame(date = lubridate::ymd(as.Date(as.POSIXct(seq(from = start_date,
                                               to = end_date, by = 1)))))
       
-      df$datetime <- df$date
+      df$datetime <- lubridate::make_datetime(year = lubridate::year(df$date),
+                                              month = lubridate::month(df$date),
+                                              day = lubridate::day(df$date),
+                                              hour = 0L,
+                                              min = 0L,
+                                              sec = 0, tz = Sys.timezone())
       # MTWTFSS
       df$day_of_week <- lubridate::wday(df$date, label = TRUE)
       

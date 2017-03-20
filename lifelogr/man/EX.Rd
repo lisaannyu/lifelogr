@@ -7,7 +7,7 @@
 2017-02-17, containing \code{fitbit_daily}, \code{fitbit_intraday}, and 
 \code{util} data
 frames.}
-\format{An object of class \code{Person} (inherits from \code{R6}) of length 13.}
+\format{An object of class \code{Person} (inherits from \code{R6}) of length 14.}
 \usage{
 EX
 }
