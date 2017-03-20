@@ -4,10 +4,10 @@
 \alias{plot_distance}
 \title{Plot distance per day over time.}
 \usage{
-plot_distance(Person, unit = "mi")
+plot_distance(person, unit = "mi")
 }
 \arguments{
-\item{Person}{The user's data}
+\item{person}{An instance of the Person class}
 
 \item{unit}{a unit of distance, 'mi' or 'km'.  The default value is 'mi'}
 }

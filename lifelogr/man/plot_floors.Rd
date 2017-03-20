@@ -4,10 +4,10 @@
 \alias{plot_floors}
 \title{Plot number of floors per day over time.}
 \usage{
-plot_floors(Person)
+plot_floors(person)
 }
 \arguments{
-\item{Person}{The user's data}
+\item{person}{An instance of the Person class}
 }
 \value{
 NULL, but plot printed to screen

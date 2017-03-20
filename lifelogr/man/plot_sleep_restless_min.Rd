@@ -4,20 +4,20 @@
 \alias{plot_sleep_restless_min}
 \title{A function to plot the minutes of restless sleep over time.}
 \usage{
-plot_sleep_restless_min(Person)
+plot_sleep_restless_min(person)
 }
 \arguments{
-\item{Person}{The user's data}
+\item{person}{An instance of the Person class}
 }
 \value{
 A ggplot2 object, prints to screen
 }
 \description{
 Returns a line plot plotting the length of restless sleep 
-over time (in minutes).
+    over time (in minutes).
 }
 \examples{
 data(EX)
-plot_sleep_restless_min(EX)
+plot_sleep_restless_min(person = EX)
 
 }

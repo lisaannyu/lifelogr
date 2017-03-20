@@ -4,10 +4,10 @@
 \alias{plot_rest_hr}
 \title{Plot resting heart rate over time.}
 \usage{
-plot_rest_hr(Person)
+plot_rest_hr(person)
 }
 \arguments{
-\item{Person}{The user's data}
+\item{person}{An instance of the Person class}
 }
 \value{
 NULL, but plot printed to screen

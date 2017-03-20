@@ -4,10 +4,10 @@
 \alias{plot_sleep_start_end}
 \title{A function to plot sleep each night by start time and end time.}
 \usage{
-plot_sleep_start_end(Person, color_var = "day_type")
+plot_sleep_start_end(person, color_var = "day_type")
 }
 \arguments{
-\item{Person}{The user's data}
+\item{person}{An instance of the Person class}
 
 \item{color_var}{"day_type" by default for weekend/weekday, or "day_of_week"
 for day of week.  Determines color of the lines.}
@@ -17,11 +17,11 @@ A ggplot2 object, prints to screen
 }
 \description{
 Returns a plot with start time of sleep and end time of sleep
-each night, colored by weekday vs. weekend.
+    each night, colored by weekday vs. weekend.
 }
 \examples{
 data(EX)
-plot_sleep_start_end(EX)
-plot_sleep_start_end(EX, "day_of_week")
+plot_sleep_start_end(person = EX)
+plot_sleep_start_end(person = EX, "day_of_week")
 
 }

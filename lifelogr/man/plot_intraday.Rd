@@ -4,11 +4,11 @@
 \alias{plot_intraday}
 \title{Switch table to plot intraday variables.}
 \usage{
-plot_intraday(Person, measure_var = "all", avg_to_get_typical_day = TRUE,
+plot_intraday(person, measure_var = "all", avg_to_get_typical_day = TRUE,
   ...)
 }
 \arguments{
-\item{Person}{The user's data}
+\item{person}{An instance of the Person class}
 
 \item{measure_var}{Character vector of length 1 denoting the variable of 
 interest.  Options include: "steps", "floors", "distance", 

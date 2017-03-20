@@ -1,7 +1,11 @@
 ---
 title: "Introduction to lifelogr"
 date: "`r Sys.Date()`"
-output: rmarkdown::html_vignette
+output: 
+  rmarkdown::html_vignette:
+    fig_width: 6
+    fig_height: 3
+
 vignette: >
   %\VignetteIndexEntry{Vignette Title}
   %\VignetteEngine{knitr::rmarkdown}
@@ -86,22 +90,32 @@ as day of week and month.
 dplyr::glimpse(EX$util)
 ```
 
+DO I NEED THIS SECTION?
+### Dates, Times, and Date-Times
+
+Dates and times come in numerous forms.  lifelogr uses three primary types of
+dates/times:
+
+* date: "2017-03-20"
+* time: "08:00:00"
+* date-time: this refers to a combination of a date and a time and is the most
+common unit of analysis in this package
+
 ## Visualization
 
 There are 3 functions which allow for a series of plots with just one function
-call: `plot_sleep_all(Person)`, `plot_daily_all(Person)`, and 
-`plot_intraday_all(Person)`.  Each acts like the `plot.lm()` function, where
-users must click "enter" to see the next plot.
+call: `plot_sleep_all`, `plot_daily_all`, and `plot_intraday_all`.  Each acts 
+like the `plot.lm` function, where users must click "enter" to see the next plot.
 
 Each plot within the generic plot function can also be called individually.
 
 Here are the sleep plots for EX:
-```{r, fig.width = 6, fig.height = 3}
+```{r}
 plot_sleep_all(EX)
 ```
 
 Users can also call each function individually using 
-`plot_sleep(Person, plot_type)`.
+`plot_sleep(person, plot_type)`.
 For example:
 ```{r}
 plot_sleep(EX, "by_datetime")
@@ -112,36 +126,139 @@ Some plots have other options.
 
 For example, `plot_sleep_start_end` has a `color_var = "day_of_week"` argument 
 to color the lines by day of the week instead of weekend/weekday.
-```{r, fig.width = 6, fig.height = 3}
+```{r}
 plot_sleep_start_end(EX, "day_of_week")
 ```
 
-
-```{r, fig.width = 6, fig.height = 3}
+Here are the plots for the daily totals for EX:
+```{r}
 plot_daily_all(EX)
 ```
 
+Users can also call each function individually using:
+```{r}
+plot_daily(EX, "steps")
+```
 
-```{r, fig.width = 6, fig.height = 3}
+Here are the plots for intraday data (multiple data points collected within each
+day).  The default is to aggregate the data by time intervals within each day
+so that data for a "typical day" is displayed.
+```{r}
 plot_intraday_all(EX)
 ```
 
-## Figures
+However, it is also possible to specify that the plots use the raw data and plot
+over all date-times.
 
-The figure sizes have been customised so that you can easily put two images side-by-side. 
-
-```{r, fig.show='hold'}
-plot(1:10)
-plot(10:1)
+```{r}
+plot_intraday_all(EX, FALSE)
 ```
 
-You can enable figure captions by `fig_caption: yes` in YAML:
+## Experimentation Framework
 
-    output:
-      rmarkdown::html_vignette:
-        fig_caption: yes
+While almost all the visualizations shown above had date, date-time, or time on 
+the x axis, the experimentation framework allows for greater flexibility.  Users
+can select any variables of interest and examine their relationship.
 
-Then you can use the chunk option `fig.cap = "Your figure caption."` in **knitr**.
+Users can specify which variables they are interested in analyzing, the type of
+analysis, and the type of time variable.
+For example:
+```{r, fig.show = "hold"}
+experiment(person = EX, variables = list("fitbit_daily" = c("sleepDuration"), 
+                                         "util" = c("day_of_week")),
+           measures = list("fitbit_daily" = c("restingHeartRate")), 
+           analysis = c("plot"),
+           time_var = c("date"))
+```
+
+
+```{r}
+dataset <- create_dataset(person = EX,
+                          all_variables = list("util" = c("month"),
+                                               "fitbit_daily" = c("steps")), 
+                          time_var = c("date"))
+
+l_plot(dataset, person = EX, variables = list("util" = c("month")),
+       measures = list("fitbit_daily" = c("steps")))
+
+l_plot(person = EX, variables = list("fitbit_daily" = c("sleepDuration",
+                                                                 "steps",
+                                                                 "distance"), 
+                                              "util" = c("day_of_week", 
+                                                         "day_type")),
+       measures = list("fitbit_daily" = c("restingHeartRate")), 
+       time_var = c("date"))
+
+
+
+# don't know why this doesn't work
+#correlation(person = EX, variables = list("fitbit_daily" = c("distance")),
+#      measures = list("fitbit_daily" = c("steps")),
+#      time_var = "date")
+
+dataset <- create_dataset(person = EX,
+                          all_variables = list("fitbit_daily" = c("sleepDuration", 
+                                                                  "steps")), 
+                          time_var = c("date"))
+
+correlation_df <- correlation(dataset, person = EX, 
+                              variables = list("fitbit_daily" = c("sleepDuration")),
+                              measures = list("fitbit_daily" = c("steps")),
+                              time_var = "date")
+
+dataset <- create_dataset(person = EX,
+                          all_variables = list("util" = c("day_of_week"), 
+                                               "fitbit_daily" = c("sleepDuration", 
+                                                                  "steps",
+                                                                  "restingHeartRate")), 
+                          time_var = c("date"))
+
+all_anovas <- l_anova(dataset, person = EX, variables = list("util" = c("day_of_week"), 
+                                               "fitbit_daily" = c("sleepDuration",
+                                                        "steps")),
+       measures = list("fitbit_daily" = c("restingHeartRate")))
+
+all_models <- l_regression(dataset, person = EX, variables = list("util" = c("day_of_week"), 
+                                                             "fitbit_daily" = c("sleepDuration",
+                                                                                "steps")),
+                      measures = list("fitbit_daily" = c("restingHeartRate")))
+
+
+dataset <- create_dataset(person = EX,
+                          all_variables = list("util" = c("month"), 
+                                               "fitbit_daily" = c("sleepDuration", 
+                                                                  "steps",
+                                                                  "restingHeartRate")), 
+                          time_var = c("date"))
+
+indiv_months <- data.frame("month"= c("Jan", "Feb", "Mar", "Apr", "May",
+                                      "Jun", "Jul", "Aug",
+                                      "Sep", "Oct", "Nov", "Dec"),
+                           "group" = c(1:12))
+
+
+compare_groups(dataset, person = EX, 
+                     addl_grouping_assignments = list("indiv_months" = indiv_months), 
+                     names_of_groupings = c("indiv_months"),
+                     variables_to_compare = c("steps", "restingHeartRate"))
+
+group_months <- data.frame("month" = c("Jan", "Feb", "Mar", "Apr", "May",
+                                        "Jun", "Jul", "Aug",
+                                        "Sep", "Oct", "Nov", "Dec"),
+                              "group" = c(0, 0, 0, 1, 1, 1, 1, 1, 1, 0, 0, 0))
+ash <- Person$new(user_info = list("name" = "Ash", "age" = 26,
+                                                        "gender" = "female"), 
+                                                        target_steps = 20000,
+                                                        group_assignments = list("group_months" = group_months),
+                                                        start_date = "2017-03-11",
+                                                        end_date = "2017-03-12")
+                                   
+```
+
+
+## Shiny Application
+
+## Apple Data
 
 ## More Examples
 
@@ -149,7 +266,4 @@ Then you can use the chunk option `fig.cap = "Your figure caption."` in **knitr*
 knitr::kable(head(mtcars, 10))
 ```
 
-Also a quote using `>`:
-
 > "He who gives up [code] safety for [code] speed deserves neither."
-([via](https://twitter.com/hadleywickham/status/504368538874703872))

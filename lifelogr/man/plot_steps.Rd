@@ -4,10 +4,10 @@
 \alias{plot_steps}
 \title{Plot steps per day over time.}
 \usage{
-plot_steps(Person)
+plot_steps(person)
 }
 \arguments{
-\item{Person}{The user's data}
+\item{person}{An instance of the Person class}
 }
 \value{
 NULL, but plot printed to screen

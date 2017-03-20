@@ -4,10 +4,10 @@
 \alias{get_hr_zones}
 \title{Calculate Heart Rate Zones.}
 \usage{
-get_hr_zones(Person)
+get_hr_zones(person)
 }
 \arguments{
-\item{Person}{The user's data}
+\item{person}{An instance of the Person class}
 }
 \value{
 Returns a list with 3 vectors of length 2: peak, cardio, and fat_burn

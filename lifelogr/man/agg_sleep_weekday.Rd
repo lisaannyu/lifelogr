@@ -4,10 +4,10 @@
 \alias{agg_sleep_weekday}
 \title{A function to preprocess sleep data for the Person object.}
 \usage{
-agg_sleep_weekday(Person)
+agg_sleep_weekday(person)
 }
 \arguments{
-\item{Person}{The user's data}
+\item{person}{An instance of the Person class}
 }
 \value{
 A tidy data frame with the columns weekday, measure, and hours
@@ -19,6 +19,6 @@ each day of the week (in hours).
 }
 \examples{
 data(EX)
-agg_sleep_weekday(EX)
+agg_sleep_weekday(person = EX)
 
 }

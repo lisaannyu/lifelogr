@@ -4,10 +4,10 @@
 \alias{plot_sleep}
 \title{Plot sleep.}
 \usage{
-plot_sleep(Person, plot_type = "all")
+plot_sleep(person, plot_type = "all")
 }
 \arguments{
-\item{Person}{The user's data}
+\item{person}{An instance of the Person class}
 
 \item{plot_type}{The type of plot.  Options include: "by_weekday", 
 "by_start_end_time", "by_datetime", "by_restless_prop", "by_restless_min", 
@@ -28,6 +28,6 @@ and four are related to quality of sleep
 }
 \examples{
 data(EX)
-plot_sleep(EX)
+plot_sleep(person = EX)
 
 }

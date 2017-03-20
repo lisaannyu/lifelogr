@@ -13,42 +13,42 @@ NULL
 #' 5.  Time spent restless over time (in minutes)
 #' 6.  Sleep quality over time (subjective score, out of 100)
 #' 
-#' @param Person The user's data
+#' @param person An instance of the Person class
 #' @return NULL, but plot prints to screen
 #' @export
 #' @importFrom grDevices dev.flush dev.hold
 #' @examples
 #' data(EX)
-#' plot_sleep_all(EX)
+#' plot_sleep_all(person = EX)
 #'
-plot_sleep_all <- function(Person) {
+plot_sleep_all <- function(person) {
   dev.hold()
-  plot_sleep_weekday(Person)
+  plot_sleep_weekday(person)
   readline(prompt = "Press [enter] to continue")
   dev.flush()
   
   dev.hold()
-  plot_sleep_start_end(Person)
+  plot_sleep_start_end(person)
   readline(prompt = "Press [enter] to continue")
   dev.flush()
   
   dev.hold()
-  plot_sleep_over_time(Person)
+  plot_sleep_over_time(person)
   readline(prompt = "Press [enter] to continue")
   dev.flush()
   
   dev.hold()
-  plot_sleep_restless_prop(Person)
+  plot_sleep_restless_prop(person)
   readline(prompt = "Press [enter] to continue")
   dev.flush()
   
   dev.hold()
-  plot_sleep_restless_min(Person)
+  plot_sleep_restless_min(person)
   readline(prompt = "Press [enter] to continue")
   dev.flush()
   
   dev.hold()
-  plot_sleep_quality(Person)
+  plot_sleep_quality(person)
   readline(prompt = "Press [enter] to continue")
   invisible()
 }
@@ -64,7 +64,7 @@ plot_sleep_all <- function(Person) {
 #' 5.  Time spent restless over time (in minutes)
 #' 6.  Sleep quality over time (subjective score, out of 100)
 #' 
-#' @param Person The user's data
+#' @param person An instance of the Person class
 #' @param plot_type The type of plot.  Options include: "by_weekday", 
 #' "by_start_end_time", "by_datetime", "by_restless_prop", "by_restless_min", 
 #' "by_quality".  Default is to plot all six.
@@ -72,21 +72,22 @@ plot_sleep_all <- function(Person) {
 #' @export
 #' @examples
 #' data(EX)
-#' plot_sleep(EX)
+#' plot_sleep(person = EX)
 #'
-plot_sleep <- function(Person, plot_type = "all") {
+plot_sleep <- function(person, plot_type = "all") {
   if (!(plot_type %in% c("by_weekday", "by_start_end_time", "by_datetime", 
-                         "by_restless_prop", "by_restless_min", "by_quality"))) {
-    stop('"plot_type" must be one of "by_weekday", "by_start_end_time", "by_datetime", "by_restless_prop", "by_restless_min", or "by_quality"')
+                         "by_restless_prop", "by_restless_min", "by_quality",
+                         "all"))) {
+    stop('"plot_type" must be one of "all", "by_weekday", "by_start_end_time", "by_datetime", "by_restless_prop", "by_restless_min", or "by_quality"')
   }
   switch(plot_type,
-    by_weekday = plot_sleep_weekday(Person),
-    by_start_end_time = plot_sleep_start_end(Person),
-    by_datetime = plot_sleep_over_time(Person),
-    by_restless_prop = plot_sleep_restless_prop(Person),
-    by_restless_min = plot_sleep_restless_min(Person),
-    by_quality = plot_sleep_quality(Person),
-    all = plot_sleep_all(Person)
+    by_weekday = plot_sleep_weekday(person),
+    by_start_end_time = plot_sleep_start_end(person),
+    by_datetime = plot_sleep_over_time(person),
+    by_restless_prop = plot_sleep_restless_prop(person),
+    by_restless_min = plot_sleep_restless_min(person),
+    by_quality = plot_sleep_quality(person),
+    all = plot_sleep_all(person)
   )
 }
 
@@ -98,7 +99,7 @@ plot_sleep <- function(Person, plot_type = "all") {
 #' function.  Specifically, it calculates the sleep duration and time asleep for 
 #' each day of the week (in hours).
 #' 
-#' @param Person The user's data
+#' @param person An instance of the Person class
 #' @return A tidy data frame with the columns weekday, measure, and hours
 #' @importFrom dplyr mutate group_by summarize
 #' @importFrom tidyr gather
@@ -106,10 +107,10 @@ plot_sleep <- function(Person, plot_type = "all") {
 #' @export
 #' @examples
 #' data(EX)
-#' agg_sleep_weekday(EX)
+#' agg_sleep_weekday(person = EX)
 #'
-agg_sleep_weekday <- function(Person) {
-  data <- create_dataset(person = Person,
+agg_sleep_weekday <- function(person) {
+  data <- create_dataset(person = person,
                          all_variables = 
                            list("fitbit_daily" = c("sleepDurationHrs", 
                                                    "minAsleepHrs"),
@@ -128,17 +129,17 @@ agg_sleep_weekday <- function(Person) {
 #' @description Returns a bar graph plotting sleep by day of week (Sunday, 
 #'     Monday, ...).
 #' 
-#' @param Person The user's data
+#' @param person An instance of the Person class
 #' @return A ggplot2 object, prints to screen
 #' @importFrom ggplot2 ggplot aes geom_col labs guides guide_legend scale_fill_discrete
 #' @export
 #' @examples
 #' data(EX)
-#' plot_sleep_weekday(EX)
+#' plot_sleep_weekday(person = EX)
 #'
 # Plot 1: by day of week
-plot_sleep_weekday <- function(Person) {
-  data <- agg_sleep_weekday(Person)
+plot_sleep_weekday <- function(person) {
+  data <- agg_sleep_weekday(person)
   p <- ggplot2::ggplot(data = data,
                   mapping = ggplot2::aes(x = day_of_week, 
                                          y = hours,
@@ -157,7 +158,7 @@ plot_sleep_weekday <- function(Person) {
 #' @description Returns a plot with start time of sleep and end time of sleep
 #'     each night, colored by weekday vs. weekend.
 #' 
-#' @param Person The user's data
+#' @param person An instance of the Person class
 #' @param color_var "day_type" by default for weekend/weekday, or "day_of_week"
 #' for day of week.  Determines color of the lines.
 #' @return A ggplot2 object, prints to screen
@@ -166,18 +167,18 @@ plot_sleep_weekday <- function(Person) {
 #' @export
 #' @examples
 #' data(EX)
-#' plot_sleep_start_end(EX)
-#' plot_sleep_start_end(EX, "day_of_week")
+#' plot_sleep_start_end(person = EX)
+#' plot_sleep_start_end(person = EX, "day_of_week")
 #'
 # Plot 2: start and end
-plot_sleep_start_end <- function(Person, color_var = "day_type") {
+plot_sleep_start_end <- function(person, color_var = "day_type") {
   
   if (!(color_var %in% c("day_type", "day_of_week"))) {
     stop("'color_var' must be 'day_type' for weekend/weekday or 'day_of_week' for day of the week")
   }
   
   # Pull relevant data
-  data <- create_dataset(person = Person,
+  data <- create_dataset(person = person,
                          all_variables = 
                            list("fitbit_daily" = c("startTime", 
                                                    "startDateTime",
@@ -223,17 +224,17 @@ plot_sleep_start_end <- function(Person, color_var = "day_type") {
 #' @description Returns a line plot plotting sleep over time.  Includes sleep
 #'     duration and time asleep (in hours).
 #' 
-#' @param Person The user's data
+#' @param person An instance of the Person class
 #' @return A ggplot2 object, prints to screen
 #' @export
 #' @importFrom ggplot2 ggplot geom_line aes labs guides guide_legend 
 #'     scale_color_discrete
 #' @examples
 #' data(EX)
-#' plot_sleep_over_time(EX)
+#' plot_sleep_over_time(person = EX)
 #'
-plot_sleep_over_time <- function(Person) {
-  p <- plot_d(Person, measures = c("sleepDurationHrs", "minAsleepHrs")) +
+plot_sleep_over_time <- function(person) {
+  p <- plot_d(person, measures = c("sleepDurationHrs", "minAsleepHrs")) +
     ggplot2::labs(y = "Sleep Duration (hours)",
                   title = "Sleep Over Time") +
     ggplot2::guides(color = ggplot2::guide_legend(title = "Sleep Type",
@@ -250,16 +251,16 @@ plot_sleep_over_time <- function(Person) {
 #'     over time.  The proportion is calculated as the difference between sleep
 #'     duration and time spent asleep over sleep duration.
 #' 
-#' @param Person The user's data
+#' @param person An instance of the Person class
 #' @return A ggplot2 object, prints to screen
 #' @export
 #' @importFrom ggplot2 ggplot geom_line aes labs
 #' @examples
 #' data(EX)
-#' plot_sleep_restless_prop(EX)
+#' plot_sleep_restless_prop(person = EX)
 #'
-plot_sleep_restless_prop <- function(Person) {
-  p <- plot_d(Person, "restlessProp")
+plot_sleep_restless_prop <- function(person) {
+  p <- plot_d(person, "restlessProp")
   p <- p + 
       ggplot2::labs(x = "Date", y = "Percent of Restless Sleep",
                     title = "Quality of Sleep: Restlessness (%)")
@@ -273,16 +274,16 @@ plot_sleep_restless_prop <- function(Person) {
 #' @description Returns a line plot plotting the length of restless sleep 
 #'     over time (in minutes).
 #' 
-#' @param Person The user's data
+#' @param person An instance of the Person class
 #' @return A ggplot2 object, prints to screen
 #' @export
 #' @importFrom ggplot2 labs
 #' @examples
 #' data(EX)
-#' plot_sleep_restless_min(EX)
+#' plot_sleep_restless_min(person = EX)
 #'
-plot_sleep_restless_min <- function(Person) {
-  p <- plot_d(Person, "restlessDuration")
+plot_sleep_restless_min <- function(person) {
+  p <- plot_d(person, "restlessDuration")
   p <- p + ggplot2::labs(y = "Length of Restless Sleep (minutes)",
                     title = "Quality of Sleep: Restlessness (mins)")
   print(p)
@@ -295,16 +296,16 @@ plot_sleep_restless_min <- function(Person) {
 #' @description Returns a line plot plotting sleep quality over time.  Sleep
 #' quality is a subjective score given by Fitbit
 #' 
-#' @param Person The user's data
+#' @param person An instance of the Person class
 #' @return A ggplot2 object, prints to screen
 #' @export
 #' @importFrom ggplot2 labs
 #' @examples
 #' data(EX)
-#' plot_sleep_quality(EX)
+#' plot_sleep_quality(person = EX)
 #'
-plot_sleep_quality <- function(Person) {
-  p <- plot_d(Person, "sleepQualityScoreA")
+plot_sleep_quality <- function(person) {
+  p <- plot_d(person, "sleepQualityScoreA")
   p <- p + ggplot2::labs(y = "Sleep Quality Score", 
                          title = "Quality of Sleep: Quality Score")
   print(p)

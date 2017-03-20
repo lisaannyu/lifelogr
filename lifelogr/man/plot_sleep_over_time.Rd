@@ -4,20 +4,20 @@
 \alias{plot_sleep_over_time}
 \title{A function to plot sleep over time.}
 \usage{
-plot_sleep_over_time(Person)
+plot_sleep_over_time(person)
 }
 \arguments{
-\item{Person}{The user's data}
+\item{person}{An instance of the Person class}
 }
 \value{
 A ggplot2 object, prints to screen
 }
 \description{
 Returns a line plot plotting sleep over time.  Includes sleep
-duration and time asleep (in hours).
+    duration and time asleep (in hours).
 }
 \examples{
 data(EX)
-plot_sleep_over_time(EX)
+plot_sleep_over_time(person = EX)
 
 }

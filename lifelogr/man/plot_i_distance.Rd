@@ -4,10 +4,10 @@
 \alias{plot_i_distance}
 \title{Plot distance over time.}
 \usage{
-plot_i_distance(Person, avg_to_get_typical_day = TRUE, unit = "mi")
+plot_i_distance(person, avg_to_get_typical_day = TRUE, unit = "mi")
 }
 \arguments{
-\item{Person}{The user's data.}
+\item{person}{An instance of the Person class.}
 
 \item{avg_to_get_typical_day}{Logical vector of length 1.  If TRUE, plot 
 gives an aggregate of the variable over the course of a typical day.  If 

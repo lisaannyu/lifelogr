@@ -4,10 +4,10 @@
 \alias{plot_daily}
 \title{Plot daily health totals.}
 \usage{
-plot_daily(Person, measure_var = "all", ...)
+plot_daily(person, measure_var = "all", ...)
 }
 \arguments{
-\item{Person}{The user's data}
+\item{person}{An instance of the Person class}
 
 \item{measure_var}{Default is to print all six plots.  Options include:
 "steps", "floors", "distance", "calories", "mins_very", "rest_hr", "all".}

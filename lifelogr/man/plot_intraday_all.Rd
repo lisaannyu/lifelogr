@@ -4,10 +4,15 @@
 \alias{plot_intraday_all}
 \title{Plot all intraday variables.}
 \usage{
-plot_intraday_all(Person)
+plot_intraday_all(person, avg_to_get_typical_day = TRUE)
 }
 \arguments{
-\item{Person}{The user's data.}
+\item{person}{An instance of the Person class.}
+
+\item{avg_to_get_typical_day}{Logical vector of length 1.  If TRUE, plot 
+gives an aggregate of the variable over the course of a typical day.  If 
+FALSE, plot gives the variable at every interval over the range specified
+ when the Person object was instantiated.}
 }
 \value{
 NULL, plots print to screen

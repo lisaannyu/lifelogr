@@ -4,10 +4,10 @@
 \alias{plot_sleep_quality}
 \title{A function to plot sleep quality over time.}
 \usage{
-plot_sleep_quality(Person)
+plot_sleep_quality(person)
 }
 \arguments{
-\item{Person}{The user's data}
+\item{person}{An instance of the Person class}
 }
 \value{
 A ggplot2 object, prints to screen
@@ -18,6 +18,6 @@ quality is a subjective score given by Fitbit
 }
 \examples{
 data(EX)
-plot_sleep_quality(EX)
+plot_sleep_quality(person = EX)
 
 }

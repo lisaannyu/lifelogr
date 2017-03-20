@@ -20,7 +20,8 @@ one list, with structure list(source1 = c(var1, var2),
         source's sublist
 }
 \description{
-
+merges list of lists specifying source and variables from each
+             source into one list
 }
 \examples{
 variables = list("fitbit_intraday" = c("steps"), 

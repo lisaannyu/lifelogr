@@ -4,21 +4,21 @@
 \alias{plot_sleep_restless_prop}
 \title{A function to plot the proportion of restless sleep over time.}
 \usage{
-plot_sleep_restless_prop(Person)
+plot_sleep_restless_prop(person)
 }
 \arguments{
-\item{Person}{The user's data}
+\item{person}{An instance of the Person class}
 }
 \value{
 A ggplot2 object, prints to screen
 }
 \description{
 Returns a line plot plotting the proportion of restless sleep 
-over time.  The proportion is calculated as the difference between sleep
-duration and time spent asleep over sleep duration.
+    over time.  The proportion is calculated as the difference between sleep
+    duration and time spent asleep over sleep duration.
 }
 \examples{
 data(EX)
-plot_sleep_restless_prop(EX)
+plot_sleep_restless_prop(person = EX)
 
 }

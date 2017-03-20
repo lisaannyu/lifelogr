@@ -4,10 +4,10 @@
 \alias{plot_daily_all}
 \title{Plot a series of six graphs.}
 \usage{
-plot_daily_all(Person)
+plot_daily_all(person)
 }
 \arguments{
-\item{Person}{The user's data}
+\item{person}{An instance of the Person class}
 }
 \value{
 NULL, but plots printed to screen

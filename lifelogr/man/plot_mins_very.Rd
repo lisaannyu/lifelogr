@@ -4,10 +4,10 @@
 \alias{plot_mins_very}
 \title{Plot minutes 'very active' over time.}
 \usage{
-plot_mins_very(Person)
+plot_mins_very(person)
 }
 \arguments{
-\item{Person}{The user's data}
+\item{person}{An instance of the Person class}
 }
 \value{
 NULL, but plot printed to screen

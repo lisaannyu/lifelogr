@@ -4,20 +4,20 @@
 \alias{plot_sleep_weekday}
 \title{A function to plot sleep by day of week.}
 \usage{
-plot_sleep_weekday(Person)
+plot_sleep_weekday(person)
 }
 \arguments{
-\item{Person}{The user's data}
+\item{person}{An instance of the Person class}
 }
 \value{
 A ggplot2 object, prints to screen
 }
 \description{
 Returns a bar graph plotting sleep by day of week (Sunday, 
-Monday, ...).
+    Monday, ...).
 }
 \examples{
 data(EX)
-plot_sleep_weekday(EX)
+plot_sleep_weekday(person = EX)
 
 }

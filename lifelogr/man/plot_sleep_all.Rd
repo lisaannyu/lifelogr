@@ -4,10 +4,10 @@
 \alias{plot_sleep_all}
 \title{Plot a series of six sleep graphs.}
 \usage{
-plot_sleep_all(Person)
+plot_sleep_all(person)
 }
 \arguments{
-\item{Person}{The user's data}
+\item{person}{An instance of the Person class}
 }
 \value{
 NULL, but plot prints to screen
@@ -24,6 +24,6 @@ four are related to quality of sleep
 }
 \examples{
 data(EX)
-plot_sleep_all(EX)
+plot_sleep_all(person = EX)
 
 }

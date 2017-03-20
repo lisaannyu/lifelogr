@@ -4,10 +4,10 @@
 \alias{plot_d}
 \title{Line graph for continuous variable(s).}
 \usage{
-plot_d(Person, measures)
+plot_d(person, measures)
 }
 \arguments{
-\item{Person}{The user's data}
+\item{person}{An instance of the Person class}
 
 \item{measures}{A character vector of length one or more indicating the 
 variable(s) of interest.  Options include: "steps", "floors", "distance",

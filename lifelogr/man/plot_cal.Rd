@@ -4,10 +4,10 @@
 \alias{plot_cal}
 \title{Plot calories over time.}
 \usage{
-plot_cal(Person)
+plot_cal(person)
 }
 \arguments{
-\item{Person}{The user's data}
+\item{person}{An instance of the Person class}
 }
 \value{
 NULL, but plot printed to screen

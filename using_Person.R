@@ -252,7 +252,7 @@ setwd("~/GitHub/stats290-project/lifelogr")
 devtools::test()
 
 # Vignette
-devtools::use_vignette("vignette")
+# devtools::use_vignette("vignette") # only need this once
 
 # use command line to do R CMD BUILD lifelogr
 # use command line to do R CMD CHECK lifelogr._0...

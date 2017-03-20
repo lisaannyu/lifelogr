@@ -11,24 +11,24 @@
 \alias{plot_i_weight}
 \title{Line graph for a single continuous variable.}
 \usage{
-plot_i(Person, measure_var, avg_to_get_typical_day = TRUE)
+plot_i(person, measure_var, avg_to_get_typical_day = TRUE)
 
-plot_i_steps(Person, avg_to_get_typical_day = TRUE)
+plot_i_steps(person, avg_to_get_typical_day = TRUE)
 
-plot_i_floors(Person, avg_to_get_typical_day = TRUE)
+plot_i_floors(person, avg_to_get_typical_day = TRUE)
 
-plot_i_cal(Person, avg_to_get_typical_day = TRUE)
+plot_i_cal(person, avg_to_get_typical_day = TRUE)
 
-plot_i_active_min(Person, avg_to_get_typical_day = TRUE)
+plot_i_active_min(person, avg_to_get_typical_day = TRUE)
 
-plot_i_hr(Person, avg_to_get_typical_day = TRUE)
+plot_i_hr(person, avg_to_get_typical_day = TRUE)
 
-plot_i_hr_datetime(Person)
+plot_i_hr_datetime(person)
 
-plot_i_weight(Person, avg_to_get_typical_day = TRUE, unit = "lb")
+plot_i_weight(person, avg_to_get_typical_day = TRUE, unit = "lb")
 }
 \arguments{
-\item{Person}{The user's data}
+\item{person}{An instance of the Person class}
 
 \item{measure_var}{character vector denoting the variables of interest.
 Options are one or more of: "steps", "floors", "distance", 

@@ -12,7 +12,7 @@ NULL
 #' 5.  Minutes 'very active'
 #' 6.  Resting heart rate
 #' 
-#' @param Person The user's data
+#' @param person An instance of the Person class
 #' @return NULL, but plots printed to screen
 #' @importFrom grDevices dev.flush dev.hold
 #' @export
@@ -20,35 +20,35 @@ NULL
 #' data(EX)
 #' plot_daily_all(EX)
 #'
-plot_daily_all <- function(Person) {
+plot_daily_all <- function(person) {
   
   dev.hold()
-  plot_steps(Person)
+  plot_steps(person)
   readline(prompt = "Press [enter] to continue")
   dev.flush()
   
   dev.hold()
-  plot_floors(Person)
+  plot_floors(person)
   readline(prompt = "Press [enter] to continue")
   dev.flush()
   
   dev.hold()
-  plot_distance(Person)
+  plot_distance(person)
   readline(prompt = "Press [enter] to continue")
   dev.flush()
   
   dev.hold()
-  plot_cal(Person)
+  plot_cal(person)
   readline(prompt = "Press [enter] to continue")
   dev.flush()
   
   dev.hold()
-  plot_mins_very(Person)
+  plot_mins_very(person)
   readline(prompt = "Press [enter] to continue")
   dev.flush()
   
   dev.hold()
-  plot_rest_hr(Person)
+  plot_rest_hr(person)
   readline(prompt = "Press [enter] to continue")
   invisible()
 }
@@ -57,7 +57,7 @@ plot_daily_all <- function(Person) {
 #' 
 #' @description Prints one of six plots, each showing daily totals over time.
 #' 
-#' @param Person The user's data
+#' @param person An instance of the Person class
 #' @param measure_var Default is to print all six plots.  Options include:
 #'     "steps", "floors", "distance", "calories", "mins_very", "rest_hr", "all".
 #' @param ... Extra arguments used to specify unit for the distance plot.
@@ -68,19 +68,19 @@ plot_daily_all <- function(Person) {
 #' plot_daily(EX, "steps")
 #' plot_daily(EX, "distance", "km")
 #'
-plot_daily <- function(Person, measure_var = "all", ...) {
+plot_daily <- function(person, measure_var = "all", ...) {
   if (!(measure_var %in% c("steps", "floors", "distance", "calories", 
-                           "mins_very", "rest_hr"))) {
-    stop('"measure_var" must be one of "steps", "floors", "distance", "calories", "mins_very", "rest_hr"')
+                           "mins_very", "rest_hr", "all"))) {
+    stop('"measure_var" must be one of "all", "steps", "floors", "distance", "calories", "mins_very", "rest_hr"')
   }
   switch(measure_var,
-         steps = plot_steps(Person),
-         floors = plot_floors(Person),
-         distance = plot_distance(Person, ...),
-         calories = plot_cal(Person),
-         mins_very = plot_mins_very(Person),
-         rest_hr = plot_rest_hr(Person),
-         all = plot_daily_all(Person)
+         steps = plot_steps(person),
+         floors = plot_floors(person),
+         distance = plot_distance(person, ...),
+         calories = plot_cal(person),
+         mins_very = plot_mins_very(person),
+         rest_hr = plot_rest_hr(person),
+         all = plot_daily_all(person)
   )
 }
 
@@ -115,7 +115,7 @@ tidy_multi_meas_data <- function(data) {
 #' @description A "quick-and-dirty" approach to plotting a generic line graph 
 #'     with default axis labels.  Can plot one or more variables.
 #' 
-#' @param Person The user's data
+#' @param person An instance of the Person class
 #' @param measures A character vector of length one or more indicating the 
 #'     variable(s) of interest.  Options include: "steps", "floors", "distance",
 #'      "calories", "mins_very", "rest_hr".
@@ -127,8 +127,8 @@ tidy_multi_meas_data <- function(data) {
 #' data(EX)
 #' plot_d(EX, "steps")
 #' plot_d(EX, c("steps", "distance"))
-plot_d <- function(Person, measures) {
-  data <- create_dataset(person = Person,
+plot_d <- function(person, measures) {
+  data <- create_dataset(person = person,
                          all_variables = 
                            list("fitbit_daily" = measures), 
                          time_var = c("date"))
@@ -167,7 +167,7 @@ plot_d <- function(Person, measures) {
 #' @description Prints a line plot plotting steps per day over time.  The
 #'     reference line refers to the user's target number of steps.
 #' 
-#' @param Person The user's data
+#' @param person An instance of the Person class
 #' @return NULL, but plot printed to screen
 #' 
 #' @export
@@ -177,9 +177,9 @@ plot_d <- function(Person, measures) {
 #' data(EX)
 #' plot_steps(EX)
 #'
-plot_steps <- function(Person) {
-  p <- plot_d(Person, "steps") + 
-    modelr::geom_ref_line(h = Person$target_steps, colour = "orange", 
+plot_steps <- function(person) {
+  p <- plot_d(person, "steps") + 
+    modelr::geom_ref_line(h = person$target_steps, colour = "orange", 
                           size = 0.7) +
     ggplot2::labs(title = "Number of Steps Per Day")
   print(p)
@@ -189,7 +189,7 @@ plot_steps <- function(Person) {
 #' 
 #' @description Prints a line plot plotting number of floors per day over time.
 #' 
-#' @param Person The user's data
+#' @param person An instance of the Person class
 #' @return NULL, but plot printed to screen
 #' 
 #' @export
@@ -197,8 +197,8 @@ plot_steps <- function(Person) {
 #' @examples
 #' data(EX)
 #' plot_floors(EX)
-plot_floors <- function(Person) {
-  p <- plot_d(Person, "floors") +
+plot_floors <- function(person) {
+  p <- plot_d(person, "floors") +
     ggplot2::labs(title = "Number of Floors Per Day")
   print(p)
 }
@@ -209,7 +209,7 @@ plot_floors <- function(Person) {
 #' @description Prints a line plot plotting distance in miles or kilometers per 
 #'     day over time.
 #' 
-#' @param Person The user's data
+#' @param person An instance of the Person class
 #' @param unit a unit of distance, 'mi' or 'km'.  The default value is 'mi'
 #' @return NULL, but plot printed to screen
 #' 
@@ -220,12 +220,12 @@ plot_floors <- function(Person) {
 #' plot_distance(EX)
 #' plot_distance(EX, "mi")
 #' plot_distance(EX, "km")
-plot_distance <- function(Person, unit = "mi") {
+plot_distance <- function(person, unit = "mi") {
   
   if (unit == "mi") {
-    p <- plot_d(Person, "distance")
+    p <- plot_d(person, "distance")
   } else if (unit == "km") {
-    p <- plot_d(Person, "distanceKm")
+    p <- plot_d(person, "distanceKm")
   } else {
     stop("'unit' must be 'mi' or 'km'")
   }
@@ -241,7 +241,7 @@ plot_distance <- function(Person, unit = "mi") {
 #' @description Prints a line plot plotting calories burned over time.  If
 #'     calories consumed are in the dataset, it also plots calories consumed.
 #' 
-#' @param Person The user's data
+#' @param person An instance of the Person class
 #' @return NULL, but plot printed to screen
 #' 
 #' @export
@@ -250,13 +250,13 @@ plot_distance <- function(Person, unit = "mi") {
 #' @examples
 #' data(EX)
 #' plot_cal(EX)
-plot_cal <- function(Person) {
-  data <- create_dataset(person = Person,
+plot_cal <- function(person) {
+  data <- create_dataset(person = person,
                          all_variables = 
                            list("fitbit_daily" = c("caloriesBurned", "caloriesIntake")), 
                          time_var = c("date"))
   if (sum(data$caloriesIntake, na.rm = TRUE) == 0) {
-    p <- plot_d(Person, "caloriesBurned")
+    p <- plot_d(person, "caloriesBurned")
     p <- p + ggplot2::labs(y = "Calories", title = "Calories Burned")
   } else if (sum(data$caloriesIntake, na.rm = TRUE) != 0) {
     data <- tidy_multi_meas_data(data)
@@ -278,7 +278,7 @@ plot_cal <- function(Person) {
 #' @description Prints a line plot plotting minutes 'very active' per day over 
 #'     time.  'Very active' is a subjective term defined by fitbit.
 #' 
-#' @param Person The user's data
+#' @param person An instance of the Person class
 #' @return NULL, but plot printed to screen
 #' 
 #' @export
@@ -287,8 +287,8 @@ plot_cal <- function(Person) {
 #' @examples
 #' data(EX)
 #' plot_mins_very(EX)
-plot_mins_very <- function(Person) {
-  p <- plot_d(Person, "minutesVery")
+plot_mins_very <- function(person) {
+  p <- plot_d(person, "minutesVery")
   p <- p + ggplot2::labs(y = "Time 'Very Active' (mins)", 
                     title = "Time Spent 'Very Active' by Day")
   print(p)
@@ -303,7 +303,7 @@ plot_mins_very <- function(Person) {
 #'     100.  However, well-trained athletes can have resting heart rates between
 #'      40 and 60.
 #' 
-#' @param Person The user's data
+#' @param person An instance of the Person class
 #' @return NULL, but plot printed to screen
 #' 
 #' @export
@@ -313,8 +313,8 @@ plot_mins_very <- function(Person) {
 #' data(EX)
 #' plot_rest_hr(EX)
 #' @seealso \url{http://www.heart.org/HEARTORG/HealthyLiving/PhysicalActivity/FitnessBasics/Target-Heart-Rates_UCM_434341_Article.jsp#.WM3bCxiZMdU}
-plot_rest_hr <- function(Person) {
-  p <- plot_d(Person, "restingHeartRate") +
+plot_rest_hr <- function(person) {
+  p <- plot_d(person, "restingHeartRate") +
     ggplot2::labs(y = "Resting Heart Rate (bpm)", title = "Resting Heart Rate")
   print(p)
 }
