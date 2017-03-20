@@ -23,12 +23,120 @@ RA <- Person$new(fitbit_user_email = "rohisha@gmail.com",
                                           data.frame(NA)),
                  start_date = "2017-03-11", end_date = "2017-03-12")
 
-EX <- Person$new(fitbit_user_email = "rohisha@gmail.com", fitbit_user_pw = "datasamplepw",
+EX <- Person$new(fitbit_user_email = "rohisha@gmail.com", 
+                 fitbit_user_pw = "datasamplepw",
                  apple_data_file = "apple.csv",
                  user_info = list("name" = "EX", "age" = 29, "gender" = "male"),
                  target_steps = 10000,
-                 group_assignments = list(data.frame(NA), data.frame(NA)),
+                 #group_assignments = list(data.frame(NA), data.frame(NA)),
                  start_date = "2017-01-19", end_date = "2017-02-17")
+
+# Examples in experiments.R
+experiment(person = EX, variables = list("fitbit_daily" = c("sleepDuration"), 
+                                         "util" = c("day_of_week")),
+           measures = list("fitbit_daily" = c("restingHeartRate")), 
+           analysis = c("plot"),
+           time_var = c("date"))
+
+dataset <- create_dataset(person = EX,
+                          all_variables = list("util" = c("month"),
+                                               "fitbit_daily" = c("steps")), 
+                          time_var = c("date"))
+
+l_plot(dataset, person = EX, variables = list("util" = c("month")),
+       measures = list("fitbit_daily" = c("steps")))
+
+l_plot(person = EX, variables = list("fitbit_daily" = c("sleepDuration",
+                                                                 "steps",
+                                                                 "distance"), 
+                                              "util" = c("day_of_week", 
+                                                         "day_type")),
+       measures = list("fitbit_daily" = c("restingHeartRate")), 
+       time_var = c("date"))
+
+
+
+# don't know why this doesn't work
+#correlation(person = EX, variables = list("fitbit_daily" = c("distance")),
+#      measures = list("fitbit_daily" = c("steps")),
+#      time_var = "date")
+
+dataset <- create_dataset(person = EX,
+                          all_variables = list("fitbit_daily" = c("sleepDuration", 
+                                                                  "steps")), 
+                          time_var = c("date"))
+
+correlation_df <- correlation(dataset, person = EX, 
+                              variables = list("fitbit_daily" = c("sleepDuration")),
+                              measures = list("fitbit_daily" = c("steps")),
+                              time_var = "date")
+
+dataset <- create_dataset(person = EX,
+                          all_variables = list("util" = c("day_of_week"), 
+                                               "fitbit_daily" = c("sleepDuration", 
+                                                                  "steps",
+                                                                  "restingHeartRate")), 
+                          time_var = c("date"))
+
+all_anovas <- l_anova(dataset, person = EX, variables = list("util" = c("day_of_week"), 
+                                               "fitbit_daily" = c("sleepDuration",
+                                                        "steps")),
+       measures = list("fitbit_daily" = c("restingHeartRate")))
+
+all_models <- l_regression(dataset, person = EX, variables = list("util" = c("day_of_week"), 
+                                                             "fitbit_daily" = c("sleepDuration",
+                                                                                "steps")),
+                      measures = list("fitbit_daily" = c("restingHeartRate")))
+
+
+dataset <- create_dataset(person = EX,
+                          all_variables = list("util" = c("month"), 
+                                               "fitbit_daily" = c("sleepDuration", 
+                                                                  "steps",
+                                                                  "restingHeartRate")), 
+                          time_var = c("date"))
+
+indiv_months <- data.frame("month"= c("Jan", "Feb", "Mar", "Apr", "May",
+                                      "Jun", "Jul", "Aug",
+                                      "Sep", "Oct", "Nov", "Dec"),
+                           "group" = c(1:12))
+
+
+compare_groups(dataset, person = EX, 
+                     addl_grouping_assignments = list("indiv_months" = indiv_months), 
+                     names_of_groupings = c("indiv_months"),
+                     variables_to_compare = c("steps", "restingHeartRate"))
+
+
+
+###############
+
+###### TESTS ############
+
+experiment(person = EX, variables = list("fitbit_daily" = c("sleepDuration"), 
+                                         "util" = c("day_of_week")),
+           measures = list("fitbit_daily" = c("restingHeartRate")), 
+           analysis = c("kriging"),
+           time_var = c("date"))
+
+experiment(person = EX, variables = list("fitbit_daily" = c("sleepDuration"), 
+                                         "util" = c("day_of_week")),
+           measures = list("fitbit_daily" = c("restingHeartRate")), 
+           analysis = c("kriging"),
+           time_var = c("lunar"))
+
+dataset <- create_dataset(person = EX,
+                          all_variables = list("util" = c("month"),
+                                               "fitbit_daily" = c("steps")), 
+                          time_var = c("lunar"))
+
+dataset <- create_dataset(person = EX,
+                          all_variables = list("util" = c("month"),
+                                               "fitbit_daily" = c("steps")), 
+                          time_var = NA)
+
+##################
+
 
 dataset <- create_dataset(person = RA,
                           all_variables = list("util" = c("month"),
@@ -77,7 +185,7 @@ dataset <- create_dataset(person = RA,
                           time_var = c("date"))
 
 # Then run each analysis on that dataset separately
-pplot(dataset, person = RA, variables = list("fitbit_daily" = c("sleepDuration",
+l_plot(dataset, person = RA, variables = list("fitbit_daily" = c("sleepDuration",
                                                                    "steps",
                                                                    "distance"), 
                                              "util" = c("day_of_week", 
@@ -99,6 +207,8 @@ pregression(dataset, person = RA, variables = list("fitbit_daily" = c("sleepDura
                                                                  "steps",
                                                                  "distance")),
        measures = list("fitbit_daily" = c("restingHeartRate")))
+
+
 
 # Building the package
 pkgName <- "/Users/lisaannyu/GitHub/stats290-project/lifelogr"
