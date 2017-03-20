@@ -141,3 +141,5 @@ devtools::use_vignette("vignette")
 # use command line to do R CMD BUILD lifelogr
 # use command line to do R CMD CHECK lifelogr._0...
 
+# Install
+devtools::install(pkg = pkgName)

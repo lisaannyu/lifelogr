@@ -53,7 +53,11 @@ load("../data/EX.rda")
 ```
 
 
-iPhone users can provide their apple data as a csv.
+iPhone users can provide their Apple data as a csv.  There is an iOS app called 
+QS Access (quantified self) where you can select which measures you would like
+and on which time scale (by day or by hour), and it will create a csv file for
+you.  For greater compatibility with the lifelogr package, users are highly 
+recommended to select the "by hour" time interval.
 
 Users can provide other sources of data as a data frame, as an argument to 
 `addl_data` or `addl_data2`.
@@ -61,19 +65,52 @@ Users can provide other sources of data as a data frame, as an argument to
 EX is an instance of the Person class, which has 3 main public data frames:
 `fitbit_daily`, `fitbit_intraday`, and `util`.
 
+Here is the structure of `fitbit_daily`, which has fitbit data recorded on a
+daily basis.
 ```{r}
 dplyr::glimpse(EX$fitbit_daily)
+```
+
+Here is the structure of `fitbit_intraday`, which has fitbit data recorded on an
+intraday basis, generally every 15 minutes, although for certain variables, such
+as heart rate, every 5 minutes.
+```{r}
 dplyr::glimpse(EX$fitbit_intraday)
+```
+
+
+Here is the structure of `fitbit_util`, which has ...
+```{r}
 dplyr::glimpse(EX$util)
 ```
 
-
 ## Visualization
 
-```{r}
+There are 3 functions which allow for a series of plots with just one function
+call: `plot_sleep_all(Person)`, `plot_daily_all(Person)`, and 
+`plot_intraday_all(Person)`.  Each acts like the `plot.lm()` function, where
+users must click "enter" to see the next plot.
+
+Each plot within the generic plot function can also be called individually.
+
+Here are the sleep plots for EX:
+```{r, fig.width = 6, fig.height = 3}
 plot_sleep_all(EX)
 ```
 
+```{r, fig.width = 6, fig.height = 3}
+plot_sleep_start_end(EX, "day_type")
+```
+
+
+```{r, fig.width = 6, fig.height = 3}
+plot_daily_all(EX)
+```
+
+
+```{r, fig.width = 6, fig.height = 3}
+plot_intraday_all(EX)
+```
 
 ## Figures
 

@@ -19,7 +19,8 @@ Collate:
     'viz_intraday.R'
     'viz_sleep.R'
 RoxygenNote: 6.0.1
-Imports: ggplot2,
+Imports:
+    ggplot2,
     shiny,
     dplyr,
     lubridate,
@@ -29,5 +30,10 @@ Imports: ggplot2,
     grDevices,
     lazyeval,
     stats,
+    R6,
+    fitbitScraper,
     tibble
-Suggests: testthat
+Suggests: testthat,
+    knitr,
+    rmarkdown
+VignetteBuilder: knitr

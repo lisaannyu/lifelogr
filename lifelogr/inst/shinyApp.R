@@ -1,65 +1,164 @@
+#' @include global_var.R Person.R experiments.R viz_daily.R viz_sleep.R viz_intraday.R
 library(shiny)
+
 ui <- fluidPage(
   # Application title
-  titlePanel("Fitbit Data"),
-  
-  sidebarLayout(
-    sidebarPanel(
-      dateRangeInput('dateRange',
-                     label = paste('Date Range'),
-                     start = Sys.Date() - 7, end = Sys.Date(),
-                     separator = " - ", format = "mm/dd/yy",
-                     startview = 'month', weekstart = 1
-      ),
-      checkboxGroupInput("measures", "Measures:",
-                          c("Steps" = "steps",
-                            "Distance" = "distance",
-                            "Floors" = "floors",
-                            "Minutes Very" = "minutesVery",
-                            "Calories Burned" = "cal_ratio",
-                            "Resting Heart Rate" = "hr",
-                            "Time in Heart Rate Zones" = "hr_zones",
-                            "Sleep" = "sleep",
-                            "Weight" = "weight",
-                            # Intra-day
-                            "Active Minutes" = "active-minutes",
-                            "Calories Burned" = "calories-burned",
-                            "Heart Rate" = "bpm"))
-      
-      # Daily basis (once per day):
-      # from get_daily_data
-      # steps
-      # distance
-      # floors
-      # minutesVery
-      # caloriesBurnedVsIntake
-      # getTimeInHeartRateZonesPerDay
-      # getRestingHeartRateData
-      # from get_sleep_data
-      # sleep
-      # from get_weight_data
-      # weight
-      
-      # Intra-day (multiple times per day):
-      # from get_intraday_data
-      # steps
-      # distance
-      # floors
-      # active-minutes
-      # calories-burned
-      # heart-rate
+  titlePanel("lifelogr"),
+  tabsetPanel(
+    tabPanel("Setup",
+             fluidRow(
+               column(3,
+                      h3("Enter setup information:"),
+                      textInput("name", label = "Name"),
+                      numericInput("age", label = "Age (in years)", value = 40),
+                      radioButtons("gender", label = "Gender",
+                                   c("Male" = "male",
+                                     "Female" = "female",
+                                     "Other" = "other")),
+                      actionButton("done", "Done")
+                      ),
+               column(3,
+                      br(),
+                      textInput("email", label = "Fitbit Email", 
+                                value = "example@domain.com"),
+                      passwordInput("password", "Fitbit Password:"),
+                      br(),
+                      numericInput("target_steps", label = "Target Steps Per Day", 
+                                   value = 10000),
+                      dateRangeInput("dates", label = "Date range")),
+               column(6,
+                      tableOutput("table"))
+             )
+             ),
+    tabPanel("Sleep",
+             sidebarLayout(
+               sidebarPanel(
+                 # user should be able to adjust units, etc.
+                   radioButtons(inputId = "sleep_measure", "Measures:",
+                                c("By Weekday" = "by_weekday",
+                                  "By Start and End Time" = "by_start_end_time",
+                                  "By Date-Time" = "by_datetime",
+                                  "By Proportion of Restless Sleep" = "by_restless_prop",
+                                  "By Length of Restless Sleep" = "by_restless_min",
+                                  "By Quality of Sleep" = "by_quality"),
+                                selected = "by_weekday"
+                   )
+               ),
+               
+               mainPanel(
+                 plotOutput("sleepPlot")
+               )
+             )
     ),
     
-    mainPanel(
-      plotOutput("distPlot")
+    tabPanel("Daily Totals",
+             sidebarLayout(
+               sidebarPanel(
+                 # user should be able to adjust units, etc.
+                 radioButtons(inputId = "daily_measure", "Measures:",
+                              c("Steps" = "steps",
+                                "Floors" = "floors",
+                                "Distance" = "distance",
+                                "Calories Burned/Consumed" = "calories",
+                                "Minutes 'Very Active'" = "mins_very",
+                                "Resting Heart Rate" = "rest_hr"),
+                              selected = "steps")
+               ),
+               mainPanel(
+                 plotOutput("dailyPlot")
+               )
+             )
+    ),
+    
+    tabPanel("Typical Day",
+             sidebarLayout(
+               sidebarPanel(
+                 # user should be able to adjust units, etc.
+                 radioButtons(inputId = "typical_day_measure", "Measures:",
+                              c("Steps" = "steps",
+                                "Floors" = "floors",
+                                "Distance" = "distance",
+                                "Calories Burned" = "caloriesBurned",
+                                "Minutes 'Active'" = "activeMin",
+                                "Heart Rate" = "bpm",
+                                "Weight" = "weight"),
+                              selected = "steps"
+                 )
+               ),
+               
+               mainPanel(
+                 plotOutput("typicalDayPlot")
+               )
+             )
+    ),
+    
+    tabPanel("Over All Time in the Range",
+             sidebarLayout(
+               sidebarPanel(
+                 # user should be able to adjust units, etc.
+                 radioButtons(inputId = "over_all_time_measure", "Measures:",
+                              c("Steps" = "steps",
+                                "Floors" = "floors",
+                                "Distance" = "distance",
+                                "Calories Burned" = "caloriesBurned",
+                                "Minutes 'Active'" = "activeMin",
+                                "Heart Rate" = "bpm",
+                                "Weight" = "weight"),
+                              selected = "steps"
+                 )
+               ),
+               
+               mainPanel(
+                 plotOutput("overAllTimePlot")
+               )
+             )
     )
   )
+
 )
 
+
 server <- function(input, output) {
-  output$distPlot <- renderPlot({
-    
-    
+  
+  df <- reactive({
+    EX <- Person$new(fitbit_user_email = input$email, 
+                     fitbit_user_pw = input$password,
+                     # apple_data_file = "apple.csv",
+                     user_info = list("name" = input$name, 
+                                      "age" = input$age, 
+                                      "gender" = input$gender),
+                     target_steps = input$target_steps,
+                     group_assignments = list(data.frame(NA), data.frame(NA)),
+                     start_date = input$dates[1], end_date = input$dates[2])
+    EX$intraday
+  })
+  
+  output$table <- renderTable({
+    input$done
+
+    isolate({
+      dplyr::glimpse(df())
+    })
+  })
+
+  output$sleepPlot <- renderPlot({
+    plot_sleep(EX, input$sleep_measure)
+  })
+  
+  output$dailyPlot <- renderPlot({
+    # eventReactive((input$daily_measure == 'distance'), {
+    #   print(input$unit)
+    #   plot_daily(EX, input$daily_measure, input$unit)
+    # })
+    plot_daily(EX, input$daily_measure)
+  })
+  
+  output$typicalDayPlot <- renderPlot({
+    plot_intraday(EX, input$typical_day_measure, TRUE)
+  })
+  
+  output$overAllTimePlot <- renderPlot({
+    plot_intraday(EX, input$over_all_time_measure, FALSE)
   })
   
 }
