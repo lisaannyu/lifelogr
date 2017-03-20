@@ -135,11 +135,28 @@ Person <- R6::R6Class("Person",
   
   private = list(
     load_apple_data = function(apple_data_file){
-      raw_df <- read.csv(apple_data_file)
-      cleaned <- tibble::data_frame(raw_df)
+      raw_df <- readr::read_csv(apple_data_file)
+      cleaned <- tibble::as_tibble(raw_df)
       
-      # TODO: convert dates/datetimes, names of columns to match fitbit data
+      # Remove Finish column because it's confusing
+      cleaned$Finish <- NULL
       
+      # Rename columns to match Person$data_intraday
+      cleaned <- dplyr::rename(cleaned,
+                               datetime = `Start`,
+                               steps = `Steps (count)`,
+                               floors = `Flights Climbed (count)`,
+                               bpm = `Heart Rate (count/min)`,
+                               distance = `Distance (mi)`,
+                               resp_Rate = `Respiratory Rate (count/min)`,
+                               active_cal = `Active Calories (kcal)`)
+
+      # Convert datetime variable to dttm type
+      cleaned$datetime <- lubridate::dmy_hm(cleaned$datetime)
+      # fitbit steps data is in 15 min intervals, while Apple steps data is in
+      # hour intervals
+      cleaned$steps <- cleaned$steps / 4
+      cleaned$distance <- cleaned$distance / 4
       return(cleaned)
     },
     
