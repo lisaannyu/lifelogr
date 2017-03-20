@@ -75,6 +75,10 @@ plot_sleep_all <- function(Person) {
 #' plot_sleep(EX)
 #'
 plot_sleep <- function(Person, plot_type = "all") {
+  if (!(plot_type %in% c("by_weekday", "by_start_end_time", "by_datetime", 
+                         "by_restless_prop", "by_restless_min", "by_quality"))) {
+    stop('"plot_type" must be one of "by_weekday", "by_start_end_time", "by_datetime", "by_restless_prop", "by_restless_min", or "by_quality"')
+  }
   switch(plot_type,
     by_weekday = plot_sleep_weekday(Person),
     by_start_end_time = plot_sleep_start_end(Person),
@@ -122,7 +126,7 @@ agg_sleep_weekday <- function(Person) {
 #' A function to plot sleep by day of week.
 #' 
 #' @description Returns a bar graph plotting sleep by day of week (Sunday, 
-#' Monday, ...).
+#'     Monday, ...).
 #' 
 #' @param Person The user's data
 #' @return A ggplot2 object, prints to screen
@@ -151,13 +155,14 @@ plot_sleep_weekday <- function(Person) {
 #' A function to plot sleep each night by start time and end time.
 #' 
 #' @description Returns a plot with start time of sleep and end time of sleep
-#' each night, colored by weekday vs. weekend.
+#'     each night, colored by weekday vs. weekend.
 #' 
 #' @param Person The user's data
 #' @param color_var "day_type" by default for weekend/weekday, or "day_of_week"
 #' for day of week.  Determines color of the lines.
 #' @return A ggplot2 object, prints to screen
-#' @importFrom ggplot2 ggplot aes geom_col labs guides guide_legend scale_fill_discrete
+#' @importFrom ggplot2 ggplot aes geom_col labs guides guide_legend 
+#'     scale_fill_discrete
 #' @export
 #' @examples
 #' data(EX)
@@ -168,8 +173,7 @@ plot_sleep_weekday <- function(Person) {
 plot_sleep_start_end <- function(Person, color_var = "day_type") {
   
   if (!(color_var %in% c("day_type", "day_of_week"))) {
-    stop("'color_var' must be 'day_type' for weekend/weekday or 'day_of_week' 
-         for day of the week")
+    stop("'color_var' must be 'day_type' for weekend/weekday or 'day_of_week' for day of the week")
   }
   
   # Pull relevant data
@@ -188,7 +192,8 @@ plot_sleep_start_end <- function(Person, color_var = "day_type") {
              as.Date(as.POSIXct(data$endTime, format = "%H:%M")),
            as.POSIXct(data$startTime, format = "%H:%M") - lubridate::days(1),
            as.POSIXct(data$startTime, format = "%H:%M"))
-  data$startTime <- as.POSIXct(data$startTime, origin = "1970-01-01", tz = Sys.timezone())
+  data$startTime <- as.POSIXct(data$startTime, origin = "1970-01-01", 
+                               tz = Sys.timezone())
   data$endTime <- as.POSIXct(data$endTime, format = "%H:%M")
 
   p <- ggplot2::ggplot(data = data) +
@@ -216,12 +221,13 @@ plot_sleep_start_end <- function(Person, color_var = "day_type") {
 #' A function to plot sleep over time.  
 #' 
 #' @description Returns a line plot plotting sleep over time.  Includes sleep
-#' duration and time asleep (in hours).
+#'     duration and time asleep (in hours).
 #' 
 #' @param Person The user's data
 #' @return A ggplot2 object, prints to screen
 #' @export
-#' @importFrom ggplot2 ggplot geom_line aes labs guides guide_legend scale_color_discrete
+#' @importFrom ggplot2 ggplot geom_line aes labs guides guide_legend 
+#'     scale_color_discrete
 #' @examples
 #' data(EX)
 #' plot_sleep_over_time(EX)
@@ -241,8 +247,8 @@ plot_sleep_over_time <- function(Person) {
 #' A function to plot the proportion of restless sleep over time.  
 #' 
 #' @description Returns a line plot plotting the proportion of restless sleep 
-#' over time.  The proportion is calculated as the difference between sleep
-#' duration and time spent asleep over sleep duration.
+#'     over time.  The proportion is calculated as the difference between sleep
+#'     duration and time spent asleep over sleep duration.
 #' 
 #' @param Person The user's data
 #' @return A ggplot2 object, prints to screen
@@ -265,7 +271,7 @@ plot_sleep_restless_prop <- function(Person) {
 #' A function to plot the minutes of restless sleep over time.  
 #' 
 #' @description Returns a line plot plotting the length of restless sleep 
-#' over time (in minutes).
+#'     over time (in minutes).
 #' 
 #' @param Person The user's data
 #' @return A ggplot2 object, prints to screen

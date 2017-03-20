@@ -97,6 +97,10 @@ plot_i <- function(Person, measure_var, avg_to_get_typical_day = TRUE) {
 #' @seealso \code{\link{plot_intraday}}
 plot_intraday <- function(Person, measure_var = "all", 
                           avg_to_get_typical_day = TRUE, ...) {
+  if (!(measure_var %in% c("steps", "floors", "distance", "caloriesBurned", 
+                           "activeMin", "bpm", "weight"))) {
+    stop('"measure_var" must be one of "steps", "floors", "distance", "caloriesBurned", "activeMin", "bpm", "weight"')
+  }
   switch(measure_var,
          steps = plot_i_steps(Person, avg_to_get_typical_day),
          floors = plot_i_floors(Person, avg_to_get_typical_day),

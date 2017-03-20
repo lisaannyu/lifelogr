@@ -79,7 +79,9 @@ dplyr::glimpse(EX$fitbit_intraday)
 ```
 
 
-Here is the structure of `fitbit_util`, which has ...
+Here is the structure of `fitbit_util`, which has information about the dates
+in the range specified by the user when creating the Person instantiation, such
+as day of week and month.
 ```{r}
 dplyr::glimpse(EX$util)
 ```
@@ -98,8 +100,20 @@ Here are the sleep plots for EX:
 plot_sleep_all(EX)
 ```
 
+Users can also call each function individually using 
+`plot_sleep(Person, plot_type)`.
+For example:
+```{r}
+plot_sleep(EX, "by_datetime")
+```
+
+
+Some plots have other options.
+
+For example, `plot_sleep_start_end` has a `color_var = "day_of_week"` argument 
+to color the lines by day of the week instead of weekend/weekday.
 ```{r, fig.width = 6, fig.height = 3}
-plot_sleep_start_end(EX, "day_type")
+plot_sleep_start_end(EX, "day_of_week")
 ```
 
 

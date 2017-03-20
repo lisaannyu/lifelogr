@@ -155,12 +155,12 @@ code > span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Inf
 <span class="co">#&gt; $ date            &lt;date&gt; 2017-01-06, 2017-01-19, 2017-01-19, 2017-01-1...</span>
 <span class="co">#&gt; $ distanceKm      &lt;dbl&gt; NA, 0, NA, NA, 0, NA, NA, 0, NA, NA, 0, NA, NA...</span>
 <span class="co">#&gt; $ weightKg        &lt;dbl&gt; 45.94887, NA, NA, NA, NA, NA, NA, NA, NA, NA, ...</span></code></pre></div>
-<p>Here is the structure of <code>fitbit_util</code>, which has …</p>
+<p>Here is the structure of <code>fitbit_util</code>, which has information about the dates in the range specified by the user when creating the Person instantiation.</p>
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">dplyr::<span class="kw">glimpse</span>(EX$util)
 <span class="co">#&gt; Observations: 30</span>
 <span class="co">#&gt; Variables: 5</span>
 <span class="co">#&gt; $ date        &lt;date&gt; 2017-01-19, 2017-01-20, 2017-01-21, 2017-01-22, 2...</span>
-<span class="co">#&gt; $ datetime    &lt;date&gt; 2017-01-19, 2017-01-20, 2017-01-21, 2017-01-22, 2...</span>
+<span class="co">#&gt; $ datetime    &lt;dttm&gt; 2017-01-18 16:00:00, 2017-01-19 16:00:00, 2017-01...</span>
 <span class="co">#&gt; $ day_of_week &lt;ord&gt; Thurs, Fri, Sat, Sun, Mon, Tues, Wed, Thurs, Fri, ...</span>
 <span class="co">#&gt; $ day_type    &lt;fctr&gt; weekday, weekday, weekend, weekend, weekday, week...</span>
 <span class="co">#&gt; $ month       &lt;ord&gt; Jan, Jan, Jan, Jan, Jan, Jan, Jan, Jan, Jan, Jan, ...</span></code></pre></div>
