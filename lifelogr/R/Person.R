@@ -123,10 +123,16 @@ Person <- R6::R6Class("Person",
         # user needs to pass in path from this directory to file
       }
       
+      if (!is.na(fitbit_user_email) && !is.na(fitbit_user_pw)){
       self$fitbit_intraday <- private$get_fitbit_intraday(fitbit_user_email,
                                                           fitbit_user_pw)
       self$fitbit_daily <- private$get_fitbit_daily(fitbit_user_email, 
                                                     fitbit_user_pw)
+      }
+      else {
+        self$fitbit_intraday <- NA
+        self$fitbit_daily <- NA
+      }
       self$groupings <- group_assignments
     }),
   

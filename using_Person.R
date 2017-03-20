@@ -106,7 +106,13 @@ compare_groups(dataset, person = EX,
                      addl_grouping_assignments = list("indiv_months" = indiv_months), 
                      names_of_groupings = c("indiv_months"),
                      variables_to_compare = c("steps", "restingHeartRate"))
-
+ash <- Person$new(user_info = list("name" = "Ash", "age" = 26,
+                                                        "gender" = "female"), 
+                                                        target_steps = 20000,
+                                                        group_assignments = list("group_months" = group_months),
+                                                        start_date = "2017-03-11",
+                                                        end_date = "2017-03-12")
+                                   
 
 
 ###############

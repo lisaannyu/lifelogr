@@ -1,6 +1,7 @@
 #' Merge a list of lists into one list
 #' 
-#' @description
+#' @description merges list of lists specifying source and variables from each
+#'              source into one list
 #' 
 #' @param list_of_lists list of lists, each with structure 
 #'                      list(source1 = c(var1, var2), source2 = c(var3, var4))
