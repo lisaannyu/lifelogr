@@ -57,18 +57,15 @@ NULL
 #' 
 #' @examples
 #' library("lifelogr")
-#' data(EX)
-#' 
+#'  
 #' group_months <- data.frame("month" = c("Jan", "Feb", "Mar", "Apr", "May",
 #'                                        "Jun", "Jul", "Aug",
 #'                                        "Sep", "Oct", "Nov", "Dec"),
 #'                                        "group" = c(0, 0, 0, 1, 1, 1, 1, 1, 
 #'                                                    1, 0, 0, 0))
-
 #' ash <- Person$new(user_info = list("name" = "Ash", "age" = 26,
 #'                     "gender" = "female"), 
 #'                     target_steps = 20000,
-#'                     addl_data = EX,
 #'                     group_assignments = list("group_months" = group_months),
 #'                     start_date = "2017-03-11",
 #'                     end_date = "2017-03-12")
