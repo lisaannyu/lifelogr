@@ -1,30 +1,24 @@
-# WANT: visualize when restless each night, norm to time of sleep or not
-
-#could make var names more friendly in the experiment fn (replace variables)
-
-# computing variances of variables
-
-# 5. Experimentation framework. The package will provide the framework for a user 
-# to easily perform A/B or other testing on him/herself - for example, decide 
-# he/she wants to know if his/her heart rate is higher in a statistically 
-# significant way when alcohol or caffeine is consumed, and so mark each day/time 
-# of consumption, then display the results of hypothesis testing on the desired field.
-
-# select factor to assess, impact to assess, way to assess
-# ex: impact of step count on restlessness of sleep
-# factors to assess impact of options: amount slept, step count, distance, amount
-# of exercise, time in heart rate zones, variable you put in yourself (tag specific
-# days/hours/nights/mornings), day(s) of the week, months, seasons
-
-# factors to assess impact on:
-# resting heart rate, time in heart rate zones, amount of time restless, weight
-
-# ways to assess
-# plot one vs other, do a linear regression and anova, histogram? etc.
-
-
-
-# Returns lists, merged by first level
+#' Merge a list of lists into one list
+#' 
+#' @description
+#' 
+#' @param list_of_lists list of lists, each with structure 
+#'                      list(source1 = c(var1, var2), source2 = c(var3, var4))
+#'                      where source is a source of data as defined in a Person
+#'                      object, and var1 and var2 are variables from source1, 
+#'                      while var3 and var4 are variables from source2
+#' @return one list, with structure list(source1 = c(var1, var2), 
+#'                                       source2 = c(var3, var4)),
+#'         where variables from the same source have been grouped in that 
+#'         source's sublist
+#' @export
+#' @examples
+#' variables = list("fitbit_intraday" = c("steps"), 
+#'                 "fitbit_daily" = c("sleepDuration"),
+#'                 "util" = c("day_of_week", "day_type", "month"))
+#' measures = list("fitbit_daily" = c("distance", "restingHeartRate"))
+#' all_variables <- merge_lists(list(variables, measures))
+#' 
 merge_lists <- function(list_of_lists){
   keys <- unique(unlist(lapply(list_of_lists, names)))
   merged_list <- setNames(do.call(mapply,
@@ -34,48 +28,42 @@ merge_lists <- function(list_of_lists){
 }
   
   
-# Do the specified analysis of the impact of the variables on the measure
-# person: Person object to do analysis on
-# variables options: named list for each source, with variables desired from that source
-# measure options:
-# analysis options:
-# told otherwise
-# NOTE: verify how to require one of the options for time_vars
-
-
+#' Do the specified analysis of the impact of the variables on the measure
+#' 
+#' @description Performs the analysis specified on the variables (X) and
+#' measures (Y).
+#' 
+#' @param Person an instantiated Person object
+#' @param variables
+#' @param measures
+#' @param analysis
+#' @param time_var
+#' @return NULL - results of analysis chosen are printed
+#' @export
+#' @examples
+#' data(EX)
+#' plot_daily_all(EX)
+#'
 experiment <- function(person, variables, measures,
                        analysis = c("plot", "correlation", 
-                                    "anova", "t_test", "regression"),
+                                    "anova", "compare_groups", "regression"),
                        time_var = c("time", "date", "datetime")) {
-  # NOTE: change sleep to time slept, amount restless. add exercise, own var
-  #c("steps", "dist", "rest_hr","hr_zones", "sleep", "weight", own variable)
-  
-  # NOTE: if give own additional variable, need to check and make sure have it
-  # NOTE: rename functions to be something relevant to this package (p_)
-  
-  # set to be fitbit sources if no sources given
-  # NEED TO FIX SINCE COULD BE INTRADAY OR DAILY
-  # if (is.na(vars.sources)){
-  #   vars.sources <- rep("fitbit", times = length(variables))
-  # }
-  # if (is.na(meas.sources)){
-  #   meas.sources <- rep("fitbit", times = length(measures))
-  # }
   
   # create dataset
   dataset <- create_dataset(person, all_variables = merge_lists(list(variables,
                                                                      measures)),
                             time_var = time_var)
 
-  # print(dataset)
   # call the type of analysis requested
   for (type in analysis){
     switch(type,
-           "plot" = pplot(dataset, person, variables, measures, time_var), 
-           "correlation" = correlation(dataset, person, variables, measures),
-           "anova" = panova(dataset, person, variables, measures),
+           "plot" = l_plot(dataset, person, variables, measures, time_var), 
+           "correlation" = correlation(dataset, person, variables, measures, 
+                                       time_var),
+           "anova" = l_anova(dataset, person, variables, measures, time_var),
            "compare_groups" = compare_groups(dataset, person, variables, measures),
-           "regression" = pregression(dataset, person, variables, measures)
+           "regression" = l_regression(dataset, person, variables, measures, 
+                                       time_var)
            # print error: your analysis didn't match any options
            )
   }
@@ -91,7 +79,6 @@ create_dataset <- function(person, all_variables,
   # for each source (name of a df), grab columns from that source + time_var
   for (source in names(all_variables)){
     all_dfs[[source]] <- person[[source]][, c(time_var, all_variables[[source]])]
-    print(all_variables[[source]])
   }
   
   dataset <- Reduce(function(x, y) merge(x, y, all=TRUE, by = time_var), all_dfs)
@@ -104,7 +91,7 @@ create_dataset <- function(person, all_variables,
 # it'll call this for you
 # NOTE: maybe shouldn't be directly printing plots
 # NOTE: test what happens when variables aren't on the same time scale
-pplot <- function(dataset = NA, person, variables, measures, time_var){
+l_plot <- function(dataset = NA, person, variables, measures, time_var){
   # plot each variable against each measure
   if (!is.data.frame(dataset)){
     # need to put the combining thing in
@@ -129,23 +116,23 @@ pplot <- function(dataset = NA, person, variables, measures, time_var){
   }
 }
 
-
-correlation <- function(dataset = NA, person, variables, measures){
+correlation <- function(dataset = NA, person, variables, measures, time_var){
   if (!is.data.frame(dataset)){
     dataset <- create_dataset(person, all_variables = merge_lists(list(variables,
                                                                        measures)),
                               time_var = time_var)
-    
     }
   
-  pearson_corr <- cor(dataset[, unlist(variables)], dataset[, unlist(measures)], method = "pearson")
+  pearson_corr <- cor(dataset[, unlist(variables)], dataset[, unlist(measures)],
+                      method = "pearson")
   print(pearson_corr)
   return(pearson_corr)
 }
 
   
-# should be printing output?
-panova <- function(dataset = NA, person, variables, measures){
+l_anova <- function(dataset = NA, person, variables, measures, time_var){
+  anovas <- list()
+  
   if (!is.data.frame(dataset)){
     dataset <- create_dataset(person, all_variables = merge_lists(list(variables,
                                                                        measures)),
@@ -157,12 +144,13 @@ panova <- function(dataset = NA, person, variables, measures){
   for (i in 1:length(measures_flat)){
     f <- paste(measures_flat[[i]], " ~ ", 
                "(", paste(variables_flat, collapse=" + "), ")^2", sep="")
-    print(f)
     lin_model <- do.call("lm", list(as.formula(f), data=as.name("dataset")))
     lin_anova <- anova(lin_model)
+    print(f)
     print(lin_anova)
+    anovas <- c(anovas, lin_anova)
   }
-  # should return lists of anovas?
+  return(anovas)
 }
 
 # Groupings is an optional list of group assignments to do the ttest on - 
@@ -176,13 +164,9 @@ panova <- function(dataset = NA, person, variables, measures){
 # names_of_groupings are names of groupings want to analyze (must be in person
 # named that way or passed in in addl)
 # Maybe should be able to pass groupings_df directly to this function
-compare_groups <- function(dataset = NA, person, names_of_groupings = NA, 
+compare_groups <- function(dataset, person, names_of_groupings = NA, 
                   addl_grouping_assignments = NA, variables_to_compare){
-  if (!is.data.frame(dataset)){
-    # PRINT ERROR
-    # don't want users to have to think at the level of time variables so requiring
-    # them to pass in a dataset but debatable
-  }
+
   if (all(is.na(names_of_groupings))){
     names_of_groupings <- names(person$groupings)
   }
@@ -192,9 +176,8 @@ compare_groups <- function(dataset = NA, person, names_of_groupings = NA,
   
   # From the dataset, keep the variables to compare, join on each groupings 
   # assignment with the column labeled by the groupings name
-  # dataset <- dataset[, variables_to_compare]
   for (grouping in names_of_groupings){
-    print(grouping)
+    
     # join this grouping onto the dataset
     merge_var <- names(all_group_maps[[grouping]])[names(all_group_maps[[grouping]]) != "group"]
     g_dataset <- merge(dataset, all_group_maps[[grouping]], by = merge_var)
@@ -215,7 +198,7 @@ compare_groups <- function(dataset = NA, person, names_of_groupings = NA,
 }
 
 
-pregression <- function(dataset = NA, person, variables, measures){
+l_regression <- function(dataset = NA, person, variables, measures, time_var){
   if (!is.data.frame(dataset)){
     dataset <- create_dataset(person, all_variables = merge_lists(list(variables,
                                                                        measures)),
@@ -224,6 +207,7 @@ pregression <- function(dataset = NA, person, variables, measures){
   
   measures_flat <- unlist(measures)
   variables_flat <- unlist(variables)
+  
   # for each measure, fit linear model with interactions, run anova
   for (i in 1:length(measures_flat)){
     f <- paste(measures_flat[[i]], " ~ ", 
@@ -233,12 +217,3 @@ pregression <- function(dataset = NA, person, variables, measures){
     print(summary(lin_model))
   }
 }
-  
-
-
-
-
-  
-  
-  
-  

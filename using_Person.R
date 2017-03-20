@@ -19,7 +19,8 @@ RA <- Person$new(fitbit_user_email = "rohisha@gmail.com",
                  #apple_data_file = "apple.csv",
                  user_info = list("name" = "RA", "age" = 23, "gender" = "female"),
                  target_steps = 10000,
-                 group_assignments = list("group_months" = group_months, data.frame(NA)),
+                 group_assignments = list("group_months" = group_months, 
+                                          data.frame(NA)),
                  start_date = "2017-03-11", end_date = "2017-03-12")
 
 # should probably change input to fitbit_user_email
