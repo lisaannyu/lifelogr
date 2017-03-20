@@ -63,7 +63,6 @@ NULL
 #'                                        "Sep", "Oct", "Nov", "Dec"),
 #'                                        "group" = c(0, 0, 0, 1, 1, 1, 1, 1, 
 #'                                                    1, 0, 0, 0))
-
 #' ash <- Person$new(user_info = list("name" = "Ash", "age" = 26,
 #'                     "gender" = "female"), 
 #'                     target_steps = 20000,
