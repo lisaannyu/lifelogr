@@ -97,10 +97,6 @@ plot_i <- function(person, measure_var, avg_to_get_typical_day = TRUE) {
 #' @seealso \code{\link{plot_intraday}}
 plot_intraday <- function(person, measure_var = "all", 
                           avg_to_get_typical_day = TRUE, ...) {
-  if (!(measure_var %in% c("steps", "floors", "distance", "caloriesBurned", 
-                           "activeMin", "bpm", "weight", "all"))) {
-    stop('"measure_var" must be one of "all", "steps", "floors", "distance", "caloriesBurned", "activeMin", "bpm", "weight"')
-  }
   switch(measure_var,
          steps = plot_i_steps(person, avg_to_get_typical_day),
          floors = plot_i_floors(person, avg_to_get_typical_day),
@@ -109,8 +105,9 @@ plot_intraday <- function(person, measure_var = "all",
          activeMin = plot_i_active_min(person, avg_to_get_typical_day),
          bpm = plot_i_hr(person, avg_to_get_typical_day),
          weight = plot_i_weight(person, avg_to_get_typical_day, ...),
-         all = plot_intraday_all(person)
-         )
+         all = plot_intraday_all(person),
+         stop('"measure_var" must be one of "all", "steps", "floors", "distance", "caloriesBurned", "activeMin", "bpm", "weight"')
+  )
 }
 
 #' Plot all intraday variables.

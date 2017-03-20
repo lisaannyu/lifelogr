@@ -160,56 +160,61 @@ While almost all the visualizations shown above had date, date-time, or time on
 the x axis, the experimentation framework allows for greater flexibility.  Users
 can select any variables of interest and examine their relationship.
 
-Users can specify which variables they are interested in analyzing, the type of
-analysis, and the type of time variable.
-For example:
-```{r, fig.show = "hold"}
-experiment(person = EX, variables = list("fitbit_daily" = c("sleepDuration"), 
-                                         "util" = c("day_of_week")),
-           measures = list("fitbit_daily" = c("restingHeartRate")), 
-           analysis = c("plot"),
-           time_var = c("date"))
-```
+Users can specify
+* x variables of interest
+* y measures of interest
+* type of analysis ("plot", "correlation", "anova", "compare_groups", or 
+"regression")
+* time variable (date, time, or datetime)
 
+The `experiment` function will study every pairwise combination of the variable
+and measure variables given.
+
+1.  Plots
+    To plot the relationship between sleep duration and resting heart 
+    rate and the relationship between day of week and resting heart rate on a 
+    date basis:
+    ```{r, fig.show = "hold"}
+    experiment(person = EX, variables = list("fitbit_daily" = c("sleepDuration"), 
+                                             "util" = c("day_of_week")),
+               measures = list("fitbit_daily" = c("restingHeartRate")), 
+               analysis = c("plot"),
+               time_var = c("date"))
+    ```
 
 ```{r}
-dataset <- create_dataset(person = EX,
-                          all_variables = list("util" = c("month"),
-                                               "fitbit_daily" = c("steps")), 
-                          time_var = c("date"))
+# Looks similar - don't need both
+# dataset <- create_dataset(person = EX,
+#                           all_variables = list("util" = c("month"),
+#                                                "fitbit_daily" = c("steps")), 
+#                           time_var = c("date"))
+# 
+# l_plot(dataset, person = EX, variables = list("util" = c("month")),
+#        measures = list("fitbit_daily" = c("steps")))
+```
 
-l_plot(dataset, person = EX, variables = list("util" = c("month")),
-       measures = list("fitbit_daily" = c("steps")))
+2.  Correlation
+    To calculate the correlation between sleep duration and number of steps on
+    a date basis:
+    ```{r}
+    dataset <- create_dataset(person = EX,
+                              all_variables = list("fitbit_daily" = c("sleepDuration", 
+                                                                      "steps")), 
+                              time_var = c("date"))
+    
+    correlation_df <- correlation(dataset, person = EX, 
+                                  variables = list("fitbit_daily" = c("sleepDuration")),
+                                  measures = list("fitbit_daily" = c("steps")),
+                                  time_var = "date")
+```
 
-l_plot(person = EX, variables = list("fitbit_daily" = c("sleepDuration",
-                                                                 "steps",
-                                                                 "distance"), 
-                                              "util" = c("day_of_week", 
-                                                         "day_type")),
-       measures = list("fitbit_daily" = c("restingHeartRate")), 
-       time_var = c("date"))
-
-
-
-# don't know why this doesn't work
-#correlation(person = EX, variables = list("fitbit_daily" = c("distance")),
-#      measures = list("fitbit_daily" = c("steps")),
-#      time_var = "date")
-
-dataset <- create_dataset(person = EX,
-                          all_variables = list("fitbit_daily" = c("sleepDuration", 
-                                                                  "steps")), 
-                          time_var = c("date"))
-
-correlation_df <- correlation(dataset, person = EX, 
-                              variables = list("fitbit_daily" = c("sleepDuration")),
-                              measures = list("fitbit_daily" = c("steps")),
-                              time_var = "date")
-
+3.  ANOVA
+    To create ANOVAs for the effect of sleep duration and day of week on resting
+    heart rate on a date basis:
+```{r}
 dataset <- create_dataset(person = EX,
                           all_variables = list("util" = c("day_of_week"), 
                                                "fitbit_daily" = c("sleepDuration", 
-                                                                  "steps",
                                                                   "restingHeartRate")), 
                           time_var = c("date"))
 
@@ -217,13 +222,17 @@ all_anovas <- l_anova(dataset, person = EX, variables = list("util" = c("day_of_
                                                "fitbit_daily" = c("sleepDuration",
                                                         "steps")),
        measures = list("fitbit_daily" = c("restingHeartRate")))
-
+```
+5.  Regression
+```{r}
 all_models <- l_regression(dataset, person = EX, variables = list("util" = c("day_of_week"), 
                                                              "fitbit_daily" = c("sleepDuration",
                                                                                 "steps")),
                       measures = list("fitbit_daily" = c("restingHeartRate")))
+```
 
-
+4.  Compare Groups
+```{r}
 dataset <- create_dataset(person = EX,
                           all_variables = list("util" = c("month"), 
                                                "fitbit_daily" = c("sleepDuration", 

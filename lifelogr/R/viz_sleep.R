@@ -75,11 +75,6 @@ plot_sleep_all <- function(person) {
 #' plot_sleep(person = EX)
 #'
 plot_sleep <- function(person, plot_type = "all") {
-  if (!(plot_type %in% c("by_weekday", "by_start_end_time", "by_datetime", 
-                         "by_restless_prop", "by_restless_min", "by_quality",
-                         "all"))) {
-    stop('"plot_type" must be one of "all", "by_weekday", "by_start_end_time", "by_datetime", "by_restless_prop", "by_restless_min", or "by_quality"')
-  }
   switch(plot_type,
     by_weekday = plot_sleep_weekday(person),
     by_start_end_time = plot_sleep_start_end(person),
@@ -87,7 +82,8 @@ plot_sleep <- function(person, plot_type = "all") {
     by_restless_prop = plot_sleep_restless_prop(person),
     by_restless_min = plot_sleep_restless_min(person),
     by_quality = plot_sleep_quality(person),
-    all = plot_sleep_all(person)
+    all = plot_sleep_all(person),
+    stop('"plot_type" must be one of "all", "by_weekday", "by_start_end_time", "by_datetime", "by_restless_prop", "by_restless_min", or "by_quality"')
   )
 }
 

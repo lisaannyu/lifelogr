@@ -69,10 +69,6 @@ plot_daily_all <- function(person) {
 #' plot_daily(EX, "distance", "km")
 #'
 plot_daily <- function(person, measure_var = "all", ...) {
-  if (!(measure_var %in% c("steps", "floors", "distance", "calories", 
-                           "mins_very", "rest_hr", "all"))) {
-    stop('"measure_var" must be one of "all", "steps", "floors", "distance", "calories", "mins_very", "rest_hr"')
-  }
   switch(measure_var,
          steps = plot_steps(person),
          floors = plot_floors(person),
@@ -80,7 +76,8 @@ plot_daily <- function(person, measure_var = "all", ...) {
          calories = plot_cal(person),
          mins_very = plot_mins_very(person),
          rest_hr = plot_rest_hr(person),
-         all = plot_daily_all(person)
+         all = plot_daily_all(person),
+         stop('"measure_var" must be one of "all", "steps", "floors", "distance", "calories", "mins_very", "rest_hr"')
   )
 }
 

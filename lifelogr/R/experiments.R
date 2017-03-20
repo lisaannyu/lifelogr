@@ -56,7 +56,8 @@ merge_lists <- function(list_of_lists){
 #' data(EX)
 #' experiment(person = EX, variables = list("fitbit_daily" = c("sleepDuration"),
 #'                                          "util" = c("day_of_week")),
-#'                         measures = list("fitbit_daily" = c("restingHeartRate")),
+#'                         measures = list("fitbit_daily" = 
+#'                                           c("restingHeartRate")),
 #'                         analysis = c("plot"), time_var = c("date"))
 #'
 experiment <- function(person, variables, measures,
@@ -76,7 +77,8 @@ experiment <- function(person, variables, measures,
            "correlation" = correlation(dataset, person, variables, measures, 
                                        time_var),
            "anova" = l_anova(dataset, person, variables, measures, time_var),
-           "compare_groups" = compare_groups(dataset, person, variables, measures),
+           "compare_groups" = compare_groups(dataset, person, variables, 
+                                             measures),
            "regression" = l_regression(dataset, person, variables, measures, 
                                        time_var),
            stop("your type of analysis did not match an available options")
@@ -121,10 +123,12 @@ create_dataset <- function(person, all_variables, time_var){
   # for each source (name of a df), grab columns from that source + time_var
   
   for (source in names(all_variables)){
-    all_dfs[[source]] <- person[[source]][, c(time_var, all_variables[[source]])]
+    all_dfs[[source]] <- 
+      person[[source]][, c(time_var, all_variables[[source]])]
   }
   
-  dataset <- Reduce(function(x, y) merge(x, y, all=TRUE, by = time_var), all_dfs)
+  dataset <- Reduce(function(x, y) merge(x, y, all = TRUE, by = time_var), 
+                    all_dfs)
   return(dataset)
 }
 
@@ -148,8 +152,8 @@ create_dataset <- function(person, all_variables, time_var){
 #'                      object, and var1 and var2 are variables from source1, 
 #'                      while var3 and var4 are variables from source2
 #' @param time_var the time variable that variables and measures are 
-#'                 observed in (time, date, or datetime) - only needed if dataset
-#'                 is not passed in
+#'                 observed in (time, date, or datetime) - only needed if 
+#'                 dataset is not passed in
 #' @return NULL - plots for each variable vs each measure are printed
 #' @export
 #' @examples
@@ -161,32 +165,33 @@ create_dataset <- function(person, all_variables, time_var){
 #'        measures = list("fitbit_daily" = c("restingHeartRate")),
 #'        time_var = c("date"))
 #' 
-#' dataset <- create_dataset(person = EX, all_variables = list("util" = c("month"),
-#'                                                    "fitbit_daily" = c("steps")),
+#' dataset <- create_dataset(person = EX, all_variables = list(
+#'                                                "util" = c("month"),
+#'                                                "fitbit_daily" = c("steps")),
 #'                                        time_var = c("date"))
 #'                                        
 #' l_plot(dataset, person = EX, variables = list("util" = c("month")),
 #'        measures = list("fitbit_daily" = c("steps")))
 #'        
 #'        
-l_plot <- function(dataset = NA, person, variables, measures, time_var = NA){
+l_plot <- function(dataset = NA, person, variables, measures, time_var = NA) {
   
   # plot each variable against each measure
   if (!is.data.frame(dataset)){
-    dataset <- create_dataset(person, all_variables = merge_lists(list(variables,
-                                                                       measures)),
+    dataset <- create_dataset(person, all_variables = merge_lists(
+                                list(variables, measures)),
                               time_var = time_var)
   }
 
-  for (meas.source in names(measures)){
-    for (measure in measures[[meas.source]]){
-      for (var.source in names(variables)){
-        for (variable in variables[[var.source]]){
+  for (meas.source in names(measures)) {
+    for (measure in measures[[meas.source]]) {
+      for (var.source in names(variables)) {
+        for (variable in variables[[var.source]]) {
 
           print(ggplot2::ggplot(dataset) +
                   ggplot2::aes_string(x = variable, y = measure) +
-                  ggplot2::geom_point() + ggplot2::ggtitle(paste(variable, 
-                                                                 "vs", measure)))
+                  ggplot2::geom_point() + 
+                  ggplot2::ggtitle(paste(variable, "vs", measure)))
           
         }
       }
@@ -215,19 +220,21 @@ l_plot <- function(dataset = NA, person, variables, measures, time_var = NA){
 #'                      object, and var1 and var2 are variables from source1, 
 #'                      while var3 and var4 are variables from source2
 #' @param time_var the time variable that variables and measures are 
-#'                 observed in (time, date, or datetime) - only needed if dataset
-#'                 is not passed in
+#'                 observed in (time, date, or datetime) - only needed if 
+#'                 dataset is not passed in
 #' @return Pearson's correlation between each variable and each measure
 #' @export
 #' @examples
 #' data(EX)
 #' 
 #' dataset <- create_dataset(person = EX, 
-#'             all_variables = list("fitbit_daily" = c("sleepDuration", "steps")),
+#'             all_variables = list("fitbit_daily" = c("sleepDuration", 
+#'                                                     "steps")),
 #'             time_var = c("date"))
 #'                       
 #' correlation_df <- correlation(dataset, person = EX, 
-#'                             variables = list("fitbit_daily" = c("sleepDuration")),
+#'                             variables = list("fitbit_daily" = 
+#'                                                  c("sleepDuration")),
 #'                             measures = list("fitbit_daily" = c("steps")),
 #'                            time_var = "date")
 #'        
@@ -235,8 +242,8 @@ l_plot <- function(dataset = NA, person, variables, measures, time_var = NA){
 correlation <- function(dataset = NA, person, variables, measures, 
                         time_var = NA){
   if (!is.data.frame(dataset)){
-    dataset <- create_dataset(person, all_variables = merge_lists(list(variables,
-                                                                       measures)),
+    dataset <- create_dataset(person, all_variables = merge_lists(
+                                list(variables, measures)),
                               time_var = time_var)
     }
   
@@ -267,8 +274,8 @@ correlation <- function(dataset = NA, person, variables, measures,
 #'                      object, and var1 and var2 are variables from source1, 
 #'                      while var3 and var4 are variables from source2
 #' @param time_var the time variable that variables and measures are 
-#'                 observed in (time, date, or datetime) - only needed if dataset
-#'                 is not passed in
+#'                 observed in (time, date, or datetime) - only needed if 
+#'                 dataset is not passed in
 #' @return list of ANOVAs for each measure
 #' @export
 #' @examples
@@ -297,10 +304,10 @@ l_anova <- function(dataset = NA, person, variables, measures, time_var = NA){
   measures_flat <- unlist(measures)
   variables_flat <- unlist(variables)
   # for each measure, fit linear model with interactions, run anova
-  for (i in 1:length(measures_flat)){
-    f <- paste(measures_flat[[i]], " ~ ", 
-               "(", paste(variables_flat, collapse=" + "), ")^2", sep="")
-    lin_model <- do.call("lm", list(as.formula(f), data=as.name("dataset")))
+  for (i in 1:length(measures_flat)) {
+    f <- paste0(measures_flat[[i]], " ~ ", 
+               "(", paste(variables_flat, collapse = " + "), ")^2")
+    lin_model <- do.call("lm", list(as.formula(f), data = as.name("dataset")))
     lin_anova <- anova(lin_model)
     print(f)
     print(lin_anova)
@@ -334,10 +341,11 @@ l_anova <- function(dataset = NA, person, variables, measures, time_var = NA){
 #' @param person an instantiated Person object
 #' @param names_of_groupings names of groupings to test (default is groupings
 #'                           in person$groupings)
-#' @param addl_grouping_assignments list of named dataframes, where each dataframe
-#'                                  provides a mapping from a value of a specified
-#'                                  variable to group on to the group assignment
-#'                                  for observations with that value for that variable
+#' @param addl_grouping_assignments list of named dataframes, where each data 
+#'                                  frame provides a mapping from a value of a 
+#'                                  specified variable to group on to the group 
+#'                                  assignment for observations with that value 
+#'                                  for that variable
 #' @param variables_to_compare variables to print grouped statistics on
 #' @return NULL - prints statistics
 #' @export
@@ -349,8 +357,9 @@ l_anova <- function(dataset = NA, person, variables, measures, time_var = NA){
 #'                                   "restingHeartRate")), time_var = c("date"))
 #'                                   
 #' indiv_months <- data.frame("month"= c("Jan", "Feb", "Mar", "Apr", "May",
-#'                                       "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"),
-#'                                        "group" = c(1:12))
+#'                                       "Jun", "Jul", "Aug", "Sep", "Oct", 
+#'                                       "Nov", "Dec"),
+#'                            "group" = c(1:12))
 #'compare_groups(dataset, person = EX, 
 #'             addl_grouping_assignments = list("indiv_months" = indiv_months), 
 #'             names_of_groupings = c("indiv_months"),
@@ -360,7 +369,7 @@ l_anova <- function(dataset = NA, person, variables, measures, time_var = NA){
 compare_groups <- function(dataset, person, names_of_groupings = NA, 
                   addl_grouping_assignments = NA, variables_to_compare){
 
-  if (all(is.na(names_of_groupings))){
+  if (all(is.na(names_of_groupings))) {
     names_of_groupings <- names(person$groupings)
   }
   
@@ -380,8 +389,8 @@ compare_groups <- function(dataset, person, names_of_groupings = NA,
     group_stats <- function(variable){
       print(variable)
       print(dplyr::summarise_(dplyr::group_by(g_dataset, group),
-                mean = lazyeval::interp(~mean(v), v=as.name(variable)),
-                sd = lazyeval::interp(~sd(v), v=as.name(variable))))
+                mean = lazyeval::interp(~mean(v), v = as.name(variable)),
+                sd = lazyeval::interp(~sd(v), v = as.name(variable))))
     }
     
     lapply(variables_to_compare, group_stats)
@@ -440,11 +449,11 @@ l_regression <- function(dataset = NA, person, variables, measures,
   variables_flat <- unlist(variables)
   
   # for each measure, fit linear model with interactions, run anova
-  for (i in 1:length(measures_flat)){
-    f <- paste(measures_flat[[i]], " ~ ", 
+  for (i in 1:length(measures_flat)) {
+    f <- paste0(measures_flat[[i]], " ~ ", 
                "(", paste(variables_flat, collapse=" + "), ")^2", sep="")
     print(f)
-    lin_model <- do.call("lm", list(as.formula(f), data=as.name("dataset")))
+    lin_model <- do.call("lm", list(as.formula(f), data = as.name("dataset")))
     print(summary(lin_model))
     models <- c(models, lin_model)
   }
