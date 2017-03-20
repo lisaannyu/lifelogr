@@ -23,9 +23,8 @@ RA <- Person$new(fitbit_user_email = "rohisha@gmail.com",
                                           data.frame(NA)),
                  start_date = "2017-03-11", end_date = "2017-03-12")
 
-# should probably change input to fitbit_user_email
 EX <- Person$new(fitbit_user_email = "rohisha@gmail.com", fitbit_user_pw = "datasamplepw",
-                 # apple_data_file = "apple.csv",
+                 apple_data_file = "apple.csv",
                  user_info = list("name" = "EX", "age" = 29, "gender" = "male"),
                  target_steps = 10000,
                  group_assignments = list(data.frame(NA), data.frame(NA)),
@@ -135,6 +134,9 @@ devtools::use_package("tibble", type = "Imports", pkg = pkgName)
 # devtools::use_testthat() # one time only
 setwd("~/GitHub/stats290-project/lifelogr")
 devtools::test()
+
+# Vignette
+devtools::use_vignette("vignette")
 
 # use command line to do R CMD BUILD lifelogr
 # use command line to do R CMD CHECK lifelogr._0...
