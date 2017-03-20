@@ -1,44 +1,136 @@
 #' @include global_var.R
+NULL
+
+#' A \code{Person} object is a complete view of an individual over a certain
+#' time period, as seen through data from multiple sources
+#'
+#' @description \code{Person} is an object that encapsulates an individual's 
+#' data over a specified date range (start and end date stored as \code{Date} 
+#' objects.
+#' An individual consists of basic information, such as name, age,
+#' and gender (a \code{list} with named elements), data from their self-tracking 
+#' devices such as Fitbit, Apple health, etc. (data from each source is a tibble
+#' dataframe), individual goals such as target steps (\code{numeric}), 
+#' additional data from self-tracking apps or one's own collection system 
+#' (stored as a tibble dataframe), and ways of grouping the data a user may be 
+#' interested in, such as grouping by seasons, or comparing weekend to weekday 
+#' behavior and health (stored as a list of named dataframes, which each contain 
+#' group assignments).
+#'
+#' @docType class
+#' @importFrom R6 R6Class
+#' @importFrom tibble data_frame as_data_frame
+#' @importFrom lubridate hour minute second make_datetime ymd wday month
+#' @importFrom fitbitScraper login get_intraday_data get_weight_data 
+#'             get_daily_data get_sleep_data
+#' @importFrom dplyr select mutate
+#' @importFrom plyr rename
+#' @field fitbit_daily tibble dataframe of fitbit variables (for user account
+#'        info provided) observed daily
+#' @field fitbit_intraday tibble dataframe of fitbit variables (for user account
+#'        info provided) observed multiple times a day
+#' @field util tibble dataframe that maps each date in the date range to utility
+#'        information about that date
+#' @field target_steps the person's target number of steps (numeric) for each
+#'        day (default 10,000)
+#' @field start_date start of user's date range of interest (Date object)
+#' @field end_date end of user's date range of interest (Date object)
+#' @field user_info provided user info, such as "age", "gender", "name" (list)
+#' @field groupings named list of dataframes, each with two columns - a known 
+#'        variable, and group, with the group assignment for observations where 
+#'        that variable has appropriate value
+#' @field apple tibble dataframe of user's provided Apple Health data
+#' @field addl_data dataframe of data from another source provided by user
+#' @field addl_data2 dataframe of data from another source provided by user
+#' 
+#' @section Methods:
+#'
+#' \describe{
+#'   \item{\code{Person$new(fitbit_user_email, fitbit_user_pw, user_info = NA,
+#'                           apple_data_file, target_steps, addl_data,
+#'                           addl_data2, group_assignments, start_date, 
+#'                           end_date)}}{Creates a new \code{Person}
+#'         with specified data, and data from provided Fitbit account. If 
+#'         provided, start_date and end_date must be characters with "%Y-%m-%d". 
+#'         All defaults are \code{NA} - user can provide sources of data
+#'         of interest.}}
+#' 
+#' @examples
+#' library("lifelogr")
+#' data(EX)
+#' 
+#' group_months <- data.frame("month" = c("Jan", "Feb", "Mar", "Apr", "May",
+#'                                        "Jun", "Jul", "Aug",
+#'                                        "Sep", "Oct", "Nov", "Dec"),
+#'                                        "group" = c(0, 0, 0, 1, 1, 1, 1, 1, 
+#'                                                    1, 0, 0, 0))
+
+#' ash <- Person$new(user_info = list("name" = "Ash", "age" = 26,
+#'                     "gender" = "female"), 
+#'                     target_steps = 20000,
+#'                     addl_data = EX,
+#'                     group_assignments = list("group_months" = group_months),
+#'                     start_date = "2017-03-11",
+#'                     end_date = "2017-03-12")
+#'
+#' \dontrun{                
+#' bailey <- Person$new(fitbit_user_email = "bailey@gmail.com",
+#'                  fitbit_user_pw = "baileypw",
+#'                  #apple_data_file = "apple.csv",
+#'                  start_date = "2017-03-11",
+#'                  end_date = "2017-03-12")}
+#'                  
+#' @export
+#' @format An \code{\link{R6Class}} generator object
+#' 
 Person <- R6::R6Class("Person",
   public = list(
-  fitbit_daily = NULL, # dataframe of daily fitbit data
-  fitbit_intraday = NULL, #dataframe of intraday fitbit data
-  util = NULL, # util/admin data
-  target_steps = NULL,
-  start_date = NA, # optional start date of interest
-  end_date = NA, # optional end date of interest
-  user_info = NULL, # optional list of user info, such as "age", "gender", "name", etc.
-  groupings = NULL, # named list of dataframes each with 2 columns: 1. a known 
-  # variable (date, weekend, etc.) and 2. "group" with the group assignment for 
-  # observations with that variable of that value
-  apple = NULL,
-  addl_data = NULL, # user's own df of other data
-  addl_data2 = NULL, # another df
-  initialize = function(fitbit_user_email = NA, fitbit_user_pw = NA, user_info = NA, 
-                        apple_data_file = NA,
-                        target_steps = 10000,
-                        addl_data = NA, addl_data2 = NA, group_assignments = NA,
-                        start_date = NA, end_date = NA) {
-    self$addl_data <- addl_data
-    self$addl_data2 <- addl_data2
-    self$start_date <- as.Date(strptime(start_date, format="%Y-%m-%d"))
-    self$end_date <- as.Date(strptime(end_date, format="%Y-%m-%d"))
-    self$target_steps <- target_steps
-    self$user_info <- user_info
-    self$util <- private$create_util_data(self$start_date, self$end_date)
-
-    if (!is.na(apple_data_file)){
-      self$apple <- private$load_apple_data(apple_data_file) # user needs to pass in path from this
-      # directory to file
-    }
-    
-    self$fitbit_intraday <- private$get_fitbit_intraday(fitbit_user_email, fitbit_user_pw)
-    self$fitbit_daily <- private$get_fitbit_daily(fitbit_user_email, fitbit_user_pw)
-    
-      # ^ NOTE: need to do the manipulations to get it into the same format as fitbit
-    # or have the user pass in a matching dataframe
-    #list of group assignments
-    self$groupings <- group_assignments # convert these to tibbles
+    fitbit_daily = NULL, # dataframe of daily fitbit data
+    fitbit_intraday = NULL, # dataframe of intraday fitbit data
+    util = NULL, # util/admin data
+    target_steps = NULL,
+    start_date = NA, # optional start date of interest
+    end_date = NA, # optional end date of interest
+    user_info = NULL, # optional list of user info, such as "age", "gender", "name", etc.
+    groupings = NULL, # named list of dataframes each with 2 columns: 1. a known 
+    # variable (date, weekend, etc.) and 2. "group" with the group assignment for 
+    # observations with that variable of that value
+    apple = NULL, # apple data from csv
+    addl_data = NULL, # user's own df of other data
+    addl_data2 = NULL, # another df
+    initialize = function(fitbit_user_email = NA, fitbit_user_pw = NA, 
+                          user_info = NA, 
+                          apple_data_file = NA,
+                          target_steps = 10000,
+                          addl_data = NA, addl_data2 = NA,
+                          group_assignments = NA,
+                          start_date = NA, end_date = NA) {
+      self$addl_data <- addl_data
+      self$addl_data2 <- addl_data2
+      
+      if (is.na(start_date)){
+        start_date = "1990-01-01"
+      }
+      if (is.na(end_date)){
+        end_date = Sys.Date()
+      }
+      
+      self$start_date <- as.Date(strptime(start_date, format="%Y-%m-%d"))
+      self$end_date <- as.Date(strptime(end_date, format="%Y-%m-%d"))
+      self$target_steps <- target_steps
+      self$user_info <- user_info
+      self$util <- private$create_util_data(self$start_date, self$end_date)
+  
+      if (!is.na(apple_data_file)){
+        self$apple <- private$load_apple_data(apple_data_file) 
+        # user needs to pass in path from this directory to file
+      }
+      
+      self$fitbit_intraday <- private$get_fitbit_intraday(fitbit_user_email,
+                                                          fitbit_user_pw)
+      self$fitbit_daily <- private$get_fitbit_daily(fitbit_user_email, 
+                                                    fitbit_user_pw)
+      self$groupings <- group_assignments
     }),
   
   private = list(
@@ -57,12 +149,10 @@ Person <- R6::R6Class("Person",
       df <- tibble::data_frame(date = lubridate::ymd(as.Date(as.POSIXct(seq(from = start_date,
                                               to = end_date, by = 1)))))
       
-      #      joined$date <- lubridate::ymd(as.Date(as.POSIXct(joined$datetime, Sys.timezone())))
       df$datetime <- df$date
       # MTWTFSS
       df$day_of_week <- lubridate::wday(df$date, label = TRUE)
       
-      # need to change this if change wday to give full days
       # weekend/weekday
       weekend <- c('Sat', 'Sun') 
       df$day_type <- factor((df$day_of_week %in% weekend),
@@ -76,22 +166,15 @@ Person <- R6::R6Class("Person",
     get_fitbit_intraday = function(fitbit_user_email, fitbit_user_pw) {
       
       cookie <- fitbitScraper::login(email=fitbit_user_email, password=fitbit_user_pw)
+      
       start <- self$start_date
       end <- self$end_date
-      
-      if (is.na(start)){
-        # set start to beginning of time if there was none
-      }
-      if (is.na(end)){
-        # set end to today if there was none
-      }
       
       char_start <- as.character(start)
       char_end <- as.character(end)
       
-      
-      # Build each intraday dataset: create list of lists, then rbind all together at once
-      intraday <- list() # list of lists; each of the below is a list of a day's data
+      # Build each intraday dataset: create list of lists, then rbind all 
+      intraday <- list()
       intraday$isteps <- NULL
       intraday$idist <- NULL
       intraday$ifloors <- NULL
@@ -99,8 +182,6 @@ Person <- R6::R6Class("Person",
       intraday$ical_burn <- NULL
       intraday$ihr <- NULL
       
-      # could use self$util$date if got format right
-      # could use something other than rbinding everything together one at a time
       for (indiv_date in format(seq.Date(from = as.Date(start), to = as.Date(end), by = "day"), format = "%Y-%m-%d")){
         char_date <- as.character(indiv_date)
         intraday$isteps <- rbind(intraday$isteps, fitbitScraper::get_intraday_data(cookie, what="steps", date=char_date))
@@ -117,11 +198,15 @@ Person <- R6::R6Class("Person",
                                    end_date = char_end)
       
       # Join all, create date, time, datetime columns and drop dateTime
-      joined <- tibble::as_data_frame(Reduce(function(x, y) merge(x, y, all=TRUE, by = "time"), intraday))
+      joined <- tibble::as_data_frame(Reduce(function(x, y) merge(x, y, all=TRUE,
+                                                                  by = "time"), 
+                                             intraday))
       joined <- dplyr::select(joined, -dateTime)
       joined$datetime <- lubridate::ymd_hms(joined$time, tz = Sys.timezone())
-      joined$date <- lubridate::ymd(as.Date(as.POSIXct(joined$datetime, Sys.timezone())))
-      joined$time <- lubridate::make_datetime(year = "1970", month = "01", day = "01",
+      joined$date <- lubridate::ymd(as.Date(as.POSIXct(joined$datetime,
+                                                       Sys.timezone())))
+      joined$time <- lubridate::make_datetime(year = "1970", month = "01", 
+                                              day = "01",
                                               hour = lubridate::hour(joined$datetime),
                                               min = lubridate::minute(joined$datetime), 
                                               sec = lubridate::second(joined$datetime))
@@ -132,25 +217,13 @@ Person <- R6::R6Class("Person",
       },
      
       # Returns a tibble of joined variables recorded daily
-      # NOTE: should put variables of interest here - ex: minsAwakeRestless, 
-      # pull out into dataframe instead of doing manipulations in other places
       get_fitbit_daily = function(fitbit_user_email, fitbit_user_pw) {
-        # better way than duplicating this (save somewhere/use to call 
-        # both from a higher level function?)
         cookie <- fitbitScraper::login(email=fitbit_user_email, password=fitbit_user_pw)
         start <- self$start_date
         end <- self$end_date
-        
-        if (is.na(start)){
-          # set start to beginning of time if there was none
-        }
-        if (is.na(end)){
-          # set end to today if there was none
-        }
-        
+
         char_start <- as.character(start)
         char_end <- as.character(end)
-        
         
         daily <- list()
         
@@ -177,18 +250,15 @@ Person <- R6::R6Class("Person",
                                      start_date = char_start,
                                      end_date = char_end)[[2]]
 
-        # temporarily get sleep's date to be "time"
+        # manipulate date, time, and datetime
         daily$sleep$time <- as.POSIXct(daily$sleep$date)
-        
-        #join all variables, create and keep only date column
-        #Join all, create date, time, datetime columns and drop dateTime
         joined <- tibble::as_data_frame(Reduce(function(x, y) merge(x, y, all=TRUE, 
                                                                     by = "time"),
                                                daily))
-        joined$date <- lubridate::ymd(as.Date(as.POSIXct(joined$time, tz = Sys.timezone())))
+        joined$date <- lubridate::ymd(as.Date(as.POSIXct(joined$time,
+                                                         tz = Sys.timezone())))
         joined <- dplyr::select(joined, -time)
-        # doesn't work...figure out if desired (not actually a datetime)
-        joined$datetime <- joined$date#lubridate::ymd_hms(joined$time, tz = Sys.timezone())
+        joined$datetime <- joined$date
         joined$minsRestlessAwake <- joined$sleepDuration - joined$minAsleep
         
         # create sleepDurationHrs and minAsleepHrs and restlessProp

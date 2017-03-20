@@ -14,7 +14,8 @@ group_months <- data.frame("month" = c("Jan", "Feb", "Mar", "Apr", "May",
 
 
 # need to make this faster
-RA <- Person$new(fitbit_user_email = "rohisha@gmail.com", fitbit_user_pw = "datasamplepw",
+RA <- Person$new(fitbit_user_email = "rohisha@gmail.com",
+                 fitbit_user_pw = "datasamplepw",
                  #apple_data_file = "apple.csv",
                  user_info = list("name" = "RA", "age" = 23, "gender" = "female"),
                  target_steps = 10000,
