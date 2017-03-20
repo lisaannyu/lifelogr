@@ -282,7 +282,7 @@ plot_i_hr <- function(Person, avg_to_get_typical_day = TRUE) {
       ggplot2::labs(y = "Heart Rate (bpm)",
                     title = "Average Heart Rate Per 5 Min Interval vs Time of Day")
   } else if (!avg_to_get_typical_day) {
-    p <- plot_i_hr_avg_datetime(Person)
+    p <- plot_i_hr_datetime(Person)
   } else {
     stop("'avg_to_get_typical_day' must be a logical value")
   }
@@ -291,7 +291,7 @@ plot_i_hr <- function(Person, avg_to_get_typical_day = TRUE) {
 
 #' @describeIn plot_i Line graph for heart rate per 5 minute interval across a
 #'     typical day.
-plot_i_hr_avg_datetime <- function(Person) {
+plot_i_hr_datetime <- function(Person) {
   hr_zones <- get_hr_zones(Person)
 
   p <- plot_i(Person, "bpm", avg_to_get_typical_day = FALSE)  + 
@@ -338,8 +338,4 @@ plot_i_weight <- function(Person, avg_to_get_typical_day = TRUE, unit = "lb") {
   }
   print(p)
 }
-
-# Overlay sleep with Heart Rate
-
-# Multiple Measures
 

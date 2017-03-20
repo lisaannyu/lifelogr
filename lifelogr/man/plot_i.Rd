@@ -7,7 +7,7 @@
 \alias{plot_i_cal}
 \alias{plot_i_active_min}
 \alias{plot_i_hr}
-\alias{plot_i_hr_avg_datetime}
+\alias{plot_i_hr_datetime}
 \alias{plot_i_weight}
 \title{Line graph for a single continuous variable.}
 \usage{
@@ -23,7 +23,7 @@ plot_i_active_min(Person, avg_to_get_typical_day = TRUE)
 
 plot_i_hr(Person, avg_to_get_typical_day = TRUE)
 
-plot_i_hr_avg_datetime(Person)
+plot_i_hr_datetime(Person)
 
 plot_i_weight(Person, avg_to_get_typical_day = TRUE, unit = "lb")
 }
@@ -69,7 +69,7 @@ date-time.
 \item \code{plot_i_hr}: Line graph for heart rate per 5 minute interval across a
 typical day or over date-time.
 
-\item \code{plot_i_hr_avg_datetime}: Line graph for heart rate per 5 minute interval across a
+\item \code{plot_i_hr_datetime}: Line graph for heart rate per 5 minute interval across a
 typical day.
 
 \item \code{plot_i_weight}: Line graph for weight over time.

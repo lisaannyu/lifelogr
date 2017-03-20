@@ -85,8 +85,8 @@ plot_daily <- function(Person, measure_var = "all", ...) {
 #' 
 #' @description Tidy daily data with multiple measures.
 #' 
-#' @param data Data with columns date and other columns of interest.  If 
-#'     multiple measures are passed in, they must be of the same type.
+#' @param data Data frame or tibble with a column named 'date' and other columns
+#'    of interest.
 #' @return Tidy tibble with the columns date, measures, and value.
 #' 
 #' @export
@@ -100,6 +100,9 @@ plot_daily <- function(Person, measure_var = "all", ...) {
 #'          minAsleepHrs = c(7.4, 7.0, 7.7))
 #' tidy_multi_meas_data(a)
 tidy_multi_meas_data <- function(data) {
+  if(is.null(data$date)) {
+    stop("'date' must be a named column of 'data'")
+  }
   return(tidyr::gather(data, key = "measures", value = "value", -date))
 }
 

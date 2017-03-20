@@ -7,8 +7,8 @@
 tidy_multi_meas_data(data)
 }
 \arguments{
-\item{data}{Data with columns date and other columns of interest.  If 
-multiple measures are passed in, they must be of the same type.}
+\item{data}{Data frame or tibble with a column named 'date' and other columns
+of interest.}
 }
 \value{
 Tidy tibble with the columns date, measures, and value.

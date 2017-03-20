@@ -102,9 +102,9 @@ plot_sleep <- function(Person, plot_type = "all") {
 #' @export
 #' @examples
 #' data(EX)
-#' tidy_sleep_weekday(EX)
+#' agg_sleep_weekday(EX)
 #'
-tidy_sleep_weekday <- function(Person) {
+agg_sleep_weekday <- function(Person) {
   data <- create_dataset(person = Person,
                          all_variables = 
                            list("fitbit_daily" = c("sleepDurationHrs", 
@@ -134,7 +134,7 @@ tidy_sleep_weekday <- function(Person) {
 #'
 # Plot 1: by day of week
 plot_sleep_weekday <- function(Person) {
-  data <- tidy_sleep_weekday(Person)
+  data <- agg_sleep_weekday(Person)
   p <- ggplot2::ggplot(data = data,
                   mapping = ggplot2::aes(x = day_of_week, 
                                          y = hours,
