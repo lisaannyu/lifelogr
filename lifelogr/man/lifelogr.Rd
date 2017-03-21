@@ -7,7 +7,7 @@
 \title{lifelogr: A package for life logging in R.}
 \description{
 The lifelogr package provides a framework for creating visualizations and
-experimenting on onself.
+experimenting on onself.  It provides an example dataset: \code{EX}.
 }
 \section{Foo functions}{
 
@@ -15,6 +15,7 @@ The foo functions ...
 }
 
 \section{To learn more about lifelogr, start with the vignette}{
-
+ 
+`browseVignettes(package = "lifelogr")`
 }
 

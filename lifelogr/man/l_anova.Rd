@@ -25,8 +25,8 @@ object, and var1 and var2 are variables from source1,
 while var3 and var4 are variables from source2}
 
 \item{time_var}{the time variable that variables and measures are 
-observed in (time, date, or datetime) - only needed if dataset
-is not passed in}
+observed in (time, date, or datetime) - only needed if 
+dataset is not passed in}
 }
 \value{
 list of ANOVAs for each measure

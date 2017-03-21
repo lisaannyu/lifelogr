@@ -7,13 +7,13 @@ Depends: R (>= 3.3.2)
 License: GPL (>= 2)
 Encoding: UTF-8
 LazyData: true
-Collate:
+Collate: 
     'EX.R'
     'global_var.R'
     'Person.R'
     'experiments.R'
-    'fitbitApp.R'
     'lifelogr.R'
+    'lifelogrApp.R'
     'viz_daily.R'
     'viz_intraday.R'
     'viz_sleep.R'

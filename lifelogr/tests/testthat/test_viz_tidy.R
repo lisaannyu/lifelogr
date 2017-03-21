@@ -9,7 +9,7 @@ test_that("get_hr_zones produces the right structure", {
 test_that("get_hr_zones produces the right output", {
   expect_equal(get_hr_zones(EX)$peak[1], 162)
   expect_equal(get_hr_zones(EX)$peak[2], 191)
-  expect_error(get_hr_zones(), 'argument "Person" is missing, with no default')
+  expect_error(get_hr_zones(), 'argument "person" is missing, with no default')
 })
 
 test_that("tidy_multi_meas_data produces output of the right class", {
@@ -51,7 +51,7 @@ test_that("agg_sleep_weekday produces output of the right class", {
 
 test_that("agg_sleep_weekday produces the right error messages", {
   expect_error(agg_sleep_weekday(), 
-               'argument "Person" is missing, with no default')
+               'argument "person" is missing, with no default')
 })
 
 test_that("agg_sleep_weekday produces the right output", {

@@ -105,10 +105,10 @@ Person <- R6::R6Class("Person",
       self$addl_data <- addl_data
       self$addl_data2 <- addl_data2
       
-      if (is.na(start_date)){
+      if (is.na(start_date)) {
         start_date = "1990-01-01"
       }
-      if (is.na(end_date)){
+      if (is.na(end_date)) {
         end_date = Sys.Date()
       }
       
@@ -137,7 +137,7 @@ Person <- R6::R6Class("Person",
     }),
   
   private = list(
-    load_apple_data = function(apple_data_file){
+    load_apple_data = function(apple_data_file) {
       raw_df <- readr::read_csv(apple_data_file)
       cleaned <- tibble::as_tibble(raw_df)
       
@@ -146,7 +146,7 @@ Person <- R6::R6Class("Person",
       
       # Rename columns to match Person$data_intraday
       cleaned <- dplyr::rename(cleaned,
-                               datetime = `Start`,
+                               datetime = Start,
                                steps = `Steps (count)`,
                                floors = `Flights Climbed (count)`,
                                bpm = `Heart Rate (count/min)`,
@@ -167,31 +167,33 @@ Person <- R6::R6Class("Person",
     create_util_data = function(start_date, end_date) {
       
       # date range between start and end date
-      df <- tibble::data_frame(date = lubridate::ymd(as.Date(as.POSIXct(seq(from = start_date,
-                                              to = end_date, by = 1)))))
+      df <- tibble::data_frame(date = lubridate::ymd(as.Date(as.POSIXct(
+              seq(from = start_date, to = end_date, by = 1)))))
       
       df$datetime <- lubridate::make_datetime(year = lubridate::year(df$date),
                                               month = lubridate::month(df$date),
                                               day = lubridate::day(df$date),
                                               hour = 0L,
                                               min = 0L,
-                                              sec = 0, tz = Sys.timezone())
+                                              sec = 0, 
+                                              tz = Sys.timezone())
       # MTWTFSS
       df$day_of_week <- lubridate::wday(df$date, label = TRUE)
       
       # weekend/weekday
       weekend <- c('Sat', 'Sun') 
       df$day_type <- factor((df$day_of_week %in% weekend),
-                            levels=c(FALSE, TRUE), 
-                            labels=c('weekday', 'weekend'))
+                            levels = c(FALSE, TRUE), 
+                            labels = c('weekday', 'weekend'))
       # Month
-      df$month <- lubridate::month(df$date, label=TRUE)
+      df$month <- lubridate::month(df$date, label = TRUE)
       return(tibble::as_data_frame(df))
     }, 
     
     get_fitbit_intraday = function(fitbit_user_email, fitbit_user_pw) {
       
-      cookie <- fitbitScraper::login(email=fitbit_user_email, password=fitbit_user_pw)
+      cookie <- fitbitScraper::login(email = fitbit_user_email, 
+                                     password = fitbit_user_pw)
       
       start <- self$start_date
       end <- self$end_date
@@ -208,14 +210,30 @@ Person <- R6::R6Class("Person",
       intraday$ical_burn <- NULL
       intraday$ihr <- NULL
       
-      for (indiv_date in format(seq.Date(from = as.Date(start), to = as.Date(end), by = "day"), format = "%Y-%m-%d")){
+      for (indiv_date in format(seq.Date(from = as.Date(start), 
+                                         to = as.Date(end), by = "day"), 
+                                format = "%Y-%m-%d")){
         char_date <- as.character(indiv_date)
-        intraday$isteps <- rbind(intraday$isteps, fitbitScraper::get_intraday_data(cookie, what="steps", date=char_date))
-        intraday$idist <- rbind(intraday$idist, fitbitScraper::get_intraday_data(cookie, what="distance", date=char_date))
-        intraday$ifloors <- rbind(intraday$ifloors, fitbitScraper::get_intraday_data(cookie, what="floors", date=char_date))
-        intraday$iactive_min <- rbind(intraday$iactive_min, fitbitScraper::get_intraday_data(cookie, what="active-minutes", date=char_date))
-        intraday$ical_burn <- rbind(intraday$ical_burn, fitbitScraper::get_intraday_data(cookie, what="calories-burned", date=char_date))
-        intraday$ihr <- rbind(intraday$ihr, fitbitScraper::get_intraday_data(cookie, what="heart-rate", date=char_date))
+        intraday$isteps <- rbind(intraday$isteps, 
+                                 fitbitScraper::get_intraday_data(
+                                   cookie, what = "steps", date = char_date))
+        intraday$idist <- rbind(intraday$idist, 
+                                fitbitScraper::get_intraday_data(
+                                  cookie, what = "distance", date = char_date))
+        intraday$ifloors <- rbind(intraday$ifloors, 
+                                  fitbitScraper::get_intraday_data(
+                                    cookie, what = "floors", date = char_date))
+        intraday$iactive_min <- rbind(intraday$iactive_min, 
+                                      fitbitScraper::get_intraday_data(
+                                        cookie, what = "active-minutes", 
+                                        date = char_date))
+        intraday$ical_burn <- rbind(intraday$ical_burn, 
+                                    fitbitScraper::get_intraday_data(
+                                      cookie, what = "calories-burned", 
+                                      date = char_date))
+        intraday$ihr <- rbind(intraday$ihr, 
+                              fitbitScraper::get_intraday_data(
+                                cookie, what = "heart-rate", date = char_date))
       }
       
       # Add weight (users can weigh many times/anytime in day)
@@ -224,19 +242,23 @@ Person <- R6::R6Class("Person",
                                    end_date = char_end)
       
       # Join all, create date, time, datetime columns and drop dateTime
-      joined <- tibble::as_data_frame(Reduce(function(x, y) merge(x, y, all=TRUE,
+      joined <- tibble::as_data_frame(Reduce(function(x, y) merge(x, y, 
+                                                                  all = TRUE, 
                                                                   by = "time"), 
-                                             intraday))
+                                             intraday)
+      )
       joined <- dplyr::select(joined, -dateTime)
       joined$datetime <- lubridate::ymd_hms(joined$time, tz = Sys.timezone())
       joined$date <- lubridate::ymd(as.Date(as.POSIXct(joined$datetime,
                                                        Sys.timezone())))
-      joined$time <- lubridate::make_datetime(year = "1970", month = "01", 
-                                              day = "01",
-                                              hour = lubridate::hour(joined$datetime),
-                                              min = lubridate::minute(joined$datetime), 
-                                              sec = lubridate::second(joined$datetime))
-      joined <- plyr::rename(joined, replace = c("active-minutes" = "activeMin"))
+      joined$time <- 
+        lubridate::make_datetime(year = "1970", month = "01", 
+                                day = "01",
+                                hour = lubridate::hour(joined$datetime),
+                                min = lubridate::minute(joined$datetime), 
+                                sec = lubridate::second(joined$datetime))
+      joined <- plyr::rename(joined, 
+                             replace = c("active-minutes" = "activeMin"))
       joined$distanceKm <- joined$distance * MI_TO_KM
       joined$weightKg <- joined$weight * LB_TO_KG
       return(joined)
@@ -244,7 +266,8 @@ Person <- R6::R6Class("Person",
      
       # Returns a tibble of joined variables recorded daily
       get_fitbit_daily = function(fitbit_user_email, fitbit_user_pw) {
-        cookie <- fitbitScraper::login(email=fitbit_user_email, password=fitbit_user_pw)
+        cookie <- fitbitScraper::login(email = fitbit_user_email, 
+                                       password = fitbit_user_pw)
         start <- self$start_date
         end <- self$end_date
 
@@ -254,21 +277,25 @@ Person <- R6::R6Class("Person",
         daily <- list()
         
         daily$steps <- fitbitScraper::get_daily_data(cookie, what = "steps",
-                                     start_date = char_start, end_date = char_end)
-        daily$distance <- fitbitScraper::get_daily_data(cookie, what = "distance",
-                                                    start_date = char_start,
-                                                   end_date = char_end)
+                                     start_date = char_start, 
+                                     end_date = char_end)
+        daily$distance <- fitbitScraper::get_daily_data(cookie, 
+                                                        what = "distance", 
+                                                        start_date = char_start,
+                                                        end_date = char_end)
         daily$floors <- fitbitScraper::get_daily_data(cookie, what = "floors",
                                                     start_date = char_start,
                                                     end_date = char_end)
-        daily$minsVery <- fitbitScraper::get_daily_data(cookie, what = "minutesVery",
-                                                       start_date = char_start,
-                                                       end_date = char_end)
-        daily$cal_ratio <- fitbitScraper::get_daily_data(cookie,
-                                                        what = "caloriesBurnedVsIntake",
+        daily$minsVery <- fitbitScraper::get_daily_data(cookie, 
+                                                        what = "minutesVery",
                                                         start_date = char_start,
                                                         end_date = char_end)
-        daily$rest_hr <- fitbitScraper::get_daily_data(cookie, what = "getRestingHeartRateData",
+        daily$cal_ratio <- fitbitScraper::get_daily_data(cookie,
+                                          what = "caloriesBurnedVsIntake",
+                                          start_date = char_start,
+                                          end_date = char_end)
+        daily$rest_hr <- fitbitScraper::get_daily_data(cookie, 
+                                   what = "getRestingHeartRateData",
                                   start_date = as.character(start),
                                   end_date = as.character(end))
 
@@ -278,7 +305,8 @@ Person <- R6::R6Class("Person",
 
         # manipulate date, time, and datetime
         daily$sleep$time <- as.POSIXct(daily$sleep$date)
-        joined <- tibble::as_data_frame(Reduce(function(x, y) merge(x, y, all=TRUE, 
+        joined <- tibble::as_data_frame(Reduce(function(x, y) merge(x, y, 
+                                                                    all = TRUE, 
                                                                     by = "time"),
                                                daily))
         joined$date <- lubridate::ymd(as.Date(as.POSIXct(joined$time,

@@ -16,10 +16,11 @@ and measures of interest}
 \item{names_of_groupings}{names of groupings to test (default is groupings
 in person$groupings)}
 
-\item{addl_grouping_assignments}{list of named dataframes, where each dataframe
-provides a mapping from a value of a specified
-variable to group on to the group assignment
-for observations with that value for that variable}
+\item{addl_grouping_assignments}{list of named dataframes, where each data 
+frame provides a mapping from a value of a 
+specified variable to group on to the group 
+assignment for observations with that value 
+for that variable}
 
 \item{variables_to_compare}{variables to print grouped statistics on}
 }
@@ -40,8 +41,9 @@ dataset <- create_dataset(person = EX, all_variables = list("util" = c("month"),
                                   "restingHeartRate")), time_var = c("date"))
                                   
 indiv_months <- data.frame("month"= c("Jan", "Feb", "Mar", "Apr", "May",
-                                      "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"),
-                                       "group" = c(1:12))
+                                      "Jun", "Jul", "Aug", "Sep", "Oct", 
+                                      "Nov", "Dec"),
+                           "group" = c(1:12))
 compare_groups(dataset, person = EX, 
             addl_grouping_assignments = list("indiv_months" = indiv_months), 
             names_of_groupings = c("indiv_months"),

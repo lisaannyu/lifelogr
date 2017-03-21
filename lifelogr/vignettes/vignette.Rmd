@@ -175,23 +175,13 @@ and measure variables given.
     rate and the relationship between day of week and resting heart rate on a 
     date basis:
     ```{r, fig.show = "hold"}
-    experiment(person = EX, variables = list("fitbit_daily" = c("sleepDuration"), 
-                                             "util" = c("day_of_week")),
+    experiment(person = EX, 
+               variables = list("fitbit_daily" = c("sleepDuration"),
+                                "util" = c("day_of_week")),
                measures = list("fitbit_daily" = c("restingHeartRate")), 
                analysis = c("plot"),
                time_var = c("date"))
     ```
-
-```{r}
-# Looks similar - don't need both
-# dataset <- create_dataset(person = EX,
-#                           all_variables = list("util" = c("month"),
-#                                                "fitbit_daily" = c("steps")), 
-#                           time_var = c("date"))
-# 
-# l_plot(dataset, person = EX, variables = list("util" = c("month")),
-#        measures = list("fitbit_daily" = c("steps")))
-```
 
 2.  Correlation
     To calculate the correlation between sleep duration and number of steps on
@@ -206,6 +196,13 @@ and measure variables given.
                                   variables = list("fitbit_daily" = c("sleepDuration")),
                                   measures = list("fitbit_daily" = c("steps")),
                                   time_var = "date")
+    
+    # # would rather do
+    # experiment(person = EX, 
+    #            variables = list("fitbit_daily" = c("sleepDuration")),
+    #            measures = list("fitbit_daily" = c("restingHeartRate")), 
+    #            analysis = c("correlation"),
+    #            time_var = c("date"))
 ```
 
 3.  ANOVA
@@ -219,60 +216,70 @@ dataset <- create_dataset(person = EX,
                           time_var = c("date"))
 
 all_anovas <- l_anova(dataset, person = EX, variables = list("util" = c("day_of_week"), 
-                                               "fitbit_daily" = c("sleepDuration",
-                                                        "steps")),
+                                               "fitbit_daily" = c("sleepDuration")),
        measures = list("fitbit_daily" = c("restingHeartRate")))
-```
-5.  Regression
-```{r}
-all_models <- l_regression(dataset, person = EX, variables = list("util" = c("day_of_week"), 
-                                                             "fitbit_daily" = c("sleepDuration",
-                                                                                "steps")),
-                      measures = list("fitbit_daily" = c("restingHeartRate")))
+
+    # experiment(person = EX,
+    #            variables = list("fitbit_daily" = c("sleepDuration", "steps")),
+    #            measures = list("fitbit_daily" = c("restingHeartRate")),
+    #            analysis = c("anova"),
+    #            time_var = c("date"))
 ```
 
 4.  Compare Groups
+    To compare across time variables not already defined, such as months, users
+    can set up groups.  In this case, only data from January and February is
+    in the sample instance of Person, so only two groups are compared:
 ```{r}
 dataset <- create_dataset(person = EX,
                           all_variables = list("util" = c("month"), 
-                                               "fitbit_daily" = c("sleepDuration", 
-                                                                  "steps",
-                                                                  "restingHeartRate")), 
+                                               "fitbit_daily" = c("steps")), 
                           time_var = c("date"))
 
-indiv_months <- data.frame("month"= c("Jan", "Feb", "Mar", "Apr", "May",
+indiv_months <- data.frame("month" = c("Jan", "Feb", "Mar", "Apr", "May",
                                       "Jun", "Jul", "Aug",
                                       "Sep", "Oct", "Nov", "Dec"),
                            "group" = c(1:12))
-
-
-compare_groups(dataset, person = EX, 
+ compare_groups(dataset, person = EX, 
                      addl_grouping_assignments = list("indiv_months" = indiv_months), 
                      names_of_groupings = c("indiv_months"),
-                     variables_to_compare = c("steps", "restingHeartRate"))
+                     variables_to_compare = c("steps"))                                  
+```
 
+Groups can even be assigned to an instantiation of a Person:
+```{r}
 group_months <- data.frame("month" = c("Jan", "Feb", "Mar", "Apr", "May",
                                         "Jun", "Jul", "Aug",
                                         "Sep", "Oct", "Nov", "Dec"),
                               "group" = c(0, 0, 0, 1, 1, 1, 1, 1, 1, 0, 0, 0))
-ash <- Person$new(user_info = list("name" = "Ash", "age" = 26,
-                                                        "gender" = "female"), 
-                                                        target_steps = 20000,
-                                                        group_assignments = list("group_months" = group_months),
-                                                        start_date = "2017-03-11",
-                                                        end_date = "2017-03-12")
-                                   
+ash <- Person$new(user_info = list("name" = "Ash", "age" = 26, "gender" = 
+                                     "female"), 
+                  group_assignments = list("group_months" = group_months),
+                  start_date = "2017-03-11",
+                  end_date = "2017-03-12")
+```
+
+5.  Regression
+```{r}
+dataset <- create_dataset(person = EX,
+                          all_variables = list("util" = c("day_of_week"), 
+                                               "fitbit_daily" = c("sleepDuration", 
+                                                                  "steps",
+                                                                  "restingHeartRate")), 
+                          time_var = c("date"))
+all_models <- l_regression(dataset, person = EX, 
+                           variables = list("util" = c("day_of_week"), 
+                                            "fitbit_daily" = c("sleepDuration","steps")),
+                      measures = list("fitbit_daily" = c("restingHeartRate")))
+
+    # experiment(person = EX,
+    #            variables = list("fitbit_daily" = c("steps")),
+    #            measures = list("fitbit_daily" = c("restingHeartRate")),
+    #            analysis = c("regression"),
+    #            time_var = c("date"))
 ```
 
 
 ## Shiny Application
 
 ## Apple Data
-
-## More Examples
-
-```{r, echo=FALSE, results='asis'}
-knitr::kable(head(mtcars, 10))
-```
-
-> "He who gives up [code] safety for [code] speed deserves neither."

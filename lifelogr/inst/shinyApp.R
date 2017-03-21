@@ -25,7 +25,13 @@ ui <- fluidPage(
                       br(),
                       numericInput("target_steps", label = "Target Steps Per Day", 
                                    value = 10000),
-                      dateRangeInput("dates", label = "Date range")),
+                      dateRangeInput("dates", label = "Date range"),
+                      fileInput("apple", label = "Apple Data", 
+                                multiple = FALSE,
+                                accept = c(
+                                  "text/csv",
+                                  "text/comma-separated-values,text/plain",
+                                  ".csv"))),
                column(6,
                       tableOutput("table"))
              )
@@ -112,6 +118,41 @@ ui <- fluidPage(
                  plotOutput("overAllTimePlot")
                )
              )
+    ),
+    
+    tabPanel("Experimentation",
+             sidebarLayout(
+               sidebarPanel(
+                 h3("Variables (x)"),
+                 checkboxGroupInput("fitbit_daily", "Daily Variables",
+                                    c("Steps" = "steps",
+                                      "Distance (mi)" = "distance",
+                                      "Floors" = "floors",
+                                      "Calories Burned" = "caloriesBurned",
+                                      "Calories Consumed" = "caloriesIntake",
+                                      "Resting Heart Rate" = "restingHeartRate",
+                                      "Restlessness Duration" = "restlessDuration",
+                                      "Restlessness Proportion" = "restlessProp",
+                                      "Minutes Asleep" = "minAsleep",
+                                      "Sleep Quality Score" = "sleepQUalityScoreA")),
+                 # Not done with this yet
+                 checkboxGroupInput("fitbit_intraday", "Intraday Variables:",
+                                    c("Steps" = "steps",
+                                      "Distance (mi)" = "distance",
+                                      "Floors" = "floors",
+                                      "Calories Burned" = "caloriesBurned",
+                                      "Calories Consumed" = "caloriesIntake",
+                                      "Resting Heart Rate" = "restingHeartRate",
+                                      "Restlessness Duration" = "restlessDuration",
+                                      "Restlessness Proportion" = "restlessProp",
+                                      "Minutes Asleep" = "minAsleep",
+                                      "Sleep Quality Score" = "sleepQUalityScoreA"))
+               ),
+               
+               mainPanel(
+                 # plotOutput("overAllTimePlot")
+               )
+             )
     )
   )
 
@@ -120,45 +161,41 @@ ui <- fluidPage(
 
 server <- function(input, output) {
   
-  df <- reactive({
-    EX <- Person$new(fitbit_user_email = input$email, 
+  df <- eventReactive(input$done, {
+    person <- Person$new(fitbit_user_email = input$email, 
                      fitbit_user_pw = input$password,
-                     # apple_data_file = "apple.csv",
+                     # apple_data_file = input$apple,
                      user_info = list("name" = input$name, 
                                       "age" = input$age, 
                                       "gender" = input$gender),
                      target_steps = input$target_steps,
                      group_assignments = list(data.frame(NA), data.frame(NA)),
                      start_date = input$dates[1], end_date = input$dates[2])
-    EX$intraday
+    # person$fitbit_intraday
   })
   
   output$table <- renderTable({
-    input$done
-
-    isolate({
-      dplyr::glimpse(df())
-    })
+    df()
   })
 
   output$sleepPlot <- renderPlot({
-    plot_sleep(EX, input$sleep_measure)
+    plot_sleep(df(), input$sleep_measure)
   })
   
   output$dailyPlot <- renderPlot({
     # eventReactive((input$daily_measure == 'distance'), {
     #   print(input$unit)
-    #   plot_daily(EX, input$daily_measure, input$unit)
+    #   plot_daily(person, input$daily_measure, input$unit)
     # })
-    plot_daily(EX, input$daily_measure)
+    plot_daily(person, input$daily_measure)
   })
   
   output$typicalDayPlot <- renderPlot({
-    plot_intraday(EX, input$typical_day_measure, TRUE)
+    plot_intraday(person, input$typical_day_measure, TRUE)
   })
   
   output$overAllTimePlot <- renderPlot({
-    plot_intraday(EX, input$over_all_time_measure, FALSE)
+    plot_intraday(person, input$over_all_time_measure, FALSE)
   })
   
 }
