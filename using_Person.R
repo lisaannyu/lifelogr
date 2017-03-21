@@ -56,10 +56,10 @@ l_plot(person = EX, variables = list("fitbit_daily" = c("sleepDuration",
 
 
 
-# don't know why this doesn't work
-#correlation(person = EX, variables = list("fitbit_daily" = c("distance")),
-#      measures = list("fitbit_daily" = c("steps")),
-#      time_var = "date")
+# works now!
+correlation(person = EX, variables = list("fitbit_daily" = c("distance")),
+      measures = list("fitbit_daily" = c("steps")),
+      time_var = "date")
 
 dataset <- create_dataset(person = EX,
                           all_variables = list("fitbit_daily" = c("sleepDuration", 

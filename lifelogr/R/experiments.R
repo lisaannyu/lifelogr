@@ -21,10 +21,23 @@
 #' all_variables <- merge_lists(list(variables, measures))
 #' 
 merge_lists <- function(list_of_lists){
-  keys <- unique(unlist(lapply(list_of_lists, names)))
-  merged_list <- setNames(do.call(mapply,
-                                    c(FUN=c, 
-                                      lapply(list_of_lists, `[`, keys))), keys)
+
+  merged_list = list()
+  existing_sources = list()
+  
+  for (l in list_of_lists){
+
+    sources <- names(l)
+    for (source in sources){
+      if(source %in% existing_sources){
+        merged_list[[source]] <- c(merged_list[[source]], l[[source]])
+      }
+      else {
+        merged_list[[source]] <- l[[source]]
+        existing_sources <- c(existing_sources, source)
+      }
+    }
+  }
   return(merged_list)
 }
   
@@ -315,19 +328,6 @@ l_anova <- function(dataset = NA, person, variables, measures, time_var = NA){
   }
   return(anovas)
 }
-
-# Groupings is an optional list of group assignments to do the ttest on - 
-# otherwise, does the test on each of the group_assignments person contains
-# dataset, if passed in, is the dataset with everything in it except the group
-# assignments variables
-# compares (averages, t test if only two, variance, ?plot, ?histogram) 
-#  each variable in variables_to_compare between the groups in groupings
-# For now, variables is a simple list, 1D, no sources
-# group assignments variable has to be named 'group'
-# names_of_groupings are names of groupings want to analyze (must be in person
-# named that way or passed in in addl)
-# Maybe should be able to pass groupings_df directly to this function
-
 
 #' Prints statistics on dataset, grouped by group assignments
 #' 
