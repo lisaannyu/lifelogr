@@ -27,13 +27,98 @@ group assignments).
 
 \describe{
 \item{\code{fitbit_daily}}{tibble dataframe of fitbit variables (for user account
-info provided) observed daily}
+info provided) observed daily.
+Columns include:
+ \itemize{
+     \item{date: unique for each row (date)}
+     \item{datetime: includes date and time, time is an arbitrary 
+     time, which is consistent for each day (date)}
+     \item{dateInForJavascriptLocalFormatting: chr}
+     \item{steps: total number of steps for that day (dbl)}
+     \item{distance: total distance for that day, in miles (dbl)}
+     \item{distanceKm: total distance for that day, in kilometers 
+     (dbl)}
+     \item{floors: total number of floors for that day (dbl)}
+     \item{minutesVery: minutes 'very active' that day (dbl)}
+     \item{caloriesBurned: calories (kcal) burned that day (dbl)}
+     \item{caloriesIntake: calories (kcal) consumed that day, user
+     must input this, either into this data frame or into the fitbit 
+     (dbl)}
+     \item{restingHeartRate: resting heart rate in beats per minute 
+     (bpm) (dbl)}
+     \item{startTime: sleeping start time for that day (chr)}
+     \item{endTime: sleeping end time for that day (chr)}
+     \item{startDateTime: sleeping start date and time for that day
+     (chr)}
+     \item{endDateTime: sleeping end date and time for that day (chr)}
+     \item{sleepDuration: sleep duration for that day, in minutes 
+     (int)}
+     \item{sleepDurationHrs: sleep duration for that day, in hours 
+     (dbl)}
+     \item{minAsleep: time asleep that day, in minutes (int)}
+     \item{minAsleepHrs: time asleep that day, in hours, derived from 
+     minAsleep (dbl)}
+     \item{minRestlessAwake: \eqn{sleepDuration - awakeCount} (int)}
+     \item{awakeCount: int}
+     \item{restlessCount: int}
+     \item{awakeDuration: int}
+     \item{restlessDuraton: int}
+     \item{restlessProp: proportion of sleep spent restless, 
+     calculated as \eqn{restlessProp = (sleepDurationHrs - 
+     minAsleepHrs) / sleepDurationHrs * 100} (dbl)}
+     \item{sleepQualityScoreB: dbl}
+     \item{sleepQualityScoreA: int}
+     \item{sleepQualityGraphicPercentA: dbl}
+     \item{sleepQualityGraphicPercentB: dbl}
+     \item{sleepBucketTextB: one of "ok", "good", "great" (chr)}
+     \item{sleepBucketTextA: one of "ok", "good", "great" (chr)}
+     \item{clusters: list of chr}
+     \item{breaks: list of chr}
+  }}
 
 \item{\code{fitbit_intraday}}{tibble dataframe of fitbit variables (for user account
-info provided) observed multiple times a day}
+info provided) observed multiple times a day.
+Columns include:
+\itemize{
+     \item{date: unique for each row (date)}
+     \item{time: a combination of an arbitrary date ("1970-01-01") 
+     and the time of the observation, generally in 5 minute intervals 
+     (dttm)}
+     \item{datetime: includes date from `date` and time from `time`
+     (dttm)}
+     \item{steps: number of steps in 15 minute interval (dbl)}
+     \item{distance: distance traveled in 15 minute interval, in 
+     miles (dbl)}
+     \item{distanceKm: distance traveled in 15 minute interval, in
+     kilometers (dbl)}
+     \item{floors: number of floors went up and down in 15 minute
+     interval (dbl)}
+     \item{activeMin: number of active minutes in 15 minute 
+     interval (dbl)}
+     \item{activityLevel:  hypothesized activity level, one of: 
+     "SEDENTARY", "LIGHTLY_ACTIVE", "MODERATELY_ACTIVE", or 
+     "VERY_ACTIVE" (chr)}
+     \item{bpm: average heart rate in 5 minute interval (int)}
+     \item{confidence: one of -1, 1, 2, or 3 (int)}
+     \item{caloriesBurned: calories (kcal) burned in 5 minute 
+     interval (dbl)}
+     \item{defaultZone: chr}
+     \item{customZone: lgl}
+     \item{weight: weight, in lbs (dbl)}
+     \item{weightKg: weight, in kg (dbl)}
+}}
 
 \item{\code{util}}{tibble dataframe that maps each date in the date range to utility
-information about that date}
+information about that date
+Columns include:
+\itemize{
+     \item{date: unique for each row (date)}
+     \item{datetime: date from `date` and an arbitrary time (16:00:00)
+     (dttm)}
+     \item{day_of_week: day of the week, with Sun as first (ord)}
+     \item{day_type: weekend or weekday (fctr)}
+     \item{month: month, with Jan as first (ord)}
+}}
 
 \item{\code{target_steps}}{the person's target number of steps (numeric) for each
 day (default 10,000)}

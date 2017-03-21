@@ -36,6 +36,12 @@ Prints and returns Pearson's correlation between each variable
 and each measure listed. Can pass in a 
 dataset from create_dataset, or function calls create_dataset itself.
 }
+\section{Note}{
+
+`correlation` uses "pairwise.complete.obs", which only computes the 
+correlation between all complete pairs of observations.
+}
+
 \examples{
 data(EX)
 

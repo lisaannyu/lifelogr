@@ -236,6 +236,9 @@ l_plot <- function(dataset = NA, person, variables, measures, time_var = NA) {
 #'                 observed in (time, date, or datetime) - only needed if 
 #'                 dataset is not passed in
 #' @return Pearson's correlation between each variable and each measure
+#' @section Note:
+#' `correlation` uses "pairwise.complete.obs", which only computes the 
+#' correlation between all complete pairs of observations.
 #' @export
 #' @examples
 #' data(EX)
@@ -261,7 +264,8 @@ correlation <- function(dataset = NA, person, variables, measures,
     }
   
   pearson_corr <- cor(dataset[, unlist(variables)], dataset[, unlist(measures)],
-                      method = "pearson")
+                      method = "pearson",
+                      use = "pairwise.complete.obs")
   print(pearson_corr)
   return(pearson_corr)
 }

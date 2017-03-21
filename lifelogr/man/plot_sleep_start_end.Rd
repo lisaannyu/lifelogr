@@ -13,7 +13,7 @@ plot_sleep_start_end(person, color_var = "day_type")
 for day of week.  Determines color of the lines.}
 }
 \value{
-A ggplot2 object, prints to screen
+NULL, but plots print to screen
 }
 \description{
 Returns a plot with start time of sleep and end time of sleep

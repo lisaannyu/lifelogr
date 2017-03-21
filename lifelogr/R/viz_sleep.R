@@ -66,18 +66,20 @@ plot_sleep_all <- function(person) {
 #' 
 #' @param person An instance of the Person class
 #' @param plot_type The type of plot.  Options include: "by_weekday", 
-#' "by_start_end_time", "by_datetime", "by_restless_prop", "by_restless_min", 
-#' "by_quality".  Default is to plot all six.
-#' @return A ggplot2 object
+#'     "by_start_end_time", "by_datetime", "by_restless_prop", 
+#'     "by_restless_min", "by_quality".  Default is to plot all six.
+#' @param ... Extra arguments used to specify the `color_var` for the 
+#'     `by_start_end_time` plot
+#' @return NULL, but plots print to screen
 #' @export
 #' @examples
 #' data(EX)
 #' plot_sleep(person = EX)
 #'
-plot_sleep <- function(person, plot_type = "all") {
+plot_sleep <- function(person, plot_type = "all", ...) {
   switch(plot_type,
     by_weekday = plot_sleep_weekday(person),
-    by_start_end_time = plot_sleep_start_end(person),
+    by_start_end_time = plot_sleep_start_end(person, ...),
     by_datetime = plot_sleep_over_time(person),
     by_restless_prop = plot_sleep_restless_prop(person),
     by_restless_min = plot_sleep_restless_min(person),
@@ -126,7 +128,7 @@ agg_sleep_weekday <- function(person) {
 #'     Monday, ...).
 #' 
 #' @param person An instance of the Person class
-#' @return A ggplot2 object, prints to screen
+#' @return NULL, but plots print to screen
 #' @importFrom ggplot2 ggplot aes geom_col labs guides guide_legend scale_fill_discrete
 #' @export
 #' @examples
@@ -157,7 +159,7 @@ plot_sleep_weekday <- function(person) {
 #' @param person An instance of the Person class
 #' @param color_var "day_type" by default for weekend/weekday, or "day_of_week"
 #' for day of week.  Determines color of the lines.
-#' @return A ggplot2 object, prints to screen
+#' @return NULL, but plots print to screen
 #' @importFrom ggplot2 ggplot aes geom_col labs guides guide_legend 
 #'     scale_fill_discrete
 #' @export
@@ -221,7 +223,7 @@ plot_sleep_start_end <- function(person, color_var = "day_type") {
 #'     duration and time asleep (in hours).
 #' 
 #' @param person An instance of the Person class
-#' @return A ggplot2 object, prints to screen
+#' @return NULL, but plots print to screen
 #' @export
 #' @importFrom ggplot2 ggplot geom_line aes labs guides guide_legend 
 #'     scale_color_discrete
@@ -248,7 +250,7 @@ plot_sleep_over_time <- function(person) {
 #'     duration and time spent asleep over sleep duration.
 #' 
 #' @param person An instance of the Person class
-#' @return A ggplot2 object, prints to screen
+#' @return NULL, but plots print to screen
 #' @export
 #' @importFrom ggplot2 ggplot geom_line aes labs
 #' @examples
@@ -271,7 +273,7 @@ plot_sleep_restless_prop <- function(person) {
 #'     over time (in minutes).
 #' 
 #' @param person An instance of the Person class
-#' @return A ggplot2 object, prints to screen
+#' @return NULL, but plots print to screen
 #' @export
 #' @importFrom ggplot2 labs
 #' @examples
@@ -293,7 +295,7 @@ plot_sleep_restless_min <- function(person) {
 #' quality is a subjective score given by Fitbit
 #' 
 #' @param person An instance of the Person class
-#' @return A ggplot2 object, prints to screen
+#' @return NULL, but plots print to screen
 #' @export
 #' @importFrom ggplot2 labs
 #' @examples

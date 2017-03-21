@@ -10,7 +10,7 @@ plot_sleep_quality(person)
 \item{person}{An instance of the Person class}
 }
 \value{
-A ggplot2 object, prints to screen
+NULL, but plots print to screen
 }
 \description{
 Returns a line plot plotting sleep quality over time.  Sleep

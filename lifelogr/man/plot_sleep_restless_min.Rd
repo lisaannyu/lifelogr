@@ -10,7 +10,7 @@ plot_sleep_restless_min(person)
 \item{person}{An instance of the Person class}
 }
 \value{
-A ggplot2 object, prints to screen
+NULL, but plots print to screen
 }
 \description{
 Returns a line plot plotting the length of restless sleep 

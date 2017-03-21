@@ -26,11 +26,96 @@ NULL
 #' @importFrom dplyr select mutate
 #' @importFrom plyr rename
 #' @field fitbit_daily tibble dataframe of fitbit variables (for user account
-#'        info provided) observed daily
+#'        info provided) observed daily.
+#'        Columns include:
+#'         \itemize{
+#'             \item{date: unique for each row (date)}
+#'             \item{datetime: includes date and time, time is an arbitrary 
+#'             time, which is consistent for each day (date)}
+#'             \item{dateInForJavascriptLocalFormatting: chr}
+#'             \item{steps: total number of steps for that day (dbl)}
+#'             \item{distance: total distance for that day, in miles (dbl)}
+#'             \item{distanceKm: total distance for that day, in kilometers 
+#'             (dbl)}
+#'             \item{floors: total number of floors for that day (dbl)}
+#'             \item{minutesVery: minutes 'very active' that day (dbl)}
+#'             \item{caloriesBurned: calories (kcal) burned that day (dbl)}
+#'             \item{caloriesIntake: calories (kcal) consumed that day, user
+#'             must input this, either into this data frame or into the fitbit 
+#'             (dbl)}
+#'             \item{restingHeartRate: resting heart rate in beats per minute 
+#'             (bpm) (dbl)}
+#'             \item{startTime: sleeping start time for that day (chr)}
+#'             \item{endTime: sleeping end time for that day (chr)}
+#'             \item{startDateTime: sleeping start date and time for that day
+#'             (chr)}
+#'             \item{endDateTime: sleeping end date and time for that day (chr)}
+#'             \item{sleepDuration: sleep duration for that day, in minutes 
+#'             (int)}
+#'             \item{sleepDurationHrs: sleep duration for that day, in hours 
+#'             (dbl)}
+#'             \item{minAsleep: time asleep that day, in minutes (int)}
+#'             \item{minAsleepHrs: time asleep that day, in hours, derived from 
+#'             minAsleep (dbl)}
+#'             \item{minRestlessAwake: \eqn{sleepDuration - awakeCount} (int)}
+#'             \item{awakeCount: int}
+#'             \item{restlessCount: int}
+#'             \item{awakeDuration: int}
+#'             \item{restlessDuraton: int}
+#'             \item{restlessProp: proportion of sleep spent restless, 
+#'             calculated as \eqn{restlessProp = (sleepDurationHrs - 
+#'             minAsleepHrs) / sleepDurationHrs * 100} (dbl)}
+#'             \item{sleepQualityScoreB: dbl}
+#'             \item{sleepQualityScoreA: int}
+#'             \item{sleepQualityGraphicPercentA: dbl}
+#'             \item{sleepQualityGraphicPercentB: dbl}
+#'             \item{sleepBucketTextB: one of "ok", "good", "great" (chr)}
+#'             \item{sleepBucketTextA: one of "ok", "good", "great" (chr)}
+#'             \item{clusters: list of chr}
+#'             \item{breaks: list of chr}
+#'          }
 #' @field fitbit_intraday tibble dataframe of fitbit variables (for user account
-#'        info provided) observed multiple times a day
+#'        info provided) observed multiple times a day.
+#'        Columns include:
+#'        \itemize{
+#'             \item{date: unique for each row (date)}
+#'             \item{time: a combination of an arbitrary date ("1970-01-01") 
+#'             and the time of the observation, generally in 5 minute intervals 
+#'             (dttm)}
+#'             \item{datetime: includes date from `date` and time from `time`
+#'             (dttm)}
+#'             \item{steps: number of steps in 15 minute interval (dbl)}
+#'             \item{distance: distance traveled in 15 minute interval, in 
+#'             miles (dbl)}
+#'             \item{distanceKm: distance traveled in 15 minute interval, in
+#'             kilometers (dbl)}
+#'             \item{floors: number of floors went up and down in 15 minute
+#'             interval (dbl)}
+#'             \item{activeMin: number of active minutes in 15 minute 
+#'             interval (dbl)}
+#'             \item{activityLevel:  hypothesized activity level, one of: 
+#'             "SEDENTARY", "LIGHTLY_ACTIVE", "MODERATELY_ACTIVE", or 
+#'             "VERY_ACTIVE" (chr)}
+#'             \item{bpm: average heart rate in 5 minute interval (int)}
+#'             \item{confidence: one of -1, 1, 2, or 3 (int)}
+#'             \item{caloriesBurned: calories (kcal) burned in 5 minute 
+#'             interval (dbl)}
+#'             \item{defaultZone: chr}
+#'             \item{customZone: lgl}
+#'             \item{weight: weight, in lbs (dbl)}
+#'             \item{weightKg: weight, in kg (dbl)}
+#'        }
 #' @field util tibble dataframe that maps each date in the date range to utility
 #'        information about that date
+#'        Columns include:
+#'        \itemize{
+#'             \item{date: unique for each row (date)}
+#'             \item{datetime: date from `date` and an arbitrary time (16:00:00)
+#'             (dttm)}
+#'             \item{day_of_week: day of the week, with Sun as first (ord)}
+#'             \item{day_type: weekend or weekday (fctr)}
+#'             \item{month: month, with Jan as first (ord)}
+#'        }
 #' @field target_steps the person's target number of steps (numeric) for each
 #'        day (default 10,000)
 #' @field start_date start of user's date range of interest (Date object)
@@ -151,7 +236,7 @@ Person <- R6::R6Class("Person",
                                floors = `Flights Climbed (count)`,
                                bpm = `Heart Rate (count/min)`,
                                distance = `Distance (mi)`,
-                               resp_Rate = `Respiratory Rate (count/min)`,
+                               resp_rate = `Respiratory Rate (count/min)`,
                                active_cal = `Active Calories (kcal)`)
 
       # Convert datetime variable to dttm type
@@ -259,8 +344,24 @@ Person <- R6::R6Class("Person",
                                 sec = lubridate::second(joined$datetime))
       joined <- plyr::rename(joined, 
                              replace = c("active-minutes" = "activeMin"))
-      joined$distanceKm <- joined$distance * MI_TO_KM
-      joined$weightKg <- joined$weight * LB_TO_KG
+
+      # create additional columns
+      joined <- dplyr::mutate(joined,
+                              distanceKm = distance * MI_TO_KM,
+                              weightKg = weight * MI_TO_KG)
+      
+      # drop `calories-burned`, which is less informative than caloriesBurned
+      joined$`calories-burned` <- NULL
+      
+      # reorder columns
+      joined <- dplyr::select(joined,
+                              date,
+                              time,
+                              datetime,
+                              steps, distance, distanceKm, floors, activeMin,
+                              activityLevel, bpm, confidence, caloriesBurned,
+                              defaultZone, customZone, weight, weightKg,
+                              dplyr::everything())
       return(joined)
       },
      
@@ -312,20 +413,48 @@ Person <- R6::R6Class("Person",
         joined$date <- lubridate::ymd(as.Date(as.POSIXct(joined$time,
                                                          tz = Sys.timezone())))
         joined <- dplyr::select(joined, -time)
-        joined$datetime <- joined$date
-        joined$minsRestlessAwake <- joined$sleepDuration - joined$minAsleep
         
-        # create sleepDurationHrs and minAsleepHrs and restlessProp
-        joined <- dplyr::mutate(joined,
-                                sleepDurationHrs = sleepDuration / 60,
-                                minAsleepHrs = minAsleep / 60,
-                                restlessProp = 
-                                  (sleepDurationHrs - minAsleepHrs) / 
-                                  sleepDurationHrs * 100)
+        joined$datetime <- 
+          lubridate::make_datetime(year = lubridate::year(joined$date),
+                                   month = lubridate::month(joined$date),
+                                   day = lubridate::day(joined$date),
+                                   hour = 0L,
+                                   min = 0L,
+                                   sec = 0, 
+                                   tz = Sys.timezone())
         
-        # create distanceKm
+        # create additional columns
         joined <- dplyr::mutate(joined,
-                                distanceKm = distance * MI_TO_KM)
+                    minRestlessAwake = joined$sleepDuration -  joined$minAsleep,
+                    sleepDurationHrs = sleepDuration / 60,
+                    minAsleepHrs = minAsleep / 60,
+                    restlessProp = (sleepDurationHrs - minAsleepHrs) / 
+                      sleepDurationHrs * 100,
+                    distanceKm = distance * MI_TO_KM)
+        
+        # rearrange columns:
+        joined <- dplyr::select(joined,
+                                date, 
+                                datetime, 
+                                dateInForJavascriptLocalFormatting,
+                                steps, distance, distanceKm, floors, 
+                                minutesVery, caloriesBurned, caloriesIntake,
+                                restingHeartRate,
+                                startTime, endTime, 
+                                startDateTime, endDateTime,
+                                sleepDuration, sleepDurationHrs,
+                                minAsleep, minAsleepHrs,
+                                minRestlessAwake,
+                                awakeCount,
+                                restlessCount,
+                                awakeDuration,
+                                restlessDuration,
+                                restlessProp,
+                                dplyr::starts_with("sleepQuality"),
+                                dplyr::starts_with("sleepBucket"),
+                                clusters,
+                                breaks,
+                                dplyr::everything())
         return(joined)
       }
     

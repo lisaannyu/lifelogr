@@ -4,17 +4,20 @@
 \alias{plot_sleep}
 \title{Plot sleep.}
 \usage{
-plot_sleep(person, plot_type = "all")
+plot_sleep(person, plot_type = "all", ...)
 }
 \arguments{
 \item{person}{An instance of the Person class}
 
 \item{plot_type}{The type of plot.  Options include: "by_weekday", 
-"by_start_end_time", "by_datetime", "by_restless_prop", "by_restless_min", 
-"by_quality".  Default is to plot all six.}
+"by_start_end_time", "by_datetime", "by_restless_prop", 
+"by_restless_min", "by_quality".  Default is to plot all six.}
+
+\item{...}{Extra arguments used to specify the `color_var` for the 
+`by_start_end_time` plot}
 }
 \value{
-A ggplot2 object
+NULL, but plots print to screen
 }
 \description{
 Prints one of six plots: two are related to quantity of sleep, 
