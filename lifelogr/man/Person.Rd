@@ -133,7 +133,29 @@ day (default 10,000)}
 variable, and group, with the group assignment for observations where 
 that variable has appropriate value}
 
-\item{\code{apple}}{tibble dataframe of user's provided Apple Health data}
+\item{\code{apple}}{tibble dataframe of user's provided Apple Health data.  These
+columns depend on which columns are passed in by the user.  However,
+these columns match fitbit columns:
+\itemize{
+    \item{datetime: dttm}
+    \item{steps: Original steps data for total number of steps in 60 
+    minutes, but divided by 4 to match fitbit steps data, which is
+    the total number of steps in 15 minutes (dbl)}
+    \item{distance: Average distance in 15 minutes in miles.  
+    Original distance data for total distance in 60 minutes, 
+    but divided by 4 to match fitbit distance data, which is the total 
+    distance in 15 minutes (dbl)}
+    \item{distanceKm: Average distance in 15 minutes in km.  
+    Original distance data for total distance in 60 minutes, 
+    but divided by 4 to match fitbit distance data, which is the total 
+    distance in 15 minutes (dbl)}
+    \item{floors: Average number of floors in 15 minutes.  
+    Original floors data for total number
+     of floors in 60 minutes, but divided by 4 to match fitbit floors 
+     data, which is the total number of floors in 15 minutes(dbl)}
+    \item{bpm: average heart rate for the given hour, most users will
+     not have this data (dbl)}
+}}
 
 \item{\code{addl_data}}{dataframe of data from another source provided by user}
 

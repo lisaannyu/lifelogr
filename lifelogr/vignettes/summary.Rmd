@@ -1,9 +1,9 @@
 ---
 title: "Summary"
-date: "`r Sys.Date()`"
+date: "2017-03-21"
 output: 
   pdf_document:
-    fig_width: 3.8
+    fig_width: 3.5
     fig_height: 1.9
 urlcolor: blue
 
@@ -33,14 +33,14 @@ The lifelogr package makes life logging analysis and interpretation easy by:
 - Creating an experimentation framework
 
 This package was designed to work with fitbit data, but users can also
-provide their own data.  However, except for Apple data, the data types must
-match that provided here for lifelogr's functions to work.
+provide their own data.  However, with the exception of Apple data, the data 
+types and names must match those provided here for lifelogr's functions to work.
 
 ## Data
 
-The main object in this package is the Person class.  Users can create instances
-of the Person class by providing information about themselves and either their
-data directly or access to their data.
+This package is built around the Person class, an R6 class.  Users can create 
+instances of the Person class by providing information about themselves and 
+either their data directly or access to their data.
 
 Fitbit users can provide their username and password.  Fitbit allows login via
 Facebook and Google, but this library only works with fitbit login.
@@ -151,6 +151,7 @@ Each analysis can also be called using `l_plot`, `correlation`, `l_anova`,
 `compare_groups`, or `l_regression` instead of using `experiment`.
 
 1.  Plots
+
     To plot the relationship between sleep duration and resting heart 
     rate and the relationship between day of week and resting heart rate on a 
     date basis:
@@ -164,6 +165,7 @@ Each analysis can also be called using `l_plot`, `correlation`, `l_anova`,
     ```
 
 2.  Correlation
+
     To calculate the correlation between sleep duration and number of steps on
     a date basis:
     ```{r}
@@ -172,33 +174,35 @@ Each analysis can also be called using `l_plot`, `correlation`, `l_anova`,
                measures = list("fitbit_intraday" = c("distance")),
                analysis = c("correlation"),
                time_var = c("date"))
-```
+    ```
   `l_plot` will generate the same result:
-```{r}
-    dataset <- create_dataset(person = EX,
-                              all_variables = list("fitbit_daily" = c("sleepDuration"),
-                                                   "fitbit_intraday" = c("distance")), 
-                              time_var = c("date"))
-    
-    correlation_df <- correlation(dataset, person = EX, 
-                                  variables = list("fitbit_daily" = c("sleepDuration")),
-                                  measures = list("fitbit_intraday" = c("distance")),
-                                  time_var = "date")
-```
+    ```{r}
+        dataset <- create_dataset(person = EX,
+                                  all_variables = list("fitbit_daily" = c("sleepDuration"),
+                                                       "fitbit_intraday" = c("distance")), 
+                                  time_var = c("date"))
+        
+        correlation_df <- correlation(dataset, person = EX, 
+                                      variables = list("fitbit_daily" = c("sleepDuration")),
+                                      measures = list("fitbit_intraday" = c("distance")),
+                                      time_var = "date")
+    ```
 
 
 3.  ANOVA
+
     To create ANOVAs for the effect of sleep duration and steps on resting
     heart rate on a date basis:
     ```{r}
-    # experiment(person = EX,
-    #            variables = list("fitbit_daily" = c("sleepDuration", "steps")),
-    #            measures = list("fitbit_daily" = c("restingHeartRate")),
-    #            analysis = c("anova"),
-    #            time_var = c("date"))
+    experiment(person = EX,
+               variables = list("fitbit_daily" = c("sleepDuration", "steps")),
+               measures = list("fitbit_daily" = c("restingHeartRate")),
+               analysis = c("anova"),
+               time_var = c("date"))
     ```
 
 4.  Compare Groups
+
     To compare across time variables not already defined, such as months, users
     can set up groups.  Groups must be part of the Person instance, so it is 
     oftentimes easier to just use `compare_groups`.
@@ -206,29 +210,35 @@ Each analysis can also be called using `l_plot`, `correlation`, `l_anova`,
     In this case, only data from January and February is
     in the sample instance of Person, so only two groups are compared:
     ```{r}
-    dataset <- create_dataset(person = EX,
-                              all_variables = list("util" = c("month"), 
-                                                   "fitbit_daily" = c("steps")), 
-                              time_var = c("datetime"))
-    
+     dataset <- create_dataset(person = EX,
+                          all_variables = list("util" = c("month"), 
+                                               "fitbit_daily" = 
+                                                 c("sleepDuration", 
+                                                   "steps",
+                                                   "restingHeartRate")), 
+                          time_var = c("date"))
+
     indiv_months <- data.frame("month" = c("Jan", "Feb", "Mar", "Apr", "May",
-                                          "Jun", "Jul", "Aug", "Sep", "Oct", "Nov",
-                                          "Dec"),
+                                          "Jun", "Jul", "Aug",
+                                          "Sep", "Oct", "Nov", "Dec"),
                                "group" = c(1:12))
-     compare_groups(dataset, person = EX, 
-                         addl_grouping_assignments = list("indiv_months" = indiv_months), 
+    
+    compare_groups(dataset, person = EX, 
+                         addl_grouping_assignments = list("indiv_months" = 
+                                                            indiv_months), 
                          names_of_groupings = c("indiv_months"),
-                         variables_to_compare = c("steps"))  
+                         variables_to_compare = c("steps", "restingHeartRate"))
     ```
 
 5.  Regression
+
     To run a regression of resting heart rate on steps ^ 2
     ```{r}
-    # experiment(person = EX,
-    #                variables = list("fitbit_daily" = c("steps")),
-    #                measures = list("fitbit_daily" = c("restingHeartRate")),
-    #                analysis = c("regression"),
-    #                time_var = c("date"))
+    experiment(person = EX,
+                   variables = list("fitbit_daily" = c("steps")),
+                   measures = list("fitbit_daily" = c("restingHeartRate")),
+                   analysis = c("regression"),
+                   time_var = c("date"))
     ```
 
 
@@ -237,3 +247,30 @@ Each analysis can also be called using `l_plot`, `correlation`, `l_anova`,
 ## Apple Data
 
 ## Reflections
+
+In our proposal, we explained that our package would accomplish 5 tasks:
+
+1.  Data matching
+2.  Visualization
+3.  Analysis
+4.  Recommendations
+5.  Experimentation
+
+We had to scale back on our proposal, after discovering the complexity of fitbit
+data.  We chose to create an R6 class to create Person objects representing each
+user.  We built upon another package called fitbitScraper, which scrapes from
+fitbit's website.  Functions from this package only pull portions of the data.
+We had to create functions to pull as much of the data as possible and join it
+together.
+
+We successfully created functions allowing the user to easily visualize certain
+measures and run a series of experiments.  We created a framework for users to
+add whatever additional data they want and then analyze it.
+
+Future work can involve providing recommendations and the ability to visually
+compare measures.  Creating recommendation functionality is difficult because
+it generally involves a human.  A package can tell its user that his/her resting 
+heart rate is too high or that s/he is not meeting his/her step count, but
+providing recommendations for how to solve that issue is more difficult.
+Fitbit does not claim to be a replacement for a doctor, and neither does this
+package.

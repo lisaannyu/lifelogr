@@ -124,7 +124,29 @@ NULL
 #' @field groupings named list of dataframes, each with two columns - a known 
 #'        variable, and group, with the group assignment for observations where 
 #'        that variable has appropriate value
-#' @field apple tibble dataframe of user's provided Apple Health data
+#' @field apple tibble dataframe of user's provided Apple Health data.  These
+#'        columns depend on which columns are passed in by the user.  However,
+#'        these columns match fitbit columns:
+#'        \itemize{
+#'            \item{datetime: dttm}
+#'            \item{steps: Original steps data for total number of steps in 60 
+#'            minutes, but divided by 4 to match fitbit steps data, which is
+#'            the total number of steps in 15 minutes (dbl)}
+#'            \item{distance: Average distance in 15 minutes in miles.  
+#'            Original distance data for total distance in 60 minutes, 
+#'            but divided by 4 to match fitbit distance data, which is the total 
+#'            distance in 15 minutes (dbl)}
+#'            \item{distanceKm: Average distance in 15 minutes in km.  
+#'            Original distance data for total distance in 60 minutes, 
+#'            but divided by 4 to match fitbit distance data, which is the total 
+#'            distance in 15 minutes (dbl)}
+#'            \item{floors: Average number of floors in 15 minutes.  
+#'            Original floors data for total number
+#'             of floors in 60 minutes, but divided by 4 to match fitbit floors 
+#'             data, which is the total number of floors in 15 minutes(dbl)}
+#'            \item{bpm: average heart rate for the given hour, most users will
+#'             not have this data (dbl)}
+#'        }
 #' @field addl_data dataframe of data from another source provided by user
 #' @field addl_data2 dataframe of data from another source provided by user
 #' 
@@ -227,25 +249,57 @@ Person <- R6::R6Class("Person",
       cleaned <- tibble::as_tibble(raw_df)
       
       # Remove Finish column because it's confusing
-      cleaned$Finish <- NULL
+      if(!is.null(cleaned$Finish)) {
+        cleaned <- cleaned$Finish <- NULL
+      }
       
-      # Rename columns to match Person$data_intraday
-      cleaned <- dplyr::rename(cleaned,
-                               datetime = Start,
-                               steps = `Steps (count)`,
-                               floors = `Flights Climbed (count)`,
-                               bpm = `Heart Rate (count/min)`,
-                               distance = `Distance (mi)`,
-                               resp_rate = `Respiratory Rate (count/min)`,
-                               active_cal = `Active Calories (kcal)`)
+      # Rename columns to match Person$data_intraday and add additional columns
+      if("Start" %in% names(cleaned)) {
+        cleaned <- dplyr::rename(cleaned, datetime = Start)
+      }
+      
+      # fitbit steps data is in 15 min intervals, while Apple steps data is in
+      # hour intervals
+      if("Steps (count)" %in% names(cleaned)) {
+        cleaned <- dplyr::rename(cleaned, steps = `Steps (count)`)
+        cleaned <- dplyr::mutate(cleaned,
+                                 steps = steps / 4)
+      }
+      
+      # fitbit floors data is in 15 min intervals, while Apple floors data 
+      # is in hour intervals
+      if("Flights Climbed (count)" %in% names(cleaned)) {
+        cleaned <- dplyr::rename(cleaned, floors = `Flights Climbed (count)`)
+        cleaned <- dplyr::mutate(cleaned = floors / 4)
+      }
+      
+      if("Heart Rate (count/min)" %in% names(cleaned)) {
+        cleaned <- dplyr::rename(cleaned, bpm = `Heart Rate (count/min)`)
+      }
+      
+      # fitbit distance data is in 15 min intervals, while Apple distance data 
+      # is in hour intervals
+      if("Distance (mi)" %in% names(cleaned)) {
+        cleaned <- dplyr::rename(cleaned, distance = `Distance (mi)`)
+        cleaned <- dplyr::mutate(cleaned, 
+                                 distance = distance / 4,
+                                 distanceKm = distance * MI_TO_KM)
+        
+      }
+      
+      if("Respiratory Rate (count/min)" %in% names(cleaned)) {
+        cleaned <- dplyr::rename(cleaned, 
+                                 resp_rate = `Respiratory Rate (count/min)`)
+      }
+      
+      if("Active Calories (kcal)" %in% names(cleaned)) {
+        cleaned <- dplyr::rename(cleaned, active_cal = `Active Calories (kcal)`)
+      }
 
       # Convert datetime variable to dttm type
       cleaned$datetime <- lubridate::dmy_hm(cleaned$datetime, 
                                             tz = Sys.timezone())
-      # fitbit steps data is in 15 min intervals, while Apple steps data is in
-      # hour intervals
-      cleaned$steps <- cleaned$steps / 4
-      cleaned$distance <- cleaned$distance / 4
+
       return(cleaned)
     },
     
