@@ -2,9 +2,15 @@
 # #' @include Person.R
 # #' @include experiments.R
 
+
+
+# source for Shiny app
 source("lifelogr/R/global_var.R")
 source("lifelogr/R/Person.R")
 source("lifelogr/R/experiments.R")
+source("lifelogr/R/viz_daily.R")
+source("lifelogr/R/viz_sleep.R")
+source("lifelogr/R/viz_intraday.R")
 
 
 group_months <- data.frame("month" = c("Jan", "Feb", "Mar", "Apr", "May",
