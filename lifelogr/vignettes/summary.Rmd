@@ -17,6 +17,12 @@ vignette: >
 knitr::opts_chunk$set(collapse = TRUE, comment = "#>")
 ```
 
+
+```{r, eval = FALSE}
+vignette("Report", package = "lifelogr")
+```
+
+
 ```{r}
 library(lifelogr)
 ```
