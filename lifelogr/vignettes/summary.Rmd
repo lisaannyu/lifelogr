@@ -137,8 +137,6 @@ plot_intraday(EX, "bpm", FALSE)
 
 ## Experimentation Framework
 
-To promote an interaction and exchange between a user's life and lifestyle and self-data, data and the process generating it (the user!)
-
 While almost all the visualizations shown above had date, date-time, or time on 
 the x axis, the experimentation framework allows for greater flexibility.  Users
 can select any variables of interest and examine their relationship.
@@ -210,8 +208,9 @@ Each analysis can also be done individually using `l_plot`, `correlation`, `l_an
 4.  Compare Groups
 
     To compare across time variables not already defined, such as months, users
-    can set up groups.  Groups must be part of the Person instance, so it is 
-    oftentimes easier to just use `compare_groups`.
+    can set up groups. Groups must be part of the Person instance, so it is 
+    oftentimes easier to just use `compare_groups`, which instead allows users to 
+    pass in new dataframes defining groupings.
     
     In this case, only data from January and February is
     in the sample instance of Person, so only two groups are compared:
@@ -252,7 +251,7 @@ cleaned dataframes in their Person object, and the create_dataset function, whic
 
 ## Shiny Application
 
-## Apple Data
+We provide a sample Shiny application for visualization of the EX object's data.
 
 ## Reflections
 
