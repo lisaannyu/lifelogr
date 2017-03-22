@@ -10,7 +10,7 @@ plot_sleep_weekday(person)
 \item{person}{An instance of the Person class}
 }
 \value{
-A ggplot2 object, prints to screen
+NULL, but plots print to screen
 }
 \description{
 Returns a bar graph plotting sleep by day of week (Sunday, 

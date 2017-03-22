@@ -1,3 +1,6 @@
+##
+## Code in this file written entirely by layu
+##
 library(lifelogr)
 context("Tidy Data functions")
 

@@ -3,5 +3,5 @@
 #' @export
 #' @importFrom shiny runApp
 lifelogrApp <- function() {
-  shiny::runApp(system.file('inst/shinyApp', package = 'lifelogr'))
+  shiny::runApp(system.file('shinyApp', package = 'lifelogr'))
 }

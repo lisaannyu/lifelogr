@@ -1,3 +1,6 @@
+##
+## Entire file layu code
+##
 library(lifelogr)
 context("Plot Functions Output")
 
