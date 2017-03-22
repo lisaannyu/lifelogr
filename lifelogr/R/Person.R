@@ -259,14 +259,14 @@ Person <- R6::R6Class("Person",
       
       # Remove Finish column because it's confusing
       if(!is.null(cleaned$Finish)) {
-        cleaned <- cleaned$Finish <- NULL
+        cleaned$Finish <- NULL
       }
-      
+
       # Rename columns to match Person$data_intraday and add additional columns
       if("Start" %in% names(cleaned)) {
         cleaned <- dplyr::rename(cleaned, datetime = Start)
       }
-      
+
       # fitbit steps data is in 15 min intervals, while Apple steps data is in
       # hour intervals
       if("Steps (count)" %in% names(cleaned)) {
@@ -274,39 +274,39 @@ Person <- R6::R6Class("Person",
         cleaned <- dplyr::mutate(cleaned,
                                  steps = steps / 4)
       }
-      
-      # fitbit floors data is in 15 min intervals, while Apple floors data 
+
+      # fitbit floors data is in 15 min intervals, while Apple floors data
       # is in hour intervals
       if("Flights Climbed (count)" %in% names(cleaned)) {
         cleaned <- dplyr::rename(cleaned, floors = `Flights Climbed (count)`)
-        cleaned <- dplyr::mutate(cleaned = floors / 4)
+        cleaned <- dplyr::mutate(cleaned, floors = floors / 4)
       }
-      
+
       if("Heart Rate (count/min)" %in% names(cleaned)) {
         cleaned <- dplyr::rename(cleaned, bpm = `Heart Rate (count/min)`)
       }
-      
-      # fitbit distance data is in 15 min intervals, while Apple distance data 
+
+      # fitbit distance data is in 15 min intervals, while Apple distance data
       # is in hour intervals
       if("Distance (mi)" %in% names(cleaned)) {
         cleaned <- dplyr::rename(cleaned, distance = `Distance (mi)`)
-        cleaned <- dplyr::mutate(cleaned, 
+        cleaned <- dplyr::mutate(cleaned,
                                  distance = distance / 4,
                                  distanceKm = distance * MI_TO_KM)
-        
+
       }
-      
+
       if("Respiratory Rate (count/min)" %in% names(cleaned)) {
-        cleaned <- dplyr::rename(cleaned, 
+        cleaned <- dplyr::rename(cleaned,
                                  resp_rate = `Respiratory Rate (count/min)`)
       }
-      
+
       if("Active Calories (kcal)" %in% names(cleaned)) {
         cleaned <- dplyr::rename(cleaned, active_cal = `Active Calories (kcal)`)
       }
 
       # Convert datetime variable to dttm type
-      cleaned$datetime <- lubridate::dmy_hm(cleaned$datetime, 
+      cleaned$datetime <- lubridate::dmy_hm(cleaned$datetime,
                                             tz = Sys.timezone())
 
       return(cleaned)
@@ -424,7 +424,7 @@ Person <- R6::R6Class("Person",
       # create additional columns
       joined <- dplyr::mutate(joined,
                               distanceKm = distance * MI_TO_KM,
-                              weightKg = weight * MI_TO_KG)
+                              weightKg = weight * MI_TO_KM)
       
       # drop `calories-burned`, which is less informative than caloriesBurned
       joined$`calories-burned` <- NULL
