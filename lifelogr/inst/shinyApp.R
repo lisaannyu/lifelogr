@@ -12,8 +12,8 @@ ui <- fluidPage(
                       textInput("name", label = "Name"),
                       numericInput("age", label = "Age (in years)", value = 40),
                       radioButtons("gender", label = "Gender",
-                                   c("Male" = "male",
-                                     "Female" = "female",
+                                   c("Female" = "female",
+                                     "Male" = "Male",
                                      "Other" = "other")),
                       actionButton("done", "Done")
                       ),
@@ -25,7 +25,8 @@ ui <- fluidPage(
                       br(),
                       numericInput("target_steps", label = "Target Steps Per Day", 
                                    value = 10000),
-                      dateRangeInput("dates", label = "Date range"),
+                      dateRangeInput("dates", label = "Date range",
+                                     start = "2017-03-18", end = "2017-03-20"),
                       fileInput("apple", label = "Apple Data", 
                                 multiple = FALSE,
                                 accept = c(
@@ -164,19 +165,24 @@ server <- function(input, output) {
   df <- eventReactive(input$done, {
     person <- Person$new(fitbit_user_email = input$email, 
                      fitbit_user_pw = input$password,
-                     # apple_data_file = input$apple,
+                     apple_data_file = input$apple,
                      user_info = list("name" = input$name, 
                                       "age" = input$age, 
                                       "gender" = input$gender),
                      target_steps = input$target_steps,
-                     group_assignments = list(data.frame(NA), data.frame(NA)),
+                     #group_assignments = list(data.frame(NA), data.frame(NA)),
                      start_date = input$dates[1], end_date = input$dates[2])
-    # person$fitbit_intraday
+    #print(person$fitbit_intraday)
   })
   
-  output$table <- renderTable({
-    df()
-  })
+  output$table <- renderText({""})#{person$fitbit_intraday})
+  
+  #output$table <- renderText({df$fitbit_intraday})#renderTable({
+    #person$fitbit_intraday
+    #})
+  #{
+    #df()
+  #})
 
   output$sleepPlot <- renderPlot({
     plot_sleep(df(), input$sleep_measure)
