@@ -37,22 +37,21 @@ test_that("create_datasets with NA time_var produces correct error", {
 
 
 test_that("correctly merge lists where each list has one, and the same, source", {
-  
-  
-})
-
-
-test_that("correctly merge lists where each list has multiple, and different, sources", {
-  
+  expect_equal(names(merge_lists(list(list("fitbit_daily" = c("distance")),
+                                list("fitbit_daily" = c("steps"))))),
+               "fitbit_daily")
   
 })
 
 
-# analysis functions
-
-test_that("", {
-  
+test_that("correctly merge lists where each list has multiple, 
+          and different, sources", {
+    expect_equal(names(merge_lists(list(list("fitbit_daily" = c("distance"), 
+                                             "util" = c("day_of_week")),
+          list("fitbit_daily" = c("steps"), 
+               "fitbit_intraday" = c("steps"))))), c("fitbit_daily",
+                                                     "util", "fitbit_intraday"))
+            
   
 })
-
 
