@@ -2,10 +2,14 @@
 % Please edit documentation in R/lifelogrApp.R
 \name{lifelogrApp}
 \alias{lifelogrApp}
-\title{Run the test shiny app}
+\title{Run the Shiny app.}
 \usage{
 lifelogrApp()
 }
 \description{
-Runs a shiny app for a graphical user interface example
+Meant to be used as an example showcasing the visualizations.
+Uses the EX Person instance used throughout this package.
+}
+\examples{
+lifelogrApp
 }

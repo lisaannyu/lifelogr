@@ -167,22 +167,24 @@ the x axis, the experimentation framework allows for greater flexibility.  Users
 can select any variables of interest and examine their relationship.
 
 Users can specify
+
 * x variables of interest
 * y measures of interest
 * type of analysis ("plot", "correlation", "anova", "compare_groups", or 
 "regression")
 * time variable (date, time, or datetime)
 
-The `experiment` function studies every pairwise combination of the variable
-and measure variables given.
+The `experiment` function studies the effect of each variable, or all variables
+together (depending on the analysis), of the variable (X) and measure variables 
+(Y) given.
 
 Users can also perform each analysis using the functions
-`l_plot`, `correlation`, `l_anova`, 
-`compare_groups`, or `l_regression` instead of the higher-level function
-`experiment`.
+`l_plot`, `correlation`, `l_anova`, `compare_groups`, or `l_regression` 
+instead of the higher-level function `experiment`.
 
-The analysis functions below perform specific analyses, but using the standardi-
-zed datasets in the fields of the Person class, the `create_dataset` function,
+The analysis functions below perform specific analyses, but using the 
+standardized datasets in the fields of the Person class, the `create_dataset` 
+function,
 which joins datasets across source types, and the templates provided by these
 analysis functions, users can easily perform their own unique analyses.
 
@@ -312,10 +314,9 @@ We created a framework for users to add whatever additional data they want and
 then analyze it.
 
 Future work can involve providing recommendations. Creating recommendation
-functionality is difficult because it generally involves a human.  
-A package can tell its user that his/her resting heart rate is too high or 
-that s/he is not meeting his/her step count, but
-providing recommendations for how to solve that issue is more difficult.
-Fitbit does not claim to be a replacement for a doctor, and neither does this
-package. Instead, we hope that with this dataset, we can begin the conversation
-between a user, and her data.
+functionality is difficult because it generally involves a human.  A package can
+tell its user that his/her resting heart rate is too high or that s/he is not 
+meeting his/her step count, but providing recommendations for how to solve that
+issue is more difficult.  Fitbit does not claim to be a replacement for a 
+doctor, and neither does this package. Instead, we hope that with this dataset,
+we can begin the conversation between a user, and her data.

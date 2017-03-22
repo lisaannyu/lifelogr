@@ -13,10 +13,15 @@
 #' @importFrom utils globalVariables
 NULL
 
-# utils::globalVariables(names = c("os",
-#                                  "Nonwindows",
-#                                  "Windows",
-#                                  "value",
-#                                  "agent",
-#                                  "count",
-#                                  "tz"))
+utils::globalVariables(names = c("day_of_week",
+                                 "sleepDurationHrs",
+                                 "minAsleepHrs",
+                                 "group",
+                                 "cor",
+                                 "as.formula",
+                                 "anova",
+                                 "time",
+                                 "hours",
+                                 "measure",
+                                 "anova"
+                                 ))
