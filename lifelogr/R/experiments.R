@@ -1,6 +1,3 @@
-##
-## Entire file radke code
-##
 #' Merge a list of lists into one list
 #' 
 #' @description merges list of lists specifying source and variables from each

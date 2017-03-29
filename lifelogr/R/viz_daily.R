@@ -1,6 +1,3 @@
-##
-## Entire file layu code
-##
 #' @include global_var.R
 #' @include experiments.R
 NULL

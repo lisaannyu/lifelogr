@@ -1,6 +1,3 @@
-##
-## Entire file layu code
-##
 # Colors
 CARDINAL <- "#BD2031"
 

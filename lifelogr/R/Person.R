@@ -187,9 +187,6 @@ NULL
 #' @export
 #' @format An \code{\link{R6Class}} generator object
 #' 
-##
-## Begin radke code
-##
 Person <- R6::R6Class("Person",
   public = list(
     fitbit_daily = NULL, # dataframe of daily fitbit data
@@ -245,13 +242,7 @@ Person <- R6::R6Class("Person",
       }
       self$groupings <- group_assignments
     }),
-  ##
-  ## End radke code
-  ##  
-  
-  ##
-  ## Begin layu code
-  ##
+
   private = list(
     load_apple_data = function(apple_data_file) {
       raw_df <- readr::read_csv(apple_data_file)
@@ -311,13 +302,7 @@ Person <- R6::R6Class("Person",
 
       return(cleaned)
     },
-    ##
-    ## End layu code
-    ##
-    
-    ##
-    ## Begin radke code
-    ##
+
     create_util_data = function(start_date, end_date) {
       
       # date range between start and end date
@@ -405,13 +390,7 @@ Person <- R6::R6Class("Person",
       joined$datetime <- lubridate::ymd_hms(joined$time, tz = Sys.timezone())
       joined$date <- lubridate::ymd(as.Date(as.POSIXct(joined$datetime,
                                                        Sys.timezone())))
-      ##
-      ## End radke code
-      ##
-      
-      ##
-      ## Begin layu code
-      ##
+
       joined$time <- 
         lubridate::make_datetime(year = "1970", month = "01", 
                                 day = "01",
@@ -440,13 +419,7 @@ Person <- R6::R6Class("Person",
                               dplyr::everything())
       return(joined)
       },
-    ##
-    ## End layu code
-    ##
-     
-    ##
-    ## Begin radke code
-    ##
+
       # Returns a tibble of joined variables recorded daily
       get_fitbit_daily = function(fitbit_user_email, fitbit_user_pw) {
         cookie <- fitbitScraper::login(email = fitbit_user_email, 
@@ -496,13 +469,6 @@ Person <- R6::R6Class("Person",
                                                          tz = Sys.timezone())))
         joined <- dplyr::select(joined, -time)
         
-        ##
-        ## End radke code
-        ##
-        
-        ##
-        ## Begin layu code
-        ##
         joined$datetime <- 
           lubridate::make_datetime(year = lubridate::year(joined$date),
                                    month = lubridate::month(joined$date),
@@ -548,6 +514,3 @@ Person <- R6::R6Class("Person",
       }
     
   ))
-##
-## End layu code
-##
