@@ -5,4 +5,4 @@ This repository contains code for the R package `lifelogr`. The package provides
 
 For more information and examples, see `summary.pdf`.
 
-To download and use the package yourself, download and unzip `lifelogr_0.0.0.9000.tar.gz`.
+To use the package yourself, download `lifelogr`, or download and unzip `lifelogr_0.0.0.9000.tar.gz`.
