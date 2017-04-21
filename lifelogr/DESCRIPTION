@@ -1,9 +1,9 @@
 Package: lifelogr
 Title: Life Logging in R
 Version: 0.0.0.9000
-Authors@R: c(person("Rohisha", "Adke", email = "rohisha@gmail.com", role = c("aut", "cre")), person("Lisa Ann", "Yu", email = "lisaann.yu@gmail.com", role = "aut"))
+Authors@R: c(person("Rohisha", "Adke", email = "rohisha@gmail.com", role = "aut"), person("Lisa Ann", "Yu", email = "lisaann.yu@gmail.com", role = c("aut", "cre")))
 Description: The lifelogr package provides a framework for combining self-data from multiple sources, creating visualizations, and experimenting on onself.
-Depends: R (>= 3.3.2)
+Depends: R (>= 3.0.2)
 License: GPL (>= 2)
 Encoding: UTF-8
 LazyData: true
@@ -13,7 +13,7 @@ Collate:
     'Person.R'
     'experiments.R'
     'lifelogr.R'
-    'lifelogrApp.R'
+    'shinyApp.R'
     'viz_daily.R'
     'viz_intraday.R'
     'viz_sleep.R'

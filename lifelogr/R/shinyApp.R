@@ -6,5 +6,5 @@
 #' @examples
 #' lifelogrApp
 lifelogrApp <- function() {
-  shiny::runApp('../inst/shinyApp.R')
+  shiny::runApp(system.file('shinyApp', package = 'lifelogr'))
 }
