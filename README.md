@@ -3,6 +3,6 @@ This repository contains code for the R package `lifelogr`. The package provides
   - Visualize data over time
   - Do experiments on themselves and their data
 
-For more information and examples, see `summary.pdf`.
+For more information and examples, see `vignettes/summary.pdf`.
 
 To use the package yourself, download `lifelogr`.
